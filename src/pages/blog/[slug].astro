@@ -1,0 +1,90 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { siteName } from '@data/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const categoryMap: Record<string, string> = {
+  bazi: '八字',
+  ziwei: '紫微',
+  fengshui: '风水',
+  wuxing: '五行',
+  general: '综合',
+};
+
+const categoryLabel = categoryMap[post.data.category] || post.data.category;
+
+const formattedDate = post.data.date.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout
+  title={`${post.data.title} - ${siteName}`}
+  description={post.data.description}
+>
+  <Header />
+
+  <main class="max-w-3xl mx-auto px-4 py-10 flex-1">
+    <article>
+      <header class="mb-10">
+        <div class="flex items-center gap-3 text-sm text-mo-light mb-4">
+          <a href={`/category/${post.data.category}/`} class="tag no-underline">{categoryLabel}</a>
+          <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+        </div>
+        <h1 class="font-kai text-3xl md:text-4xl text-xuan leading-snug mb-4">
+          {post.data.title}
+        </h1>
+        <p class="text-mo-light leading-relaxed">{post.data.description}</p>
+        <div class="section-divider"></div>
+      </header>
+
+      <div class="prose prose-lg font-song text-mo leading-loose
+                  prose-headings:font-kai prose-headings:text-xuan prose-headings:tracking-wider
+                  prose-a:text-zhu prose-a:no-underline hover:prose-a:underline
+                  prose-strong:text-xuan prose-blockquote:border-l-jin/40 prose-blockquote:bg-jin/5
+                  prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-sm
+                  prose-table:border-collapse prose-th:border prose-td:border prose-th:border-tan/30 prose-td:border-tan/30
+                  prose-th:p-3 prose-td:p-3 prose-th:bg-xuan-paper-dark prose-th:font-kai
+                  prose-img:rounded-sm
+                  max-w-none">
+        <Content />
+      </div>
+
+      {post.data.tags.length > 0 && (
+        <div class="mt-10 pt-6 border-t border-tan/20">
+          <div class="flex flex-wrap gap-2">
+            {post.data.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        </div>
+      )}
+    </article>
+
+    <!-- Disclaimer -->
+    <aside class="mt-12 p-4 bg-jin/5 border border-jin/20 rounded-sm">
+      <p class="text-xs text-mo-light leading-relaxed">
+        <strong class="font-kai text-xuan">声明：</strong>
+        本文内容仅供学习与文化交流，命理之说不可尽信，切勿迷信盲从。
+        人生在世，当自强不息，顺势而为。
+      </p>
+    </aside>
+  </main>
+
+  <Footer />
+</BaseLayout>

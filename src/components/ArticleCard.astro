@@ -1,0 +1,41 @@
+---
+interface Props {
+  title: string;
+  date: string;
+  excerpt: string;
+  slug: string;
+  category?: string;
+  tags?: string[];
+}
+
+const { title, date, excerpt, slug, category, tags } = Astro.props as Props;
+
+const formattedDate = new Date(date).toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article class="card group">
+  <a href={`/blog/${slug}/`} class="block no-underline">
+    <h3 class="font-kai text-lg text-xuan mb-2 group-hover:text-zhu transition-colors">
+      {title}
+    </h3>
+  </a>
+
+  <div class="flex items-center gap-3 text-xs text-mo-light mb-3">
+    <time datetime={date}>{formattedDate}</time>
+    {category && (
+      <a href={`/category/${category.toLowerCase()}/`} class="tag no-underline">{category}</a>
+    )}
+  </div>
+
+  <p class="text-sm text-mo-light leading-relaxed line-clamp-2">{excerpt}</p>
+
+  {tags && tags.length > 0 && (
+    <div class="flex flex-wrap gap-2 mt-3">
+      {tags.map((tag) => <span class="tag">{tag}</span>)}
+    </div>
+  )}
+</article>

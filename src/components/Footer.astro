@@ -1,0 +1,42 @@
+---
+import { siteName, navLinks } from '@data/site';
+---
+
+<footer class="border-t border-tan/20 bg-xuan text-xuan-paper/70 mt-auto">
+  <div class="max-w-6xl mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h3 class="font-kai text-xuan-paper/90 text-base tracking-widest mb-4">{siteName}</h3>
+        <p class="text-sm leading-relaxed text-xuan-paper/60">
+          传承国学命理之学，以四柱八字、紫微斗数为门径，<br />
+          探天人合一之道，明进退取舍之机。
+        </p>
+      </div>
+
+      <div>
+        <h3 class="font-kai text-xuan-paper/90 text-base tracking-widest mb-4">导航</h3>
+        <ul class="space-y-2">
+          {navLinks.slice(1).map((link) => (
+            <li>
+              <a href={link.href} class="text-sm text-xuan-paper/60 hover:text-jin-light transition-colors no-underline">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-kai text-xuan-paper/90 text-base tracking-widest mb-4">免责声明</h3>
+        <p class="text-xs leading-relaxed text-xuan-paper/50">
+          本站内容仅供学习与文化交流之用，不代表科学定论。
+          命理之学，重在了解自我、顺势而为，切勿迷信盲从。
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-white/10 text-center text-xs text-xuan-paper/40">
+      <p>&copy; {new Date().getFullYear()} {siteName} · 传承国学 · 知命乐天</p>
+    </div>
+  </div>
+</footer>

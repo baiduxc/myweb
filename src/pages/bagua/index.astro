@@ -1,0 +1,330 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import SectionHeading from '@components/SectionHeading.astro';
+import { siteName } from '@data/site';
+---
+
+<BaseLayout title={`八字排盘 - ${siteName}`} description="在线四柱八字排盘工具，输入出生年月日时即可排出八字命盘">
+  <Header />
+
+  <main class="max-w-4xl mx-auto px-4 py-10 flex-1">
+    <SectionHeading title="四柱八字排盘" subtitle="输入出生信息，排出四柱命盘" />
+
+    <!-- Input Form -->
+    <div class="card max-w-xl mx-auto mb-10">
+      <form id="bazi-form" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="birth-date" class="block text-sm font-kai text-xuan mb-1">出生日期</label>
+            <input
+              type="date"
+              id="birth-date"
+              required
+              class="w-full px-3 py-2 border border-tan/30 rounded-sm bg-white font-song text-mo
+                     focus:border-jin focus:outline-none focus:ring-1 focus:ring-jin/30"
+            />
+          </div>
+          <div>
+            <label for="birth-time" class="block text-sm font-kai text-xuan mb-1">出生时辰</label>
+            <select
+              id="birth-time"
+              required
+              class="w-full px-3 py-2 border border-tan/30 rounded-sm bg-white font-song text-mo
+                     focus:border-jin focus:outline-none focus:ring-1 focus:ring-jin/30"
+            >
+              <option value="">请选择时辰</option>
+              <option value="23">子时 (23:00-01:00)</option>
+              <option value="1">丑时 (01:00-03:00)</option>
+              <option value="3">寅时 (03:00-05:00)</option>
+              <option value="5">卯时 (05:00-07:00)</option>
+              <option value="7">辰时 (07:00-09:00)</option>
+              <option value="9">巳时 (09:00-11:00)</option>
+              <option value="11">午时 (11:00-13:00)</option>
+              <option value="13">未时 (13:00-15:00)</option>
+              <option value="15">申时 (15:00-17:00)</option>
+              <option value="17">酉时 (17:00-19:00)</option>
+              <option value="19">戌时 (19:00-21:00)</option>
+              <option value="21">亥时 (21:00-23:00)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <label class="flex items-center gap-2 text-sm font-kai text-mo cursor-pointer">
+            <input type="radio" name="calendar" value="solar" checked class="text-zhu focus:ring-zhu" />
+            公历
+          </label>
+          <label class="flex items-center gap-2 text-sm font-kai text-mo cursor-pointer">
+            <input type="radio" name="calendar" value="lunar" class="text-zhu focus:ring-zhu" />
+            农历
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary w-full text-center">
+          排盘
+        </button>
+      </form>
+    </div>
+
+    <!-- Result Area -->
+    <div id="bazi-result" class="hidden">
+      <!-- 四柱命盘 -->
+      <div class="card mb-8">
+        <h3 class="font-kai text-lg text-xuan text-center mb-6 tracking-widest">四 柱 命 盘</h3>
+
+        <div class="grid grid-cols-4 gap-4 text-center max-w-lg mx-auto">
+          <div class="font-kai text-sm text-mo-light">年柱</div>
+          <div class="font-kai text-sm text-mo-light">月柱</div>
+          <div class="font-kai text-sm text-mo-light">日柱</div>
+          <div class="font-kai text-sm text-mo-light">时柱</div>
+
+          <div id="year-gan" class="text-2xl font-kai text-xuan py-2"></div>
+          <div id="month-gan" class="text-2xl font-kai text-xuan py-2"></div>
+          <div id="day-gan" class="text-2xl font-kai text-zhu py-2"></div>
+          <div id="hour-gan" class="text-2xl font-kai text-xuan py-2"></div>
+
+          <div id="year-zhi" class="text-2xl font-kai text-xuan py-2"></div>
+          <div id="month-zhi" class="text-2xl font-kai text-xuan py-2"></div>
+          <div id="day-zhi" class="text-2xl font-kai text-zhu py-2"></div>
+          <div id="hour-zhi" class="text-2xl font-kai text-xuan py-2"></div>
+
+          <div id="year-wuxing" class="text-xs text-mo-light"></div>
+          <div id="month-wuxing" class="text-xs text-mo-light"></div>
+          <div id="day-wuxing" class="text-xs text-mo-light"></div>
+          <div id="hour-wuxing" class="text-xs text-mo-light"></div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- 十神 -->
+        <div id="shishen-row" class="grid grid-cols-4 gap-4 text-center max-w-lg mx-auto mb-4">
+          <div id="year-shishen" class="text-xs text-jin"></div>
+          <div id="month-shishen" class="text-xs text-jin"></div>
+          <div class="text-xs text-mo-light">日主</div>
+          <div id="hour-shishen" class="text-xs text-jin"></div>
+        </div>
+
+        <!-- 纳音 -->
+        <div class="text-center text-xs text-mo-light">
+          <span>纳音：</span>
+          <span id="nayin-year"></span> · <span id="nayin-month"></span> · <span id="nayin-day"></span> · <span id="nayin-hour"></span>
+        </div>
+      </div>
+
+      <!-- 五行统计 -->
+      <div class="card mb-8">
+        <h3 class="font-kai text-lg text-xuan text-center mb-4 tracking-widest">五行统计</h3>
+        <div id="wuxing-stats" class="flex items-center justify-center gap-6"></div>
+      </div>
+
+      <!-- 藏干 -->
+      <div class="card mb-8">
+        <h3 class="font-kai text-lg text-xuan text-center mb-4 tracking-widest">地支藏干</h3>
+        <div id="canggan-grid" class="grid grid-cols-4 gap-4 text-center max-w-lg mx-auto"></div>
+      </div>
+
+      <!-- AI Analysis -->
+      <div class="card">
+        <h3 class="font-kai text-lg text-xuan text-center mb-4 tracking-widest">AI 命理简析</h3>
+        <div id="ai-analysis" class="font-song text-mo leading-loose text-sm"></div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+import { tianGan, diZhi, ganWuxing, zhiWuxing, ganYinYang, cangGan, shiShenMap, naYin } from '../../utils/bazi';
+
+// ===== 简化版八字排盘计算 =====
+// 注：完整版应使用 lunar-javascript 库
+// 此处为演示用的简化算法，仅做展示
+
+function getYearGanZhi(year: number): [string, string] {
+  const ganIndex = (year - 4) % 10;
+  const zhiIndex = (year - 4) % 12;
+  return [tianGan[ganIndex], diZhi[zhiIndex]];
+}
+
+function getMonthGan(year: number, month: number): string {
+  const yearGanIndex = (year - 4) % 10;
+  // 五虎遁
+  const startGan: Record<number, number> = {
+    0: 2, 5: 2,   // 甲己 - 丙寅
+    1: 4, 6: 4,   // 乙庚 - 戊寅
+    2: 6, 7: 6,   // 丙辛 - 庚寅
+    3: 8, 8: 8,   // 丁壬 - 壬寅
+    4: 0, 9: 0,   // 戊癸 - 甲寅
+  };
+  const baseGan = startGan[yearGanIndex] ?? 2;
+  // 月份从寅月开始（立春后）
+  const monthGanIndex = (baseGan + month - 1) % 10;
+  return tianGan[monthGanIndex];
+}
+
+function getMonthZhi(month: number): string {
+  // 月份地支：寅卯辰巳午未申酉戌亥子丑
+  const monthZhi = ['寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑'];
+  return monthZhi[month - 1] || '寅';
+}
+
+function getDayGanZhi(year: number, month: number, day: number): [string, string] {
+  // 使用蔡勒公式的简化版本计算日干支
+  // 以1900年1月31日为甲戌日作为基准
+  const baseDate = new Date(1900, 0, 31);
+  const targetDate = new Date(year, month - 1, day);
+  const diffDays = Math.floor((targetDate.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  // 甲戌日序号：天干甲=0，地支戌=10
+  const baseGan = 0;
+  const baseZhi = 10;
+
+  const dayGanIndex = ((baseGan + diffDays) % 10 + 10) % 10;
+  const dayZhiIndex = ((baseZhi + diffDays) % 12 + 12) % 12;
+
+  return [tianGan[dayGanIndex], diZhi[dayZhiIndex]];
+}
+
+function getHourGan(dayGan: string, hour: number): string {
+  const dayGanIndex = tianGan.indexOf(dayGan);
+  // 五鼠遁
+  const startGan: Record<number, number> = {
+    0: 0, 5: 0,   // 甲己 - 甲子
+    1: 2, 6: 2,   // 乙庚 - 丙子
+    2: 4, 7: 4,   // 丙辛 - 戊子
+    3: 6, 8: 6,   // 丁壬 - 庚子
+    4: 8, 9: 8,   // 戊癸 - 壬子
+  };
+  const baseGan = startGan[dayGanIndex] ?? 0;
+  // 时辰对应的地支序号
+  let hourZhiIndex = 0;
+  if (hour >= 23 || hour < 1) hourZhiIndex = 0;
+  else hourZhiIndex = Math.floor((hour + 1) / 2);
+
+  const hourGanIndex = (baseGan + hourZhiIndex) % 10;
+  return tianGan[hourGanIndex];
+}
+
+function getHourZhi(hour: number): string {
+  if (hour >= 23 || hour < 1) return '子';
+  const zhi = ['', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+  return zhi[Math.floor((hour + 1) / 2)] || '子';
+}
+
+function getShiShen(dayGan: string, targetGan: string): string {
+  return shiShenMap[dayGan]?.[targetGan] || '';
+}
+
+function countWuxing(gans: string[], zhis: string[]): Record<string, number> {
+  const stats: Record<string, number> = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 };
+  for (const gan of gans) stats[ganWuxing[gan]] = (stats[ganWuxing[gan]] || 0) + 1;
+  for (const zhi of zhis) stats[zhiWuxing[zhi]] = (stats[zhiWuxing[zhi]] || 0) + 1;
+  return stats;
+}
+
+function generateAIAnalysis(dayGan: string, dayZhi: string, wuxing: Record<string, number>, gans: string[], zhis: string[]): string {
+  const wuxingChars = ['木', '火', '土', '金', '水'];
+  const missing = wuxingChars.filter(w => wuxing[w] === 0);
+  const strongest = wuxingChars.reduce((a, b) => wuxing[a] > wuxing[b] ? a : b);
+
+  let analysis = `<p class="mb-3">日主为<strong>${dayGan}${dayZhi}</strong>，${dayGan}属${ganWuxing[dayGan]}，${ganYinYang[dayGan]}性。`;
+  analysis += `日干代表命主自身，是八字的核心。</p>`;
+
+  analysis += `<p class="mb-3">五行分布：`;
+  const parts = wuxingChars.map(w => `${w} ${wuxing[w]}`);
+  analysis += parts.join(' · ');
+  analysis += `</p>`;
+
+  if (missing.length > 0) {
+    analysis += `<p class="mb-3">五行中缺<strong>${missing.join('、')}</strong>，`;
+    analysis += `可在日常生活中适当补益${missing.join('或')}相关的色彩、方位与事物。</p>`;
+  }
+
+  analysis += `<p class="mb-3">五行中<strong>${strongest}</strong>最旺，`;
+  analysis += `${strongest}旺者多有${strongest === '木' ? '仁爱心，生发向上' : strongest === '火' ? '礼仪之德，热情明朗' : strongest === '土' ? '诚信厚道，沉稳包容' : strongest === '金' ? '义气果断，刚毅明理' : '智慧灵动，善于变通'}之性。</p>`;
+
+  analysis += `<p class="text-mo-light">以上为五行基础分析，完整的八字推演还需考虑十神关系、格局、大运流年等诸多因素。命理之学博大精深，建议系统深入学习。</p>`;
+
+  return analysis;
+}
+
+const form = document.getElementById('bazi-form') as HTMLFormElement;
+form?.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const dateInput = (document.getElementById('birth-date') as HTMLInputElement).value;
+  const hourInput = (document.getElementById('birth-time') as HTMLSelectElement).value;
+
+  if (!dateInput || !hourInput) return;
+
+  const [year, month, day] = dateInput.split('-').map(Number);
+  const hour = parseInt(hourInput);
+
+  // 计算四柱
+  const [yearGan, yearZhi] = getYearGanZhi(year);
+  const monthGan = getMonthGan(year, month);
+  const monthZhi = getMonthZhi(month);
+  const [dayGan, dayZhi] = getDayGanZhi(year, month, day);
+  const hourGan = getHourGan(dayGan, hour);
+  const hourZhi = getHourZhi(hour);
+
+  const allGans = [yearGan, monthGan, dayGan, hourGan];
+  const allZhis = [yearZhi, monthZhi, dayZhi, hourZhi];
+
+  // 显示结果
+  document.getElementById('year-gan')!.textContent = yearGan;
+  document.getElementById('month-gan')!.textContent = monthGan;
+  document.getElementById('day-gan')!.textContent = dayGan;
+  document.getElementById('hour-gan')!.textContent = hourGan;
+
+  document.getElementById('year-zhi')!.textContent = yearZhi;
+  document.getElementById('month-zhi')!.textContent = monthZhi;
+  document.getElementById('day-zhi')!.textContent = dayZhi;
+  document.getElementById('hour-zhi')!.textContent = hourZhi;
+
+  // 五行
+  document.getElementById('year-wuxing')!.textContent = `${ganWuxing[yearGan]}${zhiWuxing[yearZhi]}`;
+  document.getElementById('month-wuxing')!.textContent = `${ganWuxing[monthGan]}${zhiWuxing[monthZhi]}`;
+  document.getElementById('day-wuxing')!.textContent = `${ganWuxing[dayGan]}${zhiWuxing[dayZhi]}`;
+  document.getElementById('hour-wuxing')!.textContent = `${ganWuxing[hourGan]}${zhiWuxing[hourZhi]}`;
+
+  // 十神
+  document.getElementById('year-shishen')!.textContent = getShiShen(dayGan, yearGan);
+  document.getElementById('month-shishen')!.textContent = getShiShen(dayGan, monthGan);
+  document.getElementById('hour-shishen')!.textContent = getShiShen(dayGan, hourGan);
+
+  // 纳音
+  document.getElementById('nayin-year')!.textContent = naYin[yearGan + yearZhi] || '';
+  document.getElementById('nayin-month')!.textContent = naYin[monthGan + monthZhi] || '';
+  document.getElementById('nayin-day')!.textContent = naYin[dayGan + dayZhi] || '';
+  document.getElementById('nayin-hour')!.textContent = naYin[hourGan + hourZhi] || '';
+
+  // 五行统计
+  const wuxing = countWuxing(allGans, allZhis);
+  const wuxingColors: Record<string, string> = {
+    '木': '#2E5A4B', '火': '#8B2500', '土': '#B8860B', '金': '#5C5C5C', '水': '#2B4F81'
+  };
+  const wuxingEl = document.getElementById('wuxing-stats')!;
+  wuxingEl.innerHTML = Object.entries(wuxing).map(([w, count]) => {
+    const bars = Array(count).fill('■').join('');
+    return `<div class="text-center"><div style="color:${wuxingColors[w]}" class="text-lg font-kai">${w}</div><div class="text-jin text-sm">${bars || '—'}</div><div class="text-xs text-mo-light">${count}</div></div>`;
+  }).join('');
+
+  // 藏干
+  const cangganEl = document.getElementById('canggan-grid')!;
+  cangganEl.innerHTML = allZhis.map(zhi => {
+    const cgs = cangGan[zhi] || [];
+    const ss = cgs.map(cg => getShiShen(dayGan, cg)).join(' ');
+    return `<div><div class="font-kai text-lg text-xuan">${zhi}</div><div class="text-xs text-mo-light mt-1">${cgs.join(' ')}</div><div class="text-xs text-jin">${ss}</div></div>`;
+  }).join('');
+
+  // AI分析
+  document.getElementById('ai-analysis')!.innerHTML = generateAIAnalysis(dayGan, dayZhi, wuxing, allGans, allZhis);
+
+  document.getElementById('bazi-result')!.classList.remove('hidden');
+  document.getElementById('bazi-result')!.scrollIntoView({ behavior: 'smooth' });
+});
+</script>

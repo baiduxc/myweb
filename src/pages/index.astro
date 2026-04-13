@@ -1,0 +1,107 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import SectionHeading from '@components/SectionHeading.astro';
+import ArticleCard from '@components/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+import { siteName, siteDesc } from '@data/site';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 6);
+---
+
+<BaseLayout>
+  <Header />
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-xuan text-xuan-paper">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute inset-0" style="background: radial-gradient(circle at 30% 50%, rgba(184,134,11,0.3) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(139,37,0,0.2) 0%, transparent 50%)"></div>
+    </div>
+    <div class="relative max-w-6xl mx-auto px-4 py-20 md:py-32 text-center">
+      <div class="mb-6 text-jin/60 font-kai text-sm tracking-[0.3em]">传承国学 · 知命乐天</div>
+      <h1 class="font-kai text-4xl md:text-5xl lg:text-6xl leading-tight mb-6">
+        探<span class="text-jin">天人合一</span>之道<br />
+        明<span class="text-jin">进退取舍</span>之机
+      </h1>
+      <p class="font-song text-xuan-paper/70 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+        {siteDesc}
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="/bagua/" class="btn-primary" style="background-color: #8B2500; color: #F5F0E8;">八字排盘</a>
+        <a href="/ziwei/" class="btn-outline" style="border-color: #DAA520; color: #DAA520;">紫微排盘</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Topics -->
+  <section class="max-w-6xl mx-auto px-4 py-16">
+    <SectionHeading title="命理之门" subtitle="从基础入手，循序渐进，登堂入室" />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="card text-center group cursor-pointer" onclick="window.location.href='/category/bazi/'">
+        <div class="text-4xl mb-4 text-zhu/80 group-hover:text-zhu transition-colors font-kai">八字</div>
+        <h3 class="font-kai text-lg text-xuan mb-2">四柱八字</h3>
+        <p class="text-sm text-mo-light leading-relaxed">
+          以年月日时四柱干支为基础，论五行生克，析十神关系，断命运吉凶。
+        </p>
+      </div>
+
+      <div class="card text-center group cursor-pointer" onclick="window.location.href='/category/ziwei/'">
+        <div class="text-4xl mb-4 text-qing/80 group-hover:text-qing transition-colors font-kai">紫微</div>
+        <h3 class="font-kai text-lg text-xuan mb-2">紫微斗数</h3>
+        <p class="text-sm text-mo-light leading-relaxed">
+          以紫微星为核心，布十四主星于十二宫位，观星曜组合，断人事吉凶。
+        </p>
+      </div>
+
+      <div class="card text-center group cursor-pointer" onclick="window.location.href='/category/wuxing/'">
+        <div class="text-4xl mb-4 text-jin/80 group-hover:text-jin transition-colors font-kai">五行</div>
+        <h3 class="font-kai text-lg text-xuan mb-2">五行基础</h3>
+        <p class="text-sm text-mo-light leading-relaxed">
+          木火土金水，五行相生相克，为八字与紫微共同的理论根基。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Articles -->
+  <section class="bg-xuan-paper-dark py-16">
+    <div class="max-w-6xl mx-auto px-4">
+      <SectionHeading title="最新文章" subtitle="日积月累，学有所成" />
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <ArticleCard
+            title={post.data.title}
+            date={post.data.date.toISOString()}
+            excerpt={post.data.description}
+            slug={post.slug}
+            category={post.data.category === 'bazi' ? '八字' : post.data.category === 'ziwei' ? '紫微' : post.data.category}
+            tags={post.data.tags}
+          />
+        ))}
+      </div>
+
+      <div class="text-center mt-10">
+        <a href="/category/bazi/" class="btn-outline">
+          浏览更多文章
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote -->
+  <section class="max-w-6xl mx-auto px-4 py-16 text-center">
+    <blockquote class="font-kai text-xl md:text-2xl text-xuan/80 leading-relaxed max-w-3xl mx-auto">
+      "知命者不怨天，<br />知己者不尤人。"
+    </blockquote>
+    <p class="mt-4 text-sm text-mo-light font-song">—— 《孟子》</p>
+  </section>
+
+  <Footer />
+</BaseLayout>

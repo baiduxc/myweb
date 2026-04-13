@@ -1,0 +1,60 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import SectionHeading from '@components/SectionHeading.astro';
+import { siteName } from '@data/site';
+---
+
+<BaseLayout title={`关于 ${siteName}`} description="了解命理知书的创立初衷与理念">
+  <Header />
+
+  <main class="max-w-3xl mx-auto px-4 py-10 flex-1">
+    <SectionHeading title="关于命理知书" subtitle="知命者不怨天，知己者不尤人" />
+
+    <div class="font-song text-mo leading-loose space-y-6">
+      <p>
+        <strong class="font-kai text-xuan">命理知书</strong>，是一个致力于传播中国传统命理文化的知识平台。
+        我们相信，八字、紫微斗数等命理之学，是中华文明数千年来对天地运行规律与人生轨迹关系的深刻思考，
+        值得被认真了解、学习和传承。
+      </p>
+
+      <h2 class="font-kai text-xl text-xuan mt-8 mb-4">我们的理念</h2>
+
+      <p>
+        <strong class="text-xuan">传承国学</strong>——我们将命理之学视为中国传统文化的一部分，
+        以严肃、认真的态度整理和传播相关知识，力求还原古人的智慧原貌。
+      </p>
+
+      <p>
+        <strong class="text-xuan">理性看待</strong>——命理不是迷信，也不是绝对的宿命论。
+        它是一种认识自我、了解规律的视角。我们倡导以开放而理性的态度学习命理，
+        取其精华，去其糟粕。
+      </p>
+
+      <p>
+        <strong class="text-xuan">自助学习</strong>——我们提供排盘工具和系统化的知识文章，
+        帮助每一位有兴趣了解命理的人，从入门到进阶，循序渐进地掌握这门学问。
+      </p>
+
+      <h2 class="font-kai text-xl text-xuan mt-8 mb-4">内容范围</h2>
+
+      <ul class="list-disc list-inside space-y-2 ml-4">
+        <li><strong class="text-xuan">四柱八字</strong>：天干地支、五行生克、十神关系、格局分析、大运流年</li>
+        <li><strong class="text-xuan">紫微斗数</strong>：十四主星、十二宫位、吉凶星曜、四化飞星</li>
+        <li><strong class="text-xuan">五行基础</strong>：五行特性、相生相克、天干地支的五行归属</li>
+        <li><strong class="text-xuan">历法知识</strong>：农历与公历的转换、节气与干支纪年</li>
+      </ul>
+
+      <h2 class="font-kai text-xl text-xuan mt-8 mb-4">免责声明</h2>
+
+      <p class="text-sm text-mo-light">
+        本站内容仅供学习与文化交流之用。命理之说，源于古代先贤对自然与人生的观察和总结，
+        具有一定的文化价值和研究意义，但不可作为决策的唯一依据。
+        我们提倡科学理性的态度，切勿迷信盲从。
+      </p>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npx create-astro@latest . --template minimal --install --no-git --typescript strict)",
+      "Bash(npm install:*)",
+      "Bash(/e/node/node-v22.15.1-win-x64/node /e/node/node-v22.15.1-win-x64/node_modules/npm/bin/npm-cli.js install)",
+      "Bash(rm -rf node_modules package-lock.json)",
+      "Bash(npm cache:*)",
+      "Bash(npm run:*)",
+      "Bash(/e/node/node-v22.15.1-win-x64/node node_modules/astro/astro.js build)"
+    ]
+  }
+}

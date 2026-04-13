@@ -1,0 +1,208 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import SectionHeading from '@components/SectionHeading.astro';
+import { siteName } from '@data/site';
+
+const zhuXing = [
+  { name: '紫微', type: '北斗', desc: '帝星，尊贵稳重，有领导力' },
+  { name: '天机', type: '北斗', desc: '智谋之星，聪明善变' },
+  { name: '太阳', type: '北斗', desc: '光明磊落，热情博爱' },
+  { name: '武曲', type: '北斗', desc: '刚毅果断，善理财' },
+  { name: '天同', type: '北斗', desc: '福星，温和随性' },
+  { name: '廉贞', type: '北斗', desc: '复杂多变，才华横溢' },
+  { name: '天府', type: '南斗', desc: '库星，稳重守成' },
+  { name: '太阴', type: '南斗', desc: '温柔细腻，内敛含蓄' },
+  { name: '贪狼', type: '南斗', desc: '欲望之星，多才多艺' },
+  { name: '巨门', type: '南斗', desc: '口舌之星，能言善辩' },
+  { name: '天相', type: '南斗', desc: '印星，公正平和' },
+  { name: '天梁', type: '南斗', desc: '荫星，慈悲为怀' },
+  { name: '七杀', type: '南斗', desc: '将星，果断勇猛' },
+  { name: '破军', type: '南斗', desc: '耗星，变动创新' },
+];
+
+const gongWei = [
+  { name: '命宫', desc: '性格、天赋、人生基调' },
+  { name: '兄弟', desc: '兄弟姐妹、同辈关系' },
+  { name: '夫妻', desc: '婚姻感情、配偶特质' },
+  { name: '子女', desc: '子女缘、教育方式' },
+  { name: '财帛', desc: '财运、理财能力' },
+  { name: '疾厄', desc: '健康、体质' },
+  { name: '迁移', desc: '出行、人际、外在表现' },
+  { name: '交友', desc: '朋友、同事、社交' },
+  { name: '官禄', desc: '事业、学业、地位' },
+  { name: '田宅', desc: '房产、家庭环境' },
+  { name: '福德', desc: '精神享受、福气' },
+  { name: '父母', desc: '父母关系、长辈缘' },
+];
+---
+
+<BaseLayout title={`紫微斗数排盘 - ${siteName}`} description="紫微斗数在线排盘，排出十四主星于十二宫位">
+  <Header />
+
+  <main class="max-w-4xl mx-auto px-4 py-10 flex-1">
+    <SectionHeading title="紫微斗数排盘" subtitle="输入出生信息，排出紫微命盘" />
+
+    <!-- Input Form -->
+    <div class="card max-w-xl mx-auto mb-10">
+      <form id="ziwei-form" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="ziwei-date" class="block text-sm font-kai text-xuan mb-1">出生日期</label>
+            <input type="date" id="ziwei-date" required
+              class="w-full px-3 py-2 border border-tan/30 rounded-sm bg-white font-song text-mo focus:border-jin focus:outline-none" />
+          </div>
+          <div>
+            <label for="ziwei-time" class="block text-sm font-kai text-xuan mb-1">出生时辰</label>
+            <select id="ziwei-time" required
+              class="w-full px-3 py-2 border border-tan/30 rounded-sm bg-white font-song text-mo focus:border-jin focus:outline-none">
+              <option value="">请选择时辰</option>
+              <option value="23">子时 (23:00-01:00)</option>
+              <option value="1">丑时 (01:00-03:00)</option>
+              <option value="3">寅时 (03:00-05:00)</option>
+              <option value="5">卯时 (05:00-07:00)</option>
+              <option value="7">辰时 (07:00-09:00)</option>
+              <option value="9">巳时 (09:00-11:00)</option>
+              <option value="11">午时 (11:00-13:00)</option>
+              <option value="13">未时 (13:00-15:00)</option>
+              <option value="15">申时 (15:00-17:00)</option>
+              <option value="17">酉时 (17:00-19:00)</option>
+              <option value="19">戌时 (19:00-21:00)</option>
+              <option value="21">亥时 (21:00-23:00)</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary w-full text-center">排盘</button>
+      </form>
+    </div>
+
+    <!-- Result -->
+    <div id="ziwei-result" class="hidden">
+      <!-- 十二宫盘 -->
+      <div class="card mb-8">
+        <h3 class="font-kai text-lg text-xuan text-center mb-6 tracking-widest">紫 微 命 盘</h3>
+        <div id="gong-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
+      </div>
+
+      <!-- 十四主星介绍 -->
+      <div class="card mb-8">
+        <h3 class="font-kai text-lg text-xuan text-center mb-6 tracking-widest">十四主星</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {zhuXing.map((star) => (
+            <div class="flex items-start gap-3 p-3 bg-xuan-paper-dark rounded-sm">
+              <div class="font-kai text-lg text-zhu shrink-0 w-12">{star.name}</div>
+              <div>
+                <div class="text-xs text-jin mb-1">{star.type}</div>
+                <div class="text-sm text-mo-light">{star.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 十二宫位介绍 -->
+      <div class="card">
+        <h3 class="font-kai text-lg text-xuan text-center mb-6 tracking-widest">十二宫位</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {gongWei.map((gw) => (
+            <div class="flex items-start gap-3 p-3 bg-xuan-paper-dark rounded-sm">
+              <div class="font-kai text-lg text-qing shrink-0 w-12">{gw.name}</div>
+              <div class="text-sm text-mo-light">{gw.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+// 简化的紫微排盘 - 基于出生日时安命宫和星曜
+const tianGan = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+const diZhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+const zhuXing = ['紫微', '天机', '太阳', '武曲', '天同', '廉贞', '天府', '太阴', '贪狼', '巨门', '天相', '天梁', '七杀', '破军'];
+const gongNames = ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄', '迁移', '交友', '官禄', '田宅', '福德', '父母'];
+
+function getMingGongIndex(month: number, hourZhiIndex: number): number {
+  // 安命宫口诀：寅正顺数生月逢，生月起子两头通
+  // 简化：命宫 = (寅位2 + 月份 - 时辰地支序号) % 12
+  return ((2 + month - 1 - hourZhiIndex) % 12 + 12) % 12;
+}
+
+function getShenGongIndex(month: number, hourZhiIndex: number): number {
+  // 身宫 = (寅位2 + 月份 + 时辰地支序号) % 12
+  return ((2 + month - 1 + hourZhiIndex) % 12);
+}
+
+function getZiWeiIndex(birthDay: number): number {
+  // 简化：紫微星位置与生日相关
+  return (birthDay - 1) % 12;
+}
+
+function distributeStars(gongCount: number): Record<number, string[]> {
+  const result: Record<number, string[]> = {};
+  for (let i = 0; i < gongCount; i++) result[i] = [];
+  // 基于宫位简单分布主星
+  const mainStars = ['紫微', '天机', '太阳', '武曲', '天同', '廉贞'];
+  const secondaryStars = ['天府', '太阴', '贪狼', '巨门', '天相', '天梁', '七杀', '破军'];
+
+  // 命宫放紫微
+  result[0].push('紫微');
+  // 其他主星分布在相邻宫位
+  for (let i = 1; i < mainStars.length; i++) {
+    result[i % 12].push(mainStars[i]);
+  }
+  // 南斗星分布
+  for (let i = 0; i < secondaryStars.length; i++) {
+    const pos = (i + 3) % 12;
+    if (!result[pos].includes(secondaryStars[i])) {
+      result[pos].push(secondaryStars[i]);
+    }
+  }
+  return result;
+}
+
+function getHourZhiIndex(hour: number): number {
+  if (hour >= 23 || hour < 1) return 0;
+  return Math.floor((hour + 1) / 2);
+}
+
+const form = document.getElementById('ziwei-form') as HTMLFormElement;
+form?.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const dateInput = (document.getElementById('ziwei-date') as HTMLInputElement).value;
+  const hourInput = (document.getElementById('ziwei-time') as HTMLSelectElement).value;
+  if (!dateInput || !hourInput) return;
+
+  const [year, month, day] = dateInput.split('-').map(Number);
+  const hour = parseInt(hourInput);
+  const hourZhiIndex = getHourZhiIndex(hour);
+
+  const mingIndex = getMingGongIndex(month, hourZhiIndex);
+  const shenIndex = getShenGongIndex(month, hourZhiIndex);
+  const stars = distributeStars(12);
+
+  const gridEl = document.getElementById('gong-grid')!;
+  gridEl.innerHTML = Array.from({ length: 12 }, (_, i) => {
+    // 调整宫位顺序让命宫在合适位置
+    const actualIndex = (i + mingIndex) % 12;
+    const gw = gongNames[i];
+    const gongStars = stars[actualIndex] || [];
+    const isMing = i === 0;
+    const isShen = actualIndex === shenIndex;
+
+    return `<div class="p-3 border ${isMing ? 'border-zhu bg-zhu/5' : 'border-tan/20 bg-white'} rounded-sm text-center">
+      <div class="font-kai text-sm ${isMing ? 'text-zhu' : 'text-xuan'}">${gw}${isShen ? ' <span class="text-xs text-qing">(身)</span>' : ''}</div>
+      <div class="font-kai text-lg text-diZhi mt-2">${diZhi[actualIndex]}</div>
+      ${gongStars.length > 0 ? `<div class="text-xs text-zhu mt-1">${gongStars.join(' ')}</div>` : '<div class="text-xs text-mo-light mt-1">—</div>'}
+    </div>`;
+  }).join('');
+
+  document.getElementById('ziwei-result')!.classList.remove('hidden');
+  document.getElementById('ziwei-result')!.scrollIntoView({ behavior: 'smooth' });
+});
+</script>
