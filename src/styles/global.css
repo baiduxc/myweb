@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,57 +10,111 @@
   }
 
   body {
-    @apply font-song bg-xuan-paper text-mo;
-    background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    @apply font-sans-cn text-ink bg-paper overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-kai text-xuan;
-  }
-
-  a {
-    @apply text-zhu hover:text-zhu-light transition-colors duration-200;
+    @apply font-serif-cn text-ink;
   }
 
   ::selection {
-    @apply bg-jin/20 text-xuan;
+    @apply bg-gold/20 text-ink;
   }
 }
 
 @layer components {
-  .section-divider {
-    @apply flex items-center gap-4 my-8;
+  .taiji-spin {
+    animation: spin 30s linear infinite;
   }
 
-  .section-divider::before,
-  .section-divider::after {
-    @apply content-[''] flex-1 h-px bg-gradient-to-r from-transparent via-tan/40 to-transparent;
+  .taiji-spin-reverse {
+    animation: spin 30s linear infinite reverse;
   }
 
-  .card {
-    @apply bg-white/80 backdrop-blur-sm border border-tan/20 rounded-sm p-6
-           hover:border-jin/30 hover:shadow-md transition-all duration-300;
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-2 shadow-[0_20px_40px_rgba(0,0,0,0.15)];
+  }
+
+  .scroll-indicator {
+    animation: bounce 2s infinite;
+  }
+
+  .nav-scrolled {
+    background: rgba(250, 247, 240, 0.98) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  .decoration-cloud {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='50' viewBox='0 0 100 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 25 Q30 10 40 25 Q50 10 60 25 Q70 10 80 25' stroke='%23c5a456' stroke-width='1' fill='none' opacity='0.3'/%3E%3C/svg%3E");
+    background-size: 100px 50px;
+  }
+
+  .wuxing-wood { @apply bg-gradient-to-br from-jade to-jade-light; }
+  .wuxing-fire { @apply bg-gradient-to-br from-vermilion to-vermilion-light; }
+  .wuxing-earth { @apply bg-gradient-to-br from-earth to-earth-light; }
+  .wuxing-metal { @apply bg-gradient-to-br from-gold to-gold-light; }
+  .wuxing-water { @apply bg-gradient-to-br from-water to-water-light; }
+
+  .ink-wash {
+    background: radial-gradient(ellipse at center, rgba(26,26,26,0.8) 0%, rgba(26,26,26,0.4) 50%, transparent 70%);
   }
 
   .btn-primary {
-    @apply inline-block px-6 py-2.5 bg-zhu text-xuan-paper font-kai text-sm tracking-widest
-           hover:bg-zhu-light transition-colors duration-200 rounded-sm no-underline;
+    @apply px-8 py-4 bg-vermilion text-white rounded-full hover:bg-vermilion-light
+           transition-all duration-300 text-base font-medium shadow-lg hover:shadow-xl
+           inline-flex items-center gap-2 no-underline;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-4 bg-white/80 backdrop-blur-sm border-2 border-gold text-ink
+           rounded-full hover:bg-gold hover:text-white transition-all duration-300
+           text-base font-medium inline-flex items-center gap-2 no-underline;
   }
 
   .btn-outline {
-    @apply inline-block px-6 py-2.5 border border-jin text-jin font-kai text-sm tracking-widest
-           hover:bg-jin hover:text-white transition-colors duration-200 rounded-sm no-underline;
+    @apply px-6 py-3 border border-gold text-ink rounded-full hover:bg-gold
+           hover:text-white transition-all duration-300 font-medium
+           inline-flex items-center gap-2 no-underline;
   }
 
-  .tag {
-    @apply inline-block px-3 py-1 text-xs font-kai text-qing bg-qing/10 rounded-sm no-underline hover:bg-qing/20 transition-colors;
+  .section-label {
+    @apply text-gold text-sm font-medium tracking-widest uppercase;
   }
 
-  .nav-link {
-    @apply text-mo/80 hover:text-zhu font-kai text-sm tracking-wider transition-colors duration-200 no-underline;
+  .section-title {
+    @apply font-serif-cn text-4xl md:text-5xl font-bold text-ink mt-3 mb-4;
   }
 
-  .nav-link-active {
-    @apply text-zhu font-kai text-sm tracking-wider no-underline;
+  .section-divider {
+    @apply w-24 h-1 bg-gradient-to-r from-vermilion to-gold mx-auto;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }

@@ -1,0 +1,132 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { siteName } from '@data/site';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'wuxing')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const wuxingData = [
+  { name: '木', color: 'jade', gradient: 'from-jade to-jade-light', direction: '东', season: '春', nature: '生发', organ: '肝', emotion: '怒', virtue: '仁' },
+  { name: '火', color: 'vermilion', gradient: 'from-vermilion to-vermilion-light', direction: '南', season: '夏', nature: '炎热', organ: '心', emotion: '喜', virtue: '礼' },
+  { name: '土', color: 'earth', gradient: 'from-earth to-earth-light', direction: '中', season: '季夏', nature: '承载', organ: '脾', emotion: '思', virtue: '信' },
+  { name: '金', color: 'gold', gradient: 'from-gold to-gold-light', direction: '西', season: '秋', nature: '收敛', organ: '肺', emotion: '悲', virtue: '义' },
+  { name: '水', color: 'water', gradient: 'from-water to-water-light', direction: '北', season: '冬', nature: '润下', organ: '肾', emotion: '恐', virtue: '智' },
+];
+
+const shengRelations = [
+  { from: '木', to: '火', desc: '木燃烧而生火' },
+  { from: '火', to: '土', desc: '火化为灰归于土' },
+  { from: '土', to: '金', desc: '金矿藏于土中' },
+  { from: '金', to: '水', desc: '金熔化如水流动' },
+  { from: '水', to: '木', desc: '水滋养草木生长' },
+];
+
+const keRelations = [
+  { from: '木', to: '土', desc: '草木根系穿透土壤' },
+  { from: '土', to: '水', desc: '堤坝可阻挡水流' },
+  { from: '水', to: '火', desc: '水能灭火' },
+  { from: '火', to: '金', desc: '火能熔化金属' },
+  { from: '金', to: '木', desc: '斧头可砍伐树木' },
+];
+---
+
+<BaseLayout title={`五行基础 - ${siteName}`} description="五行生克制化的深入理解">
+  <Header />
+
+  <!-- Hero -->
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-gold to-gold-light rounded-full flex items-center justify-center shadow-lg">
+        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/><circle cx="12" cy="3" r="1.5"/><circle cx="12" cy="21" r="1.5"/><circle cx="3" cy="12" r="1.5"/><circle cx="21" cy="12" r="1.5"/>
+        </svg>
+      </div>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">五行基础</h1>
+      <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">木火土金水 · 相生相克 · 命理学的根本法则</p>
+    </div>
+  </section>
+
+  <!-- Five Elements Cards -->
+  <section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up"><span class="section-label">五行概览</span><h2 class="section-title">五行属性</h2><div class="section-divider"></div></div>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {wuxingData.map((wx) => (
+          <div class={`wuxing-${wx.color} rounded-2xl p-6 text-white text-center card-hover fade-in-up`}>
+            <div class="text-4xl font-serif-cn font-bold mb-2">{wx.name}</div>
+            <div class="text-sm space-y-1 opacity-90">
+              <div>方位：{wx.direction}</div>
+              <div>季节：{wx.season}</div>
+              <div>特性：{wx.nature}</div>
+              <div>脏腑：{wx.organ}</div>
+              <div>德行：{wx.virtue}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Sheng Ke -->
+  <section class="py-16 bg-paper">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-12">
+        <!-- 相生 -->
+        <div class="fade-in-up">
+          <div class="text-center mb-8">
+            <span class="text-jade text-sm font-medium tracking-widest">相生循环</span>
+            <h3 class="font-serif-cn text-2xl font-bold text-ink mt-2">五行相生</h3>
+          </div>
+          <div class="space-y-3">
+            {shengRelations.map((r) => (
+              <div class="bg-white rounded-xl p-4 flex items-center gap-4 border border-gold/10">
+                <span class="font-serif-cn text-lg font-bold text-jade">{r.from} → {r.to}</span>
+                <span class="text-sm text-ink-light/70">{r.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <!-- 相克 -->
+        <div class="fade-in-up">
+          <div class="text-center mb-8">
+            <span class="text-vermilion text-sm font-medium tracking-widest">相克循环</span>
+            <h3 class="font-serif-cn text-2xl font-bold text-ink mt-2">五行相克</h3>
+          </div>
+          <div class="space-y-3">
+            {keRelations.map((r) => (
+              <div class="bg-white rounded-xl p-4 flex items-center gap-4 border border-gold/10">
+                <span class="font-serif-cn text-lg font-bold text-vermilion">{r.from} → {r.to}</span>
+                <span class="text-sm text-ink-light/70">{r.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Articles -->
+  {posts.length > 0 && (
+    <section class="py-16 bg-white">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="text-center mb-12 fade-in-up"><span class="section-label">相关文章</span><h2 class="section-title">推荐阅读</h2><div class="section-divider"></div></div>
+        <div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div>
+      </div>
+    </section>
+  )}
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
+  });
+</script>

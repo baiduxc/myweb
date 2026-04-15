@@ -17,73 +17,69 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 
 const categoryMap: Record<string, string> = {
-  bazi: '八字',
-  ziwei: '紫微',
-  fengshui: '风水',
-  wuxing: '五行',
-  general: '综合',
+  zhouyi: '周易', bazi: '八字命理', ziwei: '紫微斗数',
+  fengshui: '风水堪舆', qimen: '奇门遁甲', liuyao: '六爻占卜',
+  wuxing: '五行', general: '综合',
 };
-
-const categoryLabel = categoryMap[post.data.category] || post.data.category;
+const catLabel = categoryMap[post.data.category] || post.data.category;
 
 const formattedDate = post.data.date.toLocaleDateString('zh-CN', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
+  year: 'numeric', month: 'long', day: 'numeric',
 });
 ---
 
-<BaseLayout
-  title={`${post.data.title} - ${siteName}`}
-  description={post.data.description}
->
+<BaseLayout title={`${post.data.title} - ${siteName}`} description={post.data.description}>
   <Header />
 
-  <main class="max-w-3xl mx-auto px-4 py-10 flex-1">
-    <article>
-      <header class="mb-10">
-        <div class="flex items-center gap-3 text-sm text-mo-light mb-4">
-          <a href={`/category/${post.data.category}/`} class="tag no-underline">{categoryLabel}</a>
-          <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
-        </div>
-        <h1 class="font-kai text-3xl md:text-4xl text-xuan leading-snug mb-4">
-          {post.data.title}
-        </h1>
-        <p class="text-mo-light leading-relaxed">{post.data.description}</p>
-        <div class="section-divider"></div>
-      </header>
-
-      <div class="prose prose-lg font-song text-mo leading-loose
-                  prose-headings:font-kai prose-headings:text-xuan prose-headings:tracking-wider
-                  prose-a:text-zhu prose-a:no-underline hover:prose-a:underline
-                  prose-strong:text-xuan prose-blockquote:border-l-jin/40 prose-blockquote:bg-jin/5
-                  prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-sm
-                  prose-table:border-collapse prose-th:border prose-td:border prose-th:border-tan/30 prose-td:border-tan/30
-                  prose-th:p-3 prose-td:p-3 prose-th:bg-xuan-paper-dark prose-th:font-kai
-                  prose-img:rounded-sm
-                  max-w-none">
-        <Content />
-      </div>
-
-      {post.data.tags.length > 0 && (
-        <div class="mt-10 pt-6 border-t border-tan/20">
-          <div class="flex flex-wrap gap-2">
-            {post.data.tags.map((tag) => (
-              <span class="tag">{tag}</span>
-            ))}
+  <main class="pt-28 pb-16">
+    <div class="max-w-3xl mx-auto px-4">
+      <article>
+        <header class="mb-10">
+          <div class="flex items-center gap-3 text-sm text-ink-light/60 mb-4">
+            <span class="px-3 py-1 bg-vermilion/10 text-vermilion text-xs rounded-full font-medium">{catLabel}</span>
+            <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
           </div>
-        </div>
-      )}
-    </article>
+          <h1 class="font-serif-cn text-3xl md:text-4xl font-bold text-ink leading-snug mb-4">
+            {post.data.title}
+          </h1>
+          <p class="text-ink-light/70 leading-relaxed">{post.data.description}</p>
+          <div class="w-24 h-1 bg-gradient-to-r from-vermilion to-gold mt-6"></div>
+        </header>
 
-    <!-- Disclaimer -->
-    <aside class="mt-12 p-4 bg-jin/5 border border-jin/20 rounded-sm">
-      <p class="text-xs text-mo-light leading-relaxed">
-        <strong class="font-kai text-xuan">声明：</strong>
-        本文内容仅供学习与文化交流，命理之说不可尽信，切勿迷信盲从。
-        人生在世，当自强不息，顺势而为。
-      </p>
-    </aside>
+        <div class="font-sans-cn text-ink-light leading-loose
+                    prose prose-lg max-w-none
+                    prose-headings:font-serif-cn prose-headings:text-ink prose-headings:tracking-wider
+                    prose-h2:text-2xl prose-h3:text-xl
+                    prose-a:text-vermilion prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-ink
+                    prose-blockquote:border-l-gold/40 prose-blockquote:bg-gold/5
+                    prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-sm
+                    prose-table:border-collapse prose-th:border prose-td:border prose-th:border-gold/30 prose-td:border-gold/30
+                    prose-th:p-3 prose-td:p-3 prose-th:bg-paper-dark prose-th:font-serif-cn
+                    prose-img:rounded-2xl prose-img:shadow-lg
+                    prose-ul:list-disc prose-ol:list-decimal">
+          <Content />
+        </div>
+
+        {post.data.tags.length > 0 && (
+          <div class="mt-10 pt-6 border-t border-gold/20">
+            <div class="flex flex-wrap gap-2">
+              {post.data.tags.map((tag) => (
+                <span class="px-3 py-1 text-xs font-medium text-jade bg-jade/10 rounded-full">{tag}</span>
+              ))}
+            </div>
+          </div>
+        )}
+      </article>
+
+      <aside class="mt-12 p-4 bg-gold/5 border border-gold/20 rounded-xl">
+        <p class="text-xs text-ink-light/70 leading-relaxed">
+          <strong class="font-serif-cn text-ink">声明：</strong>
+          本文内容仅供学习与文化交流，命理之说不可尽信，切勿迷信盲从。
+          人生在世，当自强不息，顺势而为。
+        </p>
+      </aside>
+    </div>
   </main>
 
   <Footer />

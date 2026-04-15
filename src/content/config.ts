@@ -7,7 +7,7 @@ const blogCollection = defineCollection({
     description: z.string(),
     date: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
-    category: z.enum(['bazi', 'ziwei', 'fengshui', 'wuxing', 'general']),
+    category: z.enum(['zhouyi', 'bazi', 'ziwei', 'fengshui', 'qimen', 'liuyao', 'wuxing', 'general']),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),

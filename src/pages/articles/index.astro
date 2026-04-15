@@ -1,0 +1,125 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { siteName } from '@data/site';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const categoryMap: Record<string, { label: string; color: string }> = {
+  zhouyi: { label: '周易', color: 'bg-ink/90' },
+  bazi: { label: '八字命理', color: 'bg-vermilion/90' },
+  ziwei: { label: '紫微斗数', color: 'bg-jade/90' },
+  fengshui: { label: '风水堪舆', color: 'bg-water/90' },
+  qimen: { label: '奇门遁甲', color: 'bg-earth/90' },
+  liuyao: { label: '六爻占卜', color: 'bg-purple/90' },
+  wuxing: { label: '五行', color: 'bg-gold/90' },
+  general: { label: '综合', color: 'bg-ink-light/90' },
+};
+---
+
+<BaseLayout title={`最新文章 - ${siteName}`} description="国学院最新文章合集">
+  <Header />
+
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <span class="section-label">知识宝库</span>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mt-3 mb-4">最新文章</h1>
+      <div class="section-divider"></div>
+      <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">日积月累，学有所成</p>
+    </div>
+  </section>
+
+  <!-- Filter -->
+  <section class="py-8 bg-white border-b border-gold/10 sticky top-20 z-40">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="flex flex-wrap gap-3">
+        <button class="filter-btn active px-4 py-2 bg-vermilion text-white rounded-full text-sm font-medium transition-all" data-filter="all">全部</button>
+        {Object.entries(categoryMap).map(([slug, info]) => (
+          <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter={slug}>
+            {info.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Articles -->
+  <section class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="space-y-6">
+        {posts.map((post) => {
+          const cat = categoryMap[post.data.category] || { label: post.data.category, color: 'bg-ink/90' };
+          return (
+            <article
+              class="article-card bg-paper rounded-2xl overflow-hidden border border-gold/5 card-hover fade-in-up"
+              data-category={post.data.category}
+            >
+              <div class="flex flex-col md:flex-row">
+                <div class="md:w-48 h-48 md:h-auto overflow-hidden shrink-0 bg-paper-dark">
+                  <img
+                    src={`https://picsum.photos/seed/${post.slug}/400/300`}
+                    alt={post.data.title}
+                    class="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="p-6 flex flex-col justify-center">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class={`px-2 py-0.5 text-white text-xs rounded-full ${cat.color}`}>{cat.label}</span>
+                    <time class="text-xs text-ink-light/50" datetime={post.data.date.toISOString()}>
+                      {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </time>
+                  </div>
+                  <a href={`/blog/${post.slug}/`} class="no-underline">
+                    <h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{post.data.title}</h3>
+                  </a>
+                  <p class="text-sm text-ink-light/70 line-clamp-2">{post.data.description}</p>
+                  {post.data.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2 mt-3">
+                      {post.data.tags.map((tag) => (
+                        <span class="text-xs text-jade bg-jade/10 px-2 py-0.5 rounded-full">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const fadeEls = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1 });
+    fadeEls.forEach((el) => obs.observe(el));
+
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.article-card');
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach((b) => { b.classList.remove('bg-vermilion', 'text-white'); b.classList.add('bg-paper', 'text-ink'); });
+        btn.classList.remove('bg-paper', 'text-ink');
+        btn.classList.add('bg-vermilion', 'text-white');
+        const filter = btn.getAttribute('data-filter');
+        cards.forEach((card) => {
+          if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>

@@ -1,29 +1,58 @@
-export const siteName = '命理知书';
-export const siteDesc = '传承国学命理之学，以四柱八字、紫微斗数为门径，探天人合一之道。';
-export const siteUrl = 'https://www.mingli-zhishu.com';
-export const siteAuthor = '命理知书';
-export const siteKeywords = '四柱八字,紫微斗数,命理,八字排盘,紫微排盘,天干地支,五行,国学,命理知识';
+export const siteName = '国学院';
+export const siteDesc = '深入研习周易八卦、四柱八字、紫微斗数、奇门遁甲等传统易学知识，以现代视角解读千年智慧，助您明理知命、趋吉避凶。';
+export const siteUrl = 'https://www.guoxueyuan.com';
+export const siteAuthor = '国学院';
+export const siteKeywords = '周易,八字,紫微斗数,风水,奇门遁甲,六爻,命理,国学,易学,天干地支,五行';
 
 export const navLinks = [
   { href: '/', label: '首页' },
-  { href: '/bagua/', label: '八字排盘' },
+  { href: '/zhouyi/', label: '周易' },
+  { href: '/bazi/', label: '八字' },
   { href: '/ziwei/', label: '紫微斗数' },
-  { href: '/category/bazi/', label: '八字学堂' },
-  { href: '/category/ziwei/', label: '紫微讲堂' },
-  { href: '/about/', label: '关于' },
+  { href: '/fengshui/', label: '风水' },
+  { href: '/qimen/', label: '奇门遁甲' },
+  { href: '/liuyao/', label: '六爻' },
+  { href: '/articles/', label: '最新文章' },
+  { href: '/wuxing/', label: '五行' },
+  { href: '/masters/', label: '大师专栏' },
+  { href: '/about/', label: '关于我们' },
 ];
 
-export const baguaNavLinks = [
-  { href: '/bagua/', label: '八字排盘' },
-  { href: '/category/bazi/', label: '八字基础' },
-  { href: '/category/bazi/shishen/', label: '十神详解' },
-  { href: '/category/bazi/dayun/', label: '大运流年' },
-  { href: '/category/bazi/gexi/', label: '格局分析' },
+export const categories = [
+  { slug: 'zhouyi', name: '周易', icon: 'mdi:book-education', color: 'from-ink to-ink-light', desc: '六十四卦精解', articles: 86, views: '12.3万' },
+  { slug: 'bazi', name: '八字命理', icon: 'mdi:calendar-star', color: 'from-vermilion to-vermilion-light', desc: '四柱预测精要', articles: 124, views: '28.5万' },
+  { slug: 'ziwei', name: '紫微斗数', icon: 'mdi:star-four-points', color: 'from-jade to-jade-light', desc: '十四主星详解', articles: 98, views: '19.8万' },
+  { slug: 'fengshui', name: '风水堪舆', icon: 'mdi:compass', color: 'from-water to-water-light', desc: '形势理气双修', articles: 76, views: '15.2万' },
+  { slug: 'qimen', name: '奇门遁甲', icon: 'mdi:chess-rook', color: 'from-earth to-earth-light', desc: '三奇六仪布局', articles: 54, views: '9.6万' },
+  { slug: 'liuyao', name: '六爻占卜', icon: 'mdi:hand-peace', color: 'from-purple to-purple-light', desc: '纳甲筮法精解', articles: 62, views: '11.4万' },
 ];
 
-export const ziweiNavLinks = [
-  { href: '/ziwei/', label: '紫微排盘' },
-  { href: '/category/ziwei/', label: '紫微基础' },
-  { href: '/category/ziwei/xingyao/', label: '星曜解读' },
-  { href: '/category/ziwei/gongwei/', label: '宫位详解' },
+export const masters = [
+  {
+    name: '明易先生',
+    title: '周易研究专家',
+    image: 'https://picsum.photos/seed/master1/400/300',
+    bio: '深耕易学三十余载，专研周易卦象与人生哲学，著有《易道人生》等多部专著。',
+    rating: '5.0',
+    articleCount: 128,
+    slug: 'mingyi',
+  },
+  {
+    name: '玄微道长',
+    title: '八字命理大师',
+    image: 'https://picsum.photos/seed/master2/400/300',
+    bio: '传承祖辈命理绝学，精通四柱八字、紫微斗数，擅长以现代视角解读传统命理。',
+    rating: '4.9',
+    articleCount: 96,
+    slug: 'xuanwei',
+  },
+  {
+    name: '清源居士',
+    title: '奇门遁甲传人',
+    image: 'https://picsum.photos/seed/master3/400/300',
+    bio: '师承民间隐士，掌握奇门遁甲、六壬神课等古法，致力于传统文化现代化传播。',
+    rating: '4.8',
+    articleCount: 72,
+    slug: 'qingyuan',
+  },
 ];

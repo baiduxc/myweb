@@ -2,106 +2,426 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
-import SectionHeading from '@components/SectionHeading.astro';
-import ArticleCard from '@components/ArticleCard.astro';
 import { getCollection } from 'astro:content';
-import { siteName, siteDesc } from '@data/site';
+import { siteName, siteDesc, categories, masters } from '@data/site';
 
 const allPosts = await getCollection('blog');
 const posts = allPosts
   .filter((p) => !p.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 6);
+
+const categoryMap: Record<string, string> = {
+  zhouyi: '周易', bazi: '八字命理', ziwei: '紫微斗数',
+  fengshui: '风水堪舆', qimen: '奇门遁甲', liuyao: '六爻占卜',
+  wuxing: '五行', general: '综合',
+};
 ---
 
 <BaseLayout>
   <Header />
 
-  <!-- Hero -->
-  <section class="relative overflow-hidden bg-xuan text-xuan-paper">
-    <div class="absolute inset-0 opacity-10">
-      <div class="absolute inset-0" style="background: radial-gradient(circle at 30% 50%, rgba(184,134,11,0.3) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(139,37,0,0.2) 0%, transparent 50%)"></div>
+  <!-- ===== Hero Section ===== -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4]">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+
+    <!-- Decorative Taiji -->
+    <div class="absolute top-20 right-20 w-96 h-96 opacity-5 taiji-spin hidden lg:block">
+      <svg viewBox="0 0 200 200" fill="none">
+        <circle cx="100" cy="100" r="90" stroke="#1a1a1a" stroke-width="2"/>
+        <path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#1a1a1a"/>
+        <circle cx="100" cy="55" r="12" fill="#faf7f0"/>
+        <circle cx="100" cy="145" r="12" fill="#1a1a1a"/>
+      </svg>
     </div>
-    <div class="relative max-w-6xl mx-auto px-4 py-20 md:py-32 text-center">
-      <div class="mb-6 text-jin/60 font-kai text-sm tracking-[0.3em]">传承国学 · 知命乐天</div>
-      <h1 class="font-kai text-4xl md:text-5xl lg:text-6xl leading-tight mb-6">
-        探<span class="text-jin">天人合一</span>之道<br />
-        明<span class="text-jin">进退取舍</span>之机
+    <div class="absolute bottom-40 left-10 w-64 h-64 opacity-10 taiji-spin hidden lg:block" style="animation-direction: reverse;">
+      <svg viewBox="0 0 200 200" fill="none">
+        <circle cx="100" cy="100" r="90" stroke="#c5a456" stroke-width="2"/>
+        <path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#c5a456"/>
+        <circle cx="100" cy="55" r="12" fill="#faf7f0"/>
+        <circle cx="100" cy="145" r="12" fill="#c5a456"/>
+      </svg>
+    </div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="mb-6 inline-block">
+        <span class="px-6 py-2 bg-gold/10 border border-gold/30 rounded-full text-earth text-sm tracking-widest font-medium">
+          弘扬国学经典 · 传承易学智慧
+        </span>
+      </div>
+      <h1 class="font-serif-cn text-5xl md:text-7xl font-bold text-ink mb-6 leading-tight">
+        探赜索隐<span class="text-vermilion">易道</span><br>
+        <span class="text-4xl md:text-6xl">穷理尽性</span>
       </h1>
-      <p class="font-song text-xuan-paper/70 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-        {siteDesc}
+      <p class="text-lg md:text-xl text-ink-light/80 mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+        深入研习周易八卦、四柱八字、紫微斗数、奇门遁甲等传统易学知识<br class="hidden md:block">
+        以现代视角解读千年智慧，助您明理知命、趋吉避凶
       </p>
-      <div class="flex flex-wrap items-center justify-center gap-4">
-        <a href="/bagua/" class="btn-primary" style="background-color: #8B2500; color: #F5F0E8;">八字排盘</a>
-        <a href="/ziwei/" class="btn-outline" style="border-color: #DAA520; color: #DAA520;">紫微排盘</a>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <a href="#articles01" class="btn-primary">
+          <span>开始探索</span>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#categories01" class="btn-secondary">
+          <span>浏览分类</span>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </a>
+      </div>
+      <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+        <div class="text-center">
+          <div class="text-3xl md:text-4xl font-bold text-vermilion font-serif-cn mb-1">500+</div>
+          <div class="text-sm text-ink-light/70">精选文章</div>
+        </div>
+        <div class="text-center border-x border-gold/30">
+          <div class="text-3xl md:text-4xl font-bold text-gold font-serif-cn mb-1">12</div>
+          <div class="text-sm text-ink-light/70">易学流派</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl md:text-4xl font-bold text-jade font-serif-cn mb-1">10万+</div>
+          <div class="text-sm text-ink-light/70">国学爱好者</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 scroll-indicator">
+      <div class="w-8 h-12 border-2 border-gold/50 rounded-full flex items-start justify-center p-2">
+        <div class="w-1 h-3 bg-gold rounded-full animate-bounce"></div>
       </div>
     </div>
   </section>
 
-  <!-- Core Topics -->
-  <section class="max-w-6xl mx-auto px-4 py-16">
-    <SectionHeading title="命理之门" subtitle="从基础入手，循序渐进，登堂入室" />
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="card text-center group cursor-pointer" onclick="window.location.href='/category/bazi/'">
-        <div class="text-4xl mb-4 text-zhu/80 group-hover:text-zhu transition-colors font-kai">八字</div>
-        <h3 class="font-kai text-lg text-xuan mb-2">四柱八字</h3>
-        <p class="text-sm text-mo-light leading-relaxed">
-          以年月日时四柱干支为基础，论五行生克，析十神关系，断命运吉凶。
-        </p>
+  <!-- ===== Categories Section ===== -->
+  <section id="categories01" class="py-20 bg-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16 fade-in-up visible">
+        <span class="section-label">知识体系</span>
+        <h2 class="section-title">易学分类</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">系统梳理中华易学脉络，从周易八卦到命理术数，构建完整的国学知识体系</p>
       </div>
-
-      <div class="card text-center group cursor-pointer" onclick="window.location.href='/category/ziwei/'">
-        <div class="text-4xl mb-4 text-qing/80 group-hover:text-qing transition-colors font-kai">紫微</div>
-        <h3 class="font-kai text-lg text-xuan mb-2">紫微斗数</h3>
-        <p class="text-sm text-mo-light leading-relaxed">
-          以紫微星为核心，布十四主星于十二宫位，观星曜组合，断人事吉凶。
-        </p>
-      </div>
-
-      <div class="card text-center group cursor-pointer" onclick="window.location.href='/category/wuxing/'">
-        <div class="text-4xl mb-4 text-jin/80 group-hover:text-jin transition-colors font-kai">五行</div>
-        <h3 class="font-kai text-lg text-xuan mb-2">五行基础</h3>
-        <p class="text-sm text-mo-light leading-relaxed">
-          木火土金水，五行相生相克，为八字与紫微共同的理论根基。
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Latest Articles -->
-  <section class="bg-xuan-paper-dark py-16">
-    <div class="max-w-6xl mx-auto px-4">
-      <SectionHeading title="最新文章" subtitle="日积月累，学有所成" />
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post) => (
-          <ArticleCard
-            title={post.data.title}
-            date={post.data.date.toISOString()}
-            excerpt={post.data.description}
-            slug={post.slug}
-            category={post.data.category === 'bazi' ? '八字' : post.data.category === 'ziwei' ? '紫微' : post.data.category}
-            tags={post.data.tags}
-          />
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        {categories.map((cat, i) => (
+          <a href={`/${cat.slug}/`} class="group relative bg-paper rounded-2xl p-6 text-center card-hover cursor-pointer fade-in-up border border-gold/10 no-underline" style={`transition-delay: ${i * 100}ms;`}>
+            <div class={`w-16 h-16 mx-auto mb-4 bg-gradient-to-br ${cat.color} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+              <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                {cat.slug === 'zhouyi' && <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></>}
+                {cat.slug === 'bazi' && <><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></>}
+                {cat.slug === 'ziwei' && <><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></>}
+                {cat.slug === 'fengshui' && <><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></>}
+                {cat.slug === 'qimen' && <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></>}
+                {cat.slug === 'liuyao' && <><path d="M12 2v20M2 12h20M4 4l16 16M20 4L4 20"/></>}
+              </svg>
+            </div>
+            <h3 class="font-serif-cn text-lg font-bold text-ink mb-1">{cat.name}</h3>
+            <p class="text-xs text-ink-light/60 mb-3">{cat.desc}</p>
+            <div class="text-sm font-medium text-vermilion">
+              {cat.articles}篇 <span class="text-ink-light/40">·</span> {cat.views}阅读
+            </div>
+          </a>
         ))}
       </div>
+    </div>
+  </section>
 
-      <div class="text-center mt-10">
-        <a href="/category/bazi/" class="btn-outline">
-          浏览更多文章
+  <!-- ===== Featured Article Section ===== -->
+  <section class="py-20 bg-paper relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-2 decoration-cloud"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="fade-in-up">
+          <span class="text-vermilion text-sm font-medium tracking-widest uppercase">本周精选</span>
+          <h2 class="font-serif-cn text-3xl md:text-4xl font-bold text-ink mt-3 mb-6 leading-tight">
+            <span class="text-vermilion">《周易》</span>乾卦详解：<br>潜龙勿用到飞龙在天的人生智慧
+          </h2>
+          <p class="text-ink-light/70 mb-6 leading-relaxed">
+            本文深入剖析乾卦六爻的深层含义，从"潜龙勿用"的韬光养晦，到"飞龙在天"的顺势而为，结合现代职场与人生发展，解读六十四卦之首的处世哲学。
+          </p>
+          <div class="flex flex-wrap items-center gap-4 mb-8">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span class="text-sm text-ink-light">作者：明易先生</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <span class="text-sm text-ink-light">2024年3月15日</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span class="text-sm text-ink-light">32.6k 阅读</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="#" class="btn-primary">
+              <span>阅读全文</span>
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <button class="btn-outline">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              <span>收藏</span>
+            </button>
+          </div>
+        </div>
+        <div class="relative fade-in-up">
+          <div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-paper-dark">
+            <img src="https://picsum.photos/seed/yijing-gua/800/600" alt="周易乾卦" class="w-full h-full object-cover" loading="lazy" />
+          </div>
+          <div class="absolute -bottom-6 -right-6 w-48 h-48 bg-gradient-to-br from-vermilion to-vermilion-light rounded-2xl flex items-center justify-center shadow-xl">
+            <div class="text-center text-white">
+              <div class="text-3xl font-bold font-serif-cn mb-1">TOP 1</div>
+              <div class="text-sm opacity-90">本周最热</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Latest Articles Section ===== -->
+  <section id="articles01" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 fade-in-up">
+        <div>
+          <span class="section-label">知识宝库</span>
+          <h2 class="font-serif-cn text-3xl md:text-4xl font-bold text-ink mt-3">最新文章</h2>
+        </div>
+        <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
+          <button class="filter-btn active px-4 py-2 bg-vermilion text-white rounded-full text-sm font-medium transition-all" data-filter="all">全部</button>
+          <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter="bazi">八字</button>
+          <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter="ziwei">紫微</button>
+          <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter="wuxing">五行</button>
+          <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter="zhouyi">周易</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post) => {
+          const catLabel = categoryMap[post.data.category] || post.data.category;
+          const catSlug = post.data.category;
+          return (
+            <article
+              class="group bg-paper rounded-2xl overflow-hidden shadow-md card-hover fade-in-up border border-gold/5"
+              data-category={catSlug}
+            >
+              <div class="relative h-48 overflow-hidden bg-paper-dark">
+                <img
+                  src={`https://picsum.photos/seed/${post.slug}/600/400`}
+                  alt={post.data.title}
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                <div class="absolute bottom-3 left-3">
+                  <span class="px-3 py-1 bg-vermilion/90 text-white text-xs rounded-full font-medium">{catLabel}</span>
+                </div>
+              </div>
+              <div class="p-6">
+                <a href={`/blog/${post.slug}/`} class="no-underline block">
+                  <h3 class="font-serif-cn text-lg font-bold text-ink mb-2 group-hover:text-vermilion transition-colors line-clamp-2">
+                    {post.data.title}
+                  </h3>
+                </a>
+                <p class="text-sm text-ink-light/70 leading-relaxed line-clamp-2 mb-4">{post.data.description}</p>
+                <div class="flex items-center justify-between text-xs text-ink-light/50">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    <time datetime={post.data.date.toISOString()}>
+                      {post.data.date.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </time>
+                  </div>
+                  {post.data.tags.length > 0 && (
+                    <span class="text-gold">{post.data.tags[0]}</span>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="/articles/" class="btn-outline">
+          <span>查看更多文章</span>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- Quote -->
-  <section class="max-w-6xl mx-auto px-4 py-16 text-center">
-    <blockquote class="font-kai text-xl md:text-2xl text-xuan/80 leading-relaxed max-w-3xl mx-auto">
-      "知命者不怨天，<br />知己者不尤人。"
-    </blockquote>
-    <p class="mt-4 text-sm text-mo-light font-song">—— 《孟子》</p>
+  <!-- ===== Masters Section ===== -->
+  <section class="py-20 bg-paper">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16 fade-in-up">
+        <span class="section-label">师资团队</span>
+        <h2 class="section-title">大师专栏</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">汇聚国内知名易学研究学者，为您带来专业深度的易学解读</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        {masters.map((master, i) => (
+          <div
+            class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover fade-in-up"
+            style={`transition-delay: ${i * 150}ms;`}
+          >
+            <div class="relative h-48 overflow-hidden">
+              <img src={master.image} alt={master.name} class="w-full h-full object-cover" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 text-white">
+                <h3 class="text-xl font-bold font-serif-cn">{master.name}</h3>
+                <p class="text-sm opacity-90">{master.title}</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <p class="text-ink-light/70 text-sm leading-relaxed mb-4">{master.bio}</p>
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, si) => (
+                    <svg class={`w-4 h-4 ${si < Math.floor(parseFloat(master.rating)) ? 'text-yellow-400' : 'text-ink-light/20'}`} viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/>
+                    </svg>
+                  ))}
+                  <span class="text-sm text-ink-light/60 ml-2">{master.rating}</span>
+                </div>
+                <span class="text-sm text-vermilion font-medium">{master.articleCount}篇文章</span>
+              </div>
+              <a href={`/masters/${master.slug}/`} class="block text-center py-3 border border-gold text-ink rounded-lg hover:bg-gold hover:text-white transition-all duration-300 text-sm font-medium no-underline">
+                进入专栏
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Testimonials Section ===== -->
+  <section class="py-20 bg-white relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-vermilion/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="text-center mb-16 fade-in-up">
+        <span class="section-label">学员反馈</span>
+        <h2 class="section-title">读者心声</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">听听易学爱好者们的真实感受</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        {[
+          { name: '张先生', role: '企业高管 · 北京', text: '通过国学院的系统学习，我对周易有了更深刻的理解。明易先生的乾卦解读让我在职场决策中找到了方向，受益匪浅。', img: 'https://picsum.photos/seed/user1/80/80' },
+          { name: '李女士', role: '传统文化爱好者 · 上海', text: '紫微斗数课程非常专业，玄微道长的讲解深入浅出。从命盘解读到流年运势分析，内容详实，是我见过最好的易学平台。', img: 'https://picsum.photos/seed/user2/80/80' },
+          { name: '王先生', role: '风水研究者 · 广州', text: '奇门遁甲的学习门槛很高，但清源居士的课程让我逐渐入门。网站的文章分类清晰，内容丰富，是易学爱好者的宝藏。', img: 'https://picsum.photos/seed/user3/80/80' },
+        ].map((t, i) => (
+          <div class="bg-paper rounded-2xl p-8 relative card-hover fade-in-up" style={`transition-delay: ${i * 150}ms;`}>
+            <div class="absolute top-6 right-6 text-6xl text-gold/20 font-serif-cn">"</div>
+            <div class="flex items-center gap-4 mb-6">
+              <img src={t.img} alt={t.name} class="w-14 h-14 rounded-full object-cover border-2 border-gold" loading="lazy" />
+              <div>
+                <h4 class="font-bold text-ink">{t.name}</h4>
+                <p class="text-sm text-ink-light/60">{t.role}</p>
+              </div>
+            </div>
+            <p class="text-ink-light/80 leading-relaxed mb-4">{t.text}</p>
+            <div class="flex items-center gap-0.5 text-yellow-400">
+              {Array.from({ length: 5 }).map((_, si) => (
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/>
+                </svg>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Subscribe Section ===== -->
+  <section class="py-20 bg-gradient-to-br from-ink to-ink-light relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-10 left-10 w-40 h-40 border border-gold rounded-full"></div>
+      <div class="absolute bottom-10 right-10 w-60 h-60 border border-vermilion rounded-full"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 border border-gold/30 rounded-full taiji-spin"></div>
+    </div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-vermilion rounded-full mb-6">
+        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
+      </div>
+      <h2 class="font-serif-cn text-3xl md:text-5xl font-bold text-white mb-4">订阅易学周刊</h2>
+      <p class="text-paper/70 text-lg mb-10 max-w-2xl mx-auto">每周精选易学干货、卦象解析、命理知识，直达您的邮箱</p>
+      <div class="flex flex-col sm:flex-row items-center gap-4 max-w-xl mx-auto">
+        <input
+          type="email"
+          placeholder="请输入您的邮箱地址"
+          class="w-full sm:flex-1 px-6 py-4 bg-white/10 border border-gold/30 rounded-full text-white placeholder-paper/50 focus:outline-none focus:border-vermilion transition-colors"
+        />
+        <button class="w-full sm:w-auto px-8 py-4 bg-vermilion text-white rounded-full hover:bg-vermilion-light transition-all duration-300 font-medium whitespace-nowrap flex items-center justify-center gap-2">
+          <span>立即订阅</span>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+        </button>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-6 mt-8 text-paper/50 text-sm">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>每周更新</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>免费专享</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>随时退订</span>
+        </div>
+      </div>
+    </div>
   </section>
 
   <Footer />
 </BaseLayout>
+
+<script is:inline>
+  // Fade-in animation on scroll
+  document.addEventListener('DOMContentLoaded', () => {
+    const fadeElements = document.querySelectorAll('.fade-in-up');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    fadeElements.forEach((el) => observer.observe(el));
+
+    // Filter buttons
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const articleCards = document.querySelectorAll('[data-category]');
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach((b) => {
+          b.classList.remove('bg-vermilion', 'text-white');
+          b.classList.add('bg-paper', 'text-ink');
+        });
+        btn.classList.remove('bg-paper', 'text-ink');
+        btn.classList.add('bg-vermilion', 'text-white');
+        const filter = btn.getAttribute('data-filter');
+        articleCards.forEach((card) => {
+          if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.style.display = '';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, 50);
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>

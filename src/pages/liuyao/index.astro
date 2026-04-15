@@ -1,0 +1,64 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { siteName } from '@data/site';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'liuyao')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const topics = [
+  { title: '六爻基础', desc: '阴阳爻、八卦、六十四卦的基础知识，理解卦象的基本构成。' },
+  { title: '纳甲筮法', desc: '京房纳甲法，将天干地支纳入六爻，构建完整的断卦体系。' },
+  { title: '六亲与六神', desc: '父母、兄弟、子孙、妻财、官鬼六亲，以及青龙、朱雀等六神的含义。' },
+  { title: '动爻与变卦', desc: '老阴老阳的变动规律，本卦与变卦的关系及断卦方法。' },
+  { title: '用神与忌神', desc: '确定用神的方法，分析用神旺衰与吉凶判断。' },
+  { title: '实战断卦', desc: '结合具体卦例，从起卦到断卦的完整流程演示。' },
+];
+---
+
+<BaseLayout title={`六爻占卜 - ${siteName}`} description="纳甲筮法精解，学习六爻预测方法">
+  <Header />
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-purple to-purple-light rounded-full flex items-center justify-center shadow-lg">
+        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      </div>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">六爻占卜</h1>
+      <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">纳甲筮法精解 · 阴阳变化之道 · 观卦象而知吉凶</p>
+    </div>
+  </section>
+
+  <section class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up"><span class="section-label">概述</span><h2 class="section-title">走进六爻</h2><div class="section-divider"></div></div>
+      <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
+        <p>六爻占卜，又称纳甲筮法、金钱卦，是中国最古老的占卜方法之一。它以铜钱摇卦或蓍草揲法得到六爻卦象，通过卦象、爻辞、五行生克等综合分析事物发展趋势。</p>
+        <p>六爻的核心体系由汉代京房创立，将天干地支纳入六十四卦中，配合六亲（父母、兄弟、子孙、妻财、官鬼）和六神（青龙、朱雀、勾陈、螣蛇、白虎、玄武），形成精密的推断框架。</p>
+        <p>学习六爻占卜，不仅是掌握一种预测方法，更是培养对"变化"的敏锐感知力——在复杂多变的世界中，找到事物发展的内在规律。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-paper">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up"><span class="section-label">知识体系</span><h2 class="section-title">核心内容</h2><div class="section-divider"></div></div>
+      <div class="grid md:grid-cols-2 gap-6">{topics.map((t, i) => (<div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}><h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{t.title}</h3><p class="text-sm text-ink-light/70 leading-relaxed">{t.desc}</p></div>))}</div>
+    </div>
+  </section>
+
+  {posts.length > 0 && (<section class="py-16 bg-white"><div class="max-w-4xl mx-auto px-4"><div class="text-center mb-12 fade-in-up"><span class="section-label">相关文章</span><h2 class="section-title">推荐阅读</h2><div class="section-divider"></div></div><div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div></div></section>)}
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
+  });
+</script>

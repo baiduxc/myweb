@@ -1,0 +1,66 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { siteName, masters } from '@data/site';
+---
+
+<BaseLayout title={`大师专栏 - ${siteName}`} description="汇聚国内知名易学研究学者">
+  <Header />
+
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <span class="section-label">师资团队</span>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mt-3 mb-4">大师专栏</h1>
+      <div class="section-divider"></div>
+      <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">汇聚国内知名易学研究学者，为您带来专业深度的易学解读</p>
+    </div>
+  </section>
+
+  <section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {masters.map((master, i) => (
+          <div class="bg-paper rounded-2xl overflow-hidden shadow-lg card-hover fade-in-up" style={`transition-delay: ${i * 150}ms;`}>
+            <div class="relative h-56 overflow-hidden">
+              <img src={master.image} alt={master.name} class="w-full h-full object-cover" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 text-white">
+                <h3 class="text-xl font-bold font-serif-cn">{master.name}</h3>
+                <p class="text-sm opacity-90">{master.title}</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <p class="text-ink-light/70 text-sm leading-relaxed mb-4">{master.bio}</p>
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, si) => (
+                    <svg class={`w-4 h-4 ${si < Math.floor(parseFloat(master.rating)) ? 'text-yellow-400' : 'text-ink-light/20'}`} viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/>
+                    </svg>
+                  ))}
+                  <span class="text-sm text-ink-light/60 ml-2">{master.rating}</span>
+                </div>
+                <span class="text-sm text-vermilion font-medium">{master.articleCount}篇文章</span>
+              </div>
+              <a href={`/masters/${master.slug}/`} class="block text-center py-3 border border-gold text-ink rounded-lg hover:bg-gold hover:text-white transition-all duration-300 text-sm font-medium no-underline">
+                进入专栏
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
+  });
+</script>

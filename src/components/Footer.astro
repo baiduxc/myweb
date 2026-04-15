@@ -1,25 +1,55 @@
 ---
-import { siteName, navLinks } from '@data/site';
+import { siteName, categories } from '@data/site';
 ---
 
-<footer class="border-t border-tan/20 bg-xuan text-xuan-paper/70 mt-auto">
-  <div class="max-w-6xl mx-auto px-4 py-12">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<footer class="bg-ink text-paper/70 py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
       <div>
-        <h3 class="font-kai text-xuan-paper/90 text-base tracking-widest mb-4">{siteName}</h3>
-        <p class="text-sm leading-relaxed text-xuan-paper/60">
-          传承国学命理之学，以四柱八字、紫微斗数为门径，<br />
-          探天人合一之道，明进退取舍之机。
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 flex items-center justify-center">
+            <svg class="w-8 h-8 text-vermilion" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 2A10 10 0 0 1 12 22A5 5 0 0 0 12 12A5 5 0 0 1 12 2Z" fill="currentColor"/>
+              <circle cx="12" cy="7" r="1.5" fill="currentColor" class="text-paper"/>
+              <circle cx="12" cy="17" r="1.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div>
+            <span class="font-serif-cn text-xl font-bold text-white tracking-widest">{siteName}</span>
+            <span class="block text-xs text-gold">传承千年智慧</span>
+          </div>
+        </div>
+        <p class="text-sm leading-relaxed mb-4">
+          致力于中华传统易学的传承与发扬，为易学爱好者提供专业、系统的学习平台。
         </p>
+        <div class="flex items-center gap-4">
+          <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-vermilion transition-colors">
+            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8.69 13.75c-.27.33-.53.75-.73 1.16-.2.41-.31.82-.31 1.18 0 .67.42 1.08 1.08 1.08.33 0 .75-.11 1.16-.31.41-.2.82-.46 1.16-.73l.5-.42.5.42c.33.27.75.53 1.16.73.41.2.83.31 1.16.31.67 0 1.08-.42 1.08-1.08 0-.36-.11-.77-.31-1.18-.2-.41-.46-.83-.73-1.16l-.42-.5.42-.5c.27-.33.53-.75.73-1.16.2-.41.31-.82.31-1.18 0-.67-.42-1.08-1.08-1.08-.33 0-.75.11-1.16.31-.41.2-.83.46-1.16.73l-.5.42-.5-.42c-.33-.27-.75-.53-1.16-.73-.41-.2-.83-.31-1.16-.31-.67 0-1.08.42-1.08 1.08 0 .36.11.77.31 1.18.2.41.46.83.73 1.16l.42.5-.42.5z"/>
+            </svg>
+          </a>
+          <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-vermilion transition-colors">
+            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6zm4 4h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+          </a>
+          <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-vermilion transition-colors">
+            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+            </svg>
+          </a>
+        </div>
       </div>
 
       <div>
-        <h3 class="font-kai text-xuan-paper/90 text-base tracking-widest mb-4">导航</h3>
-        <ul class="space-y-2">
-          {navLinks.slice(1).map((link) => (
+        <h4 class="text-white font-bold mb-6 font-serif-cn">易学分类</h4>
+        <ul class="space-y-3 text-sm">
+          {categories.map((cat) => (
             <li>
-              <a href={link.href} class="text-sm text-xuan-paper/60 hover:text-jin-light transition-colors no-underline">
-                {link.label}
+              <a href={`/${cat.slug}/`} class="hover:text-vermilion transition-colors flex items-center gap-2 no-underline text-paper/70">
+                <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                {cat.name}
               </a>
             </li>
           ))}
@@ -27,16 +57,49 @@ import { siteName, navLinks } from '@data/site';
       </div>
 
       <div>
-        <h3 class="font-kai text-xuan-paper/90 text-base tracking-widest mb-4">免责声明</h3>
-        <p class="text-xs leading-relaxed text-xuan-paper/50">
-          本站内容仅供学习与文化交流之用，不代表科学定论。
-          命理之学，重在了解自我、顺势而为，切勿迷信盲从。
-        </p>
+        <h4 class="text-white font-bold mb-6 font-serif-cn">快速链接</h4>
+        <ul class="space-y-3 text-sm">
+          {['关于我们', '大师团队', '学员评价', '联系我们', '隐私政策'].map((label) => (
+            <li>
+              <a href="#" class="hover:text-vermilion transition-colors flex items-center gap-2 no-underline text-paper/70">
+                <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-white font-bold mb-6 font-serif-cn">联系方式</h4>
+        <ul class="space-y-4 text-sm">
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-vermilion mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>北京市朝阳区国学文化产业园A座</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-vermilion shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>400-888-6666</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-vermilion shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <span>contact@guoxue.com</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-vermilion shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span>周一至周日 9:00-21:00</span>
+          </li>
+        </ul>
       </div>
     </div>
 
-    <div class="mt-8 pt-6 border-t border-white/10 text-center text-xs text-xuan-paper/40">
-      <p>&copy; {new Date().getFullYear()} {siteName} · 传承国学 · 知命乐天</p>
+    <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-center md:text-left">&copy; {new Date().getFullYear()} {siteName}. 保留所有权利.</p>
+      <div class="flex items-center gap-6 text-sm">
+        <a href="#" class="hover:text-vermilion transition-colors no-underline">使用条款</a>
+        <a href="#" class="hover:text-vermilion transition-colors no-underline">隐私政策</a>
+        <a href="#" class="hover:text-vermilion transition-colors no-underline">免责声明</a>
+      </div>
     </div>
   </div>
 </footer>

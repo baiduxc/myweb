@@ -1,0 +1,64 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { siteName } from '@data/site';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'qimen')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const topics = [
+  { title: '奇门遁甲基础', desc: '九宫、八门、九星、八神、三奇六仪的概念与排盘方法。' },
+  { title: '八门详解', desc: '休、生、伤、杜、景、死、惊、开八门的吉凶含义与应用。' },
+  { title: '九星分析', desc: '天蓬、天任、天冲、天辅、天禽、天心、天柱、天英、天芮的特性。' },
+  { title: '三奇六仪', desc: '乙丙丁三奇与戊己庚辛壬癸六仪的组合与推断方法。' },
+  { title: '时家奇门', desc: '以时辰为单位排局，用于日常决策与择吉。' },
+  { title: '实战案例', desc: '结合真实案例，演示奇门遁甲在商业、择业、出行等方面的应用。' },
+];
+---
+
+<BaseLayout title={`奇门遁甲 - ${siteName}`} description="三奇六仪布局，学习古代最高决策学">
+  <Header />
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-earth to-earth-light rounded-full flex items-center justify-center shadow-lg">
+        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">奇门遁甲</h1>
+      <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">三奇六仪布局 · 古代帝王决策学 · 趋吉避凶的智慧</p>
+    </div>
+  </section>
+
+  <section class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up"><span class="section-label">概述</span><h2 class="section-title">走进奇门遁甲</h2><div class="section-divider"></div></div>
+      <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
+        <p>奇门遁甲是中国古代最高层次的预测学，与太乙神数、六壬神课并称为"三式"。相传源于黄帝战蚩尤时九天玄女所授，历代被视为秘传之学。</p>
+        <p>奇门遁甲以九宫八卦为基础，将天干、地支、八门、九星、八神等元素综合运用于时空分析，形成独特的预测体系。其核心在于通过排局找出特定时间空间中的有利方位与行动时机。</p>
+        <p>在古代，奇门遁甲主要用于军事决策、出行择吉、战争布局等。现代社会中，它被广泛应用于商业决策、项目启动、人际沟通等方面。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-paper">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up"><span class="section-label">知识体系</span><h2 class="section-title">核心内容</h2><div class="section-divider"></div></div>
+      <div class="grid md:grid-cols-2 gap-6">{topics.map((t, i) => (<div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}><h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{t.title}</h3><p class="text-sm text-ink-light/70 leading-relaxed">{t.desc}</p></div>))}</div>
+    </div>
+  </section>
+
+  {posts.length > 0 && (<section class="py-16 bg-white"><div class="max-w-4xl mx-auto px-4"><div class="text-center mb-12 fade-in-up"><span class="section-label">相关文章</span><h2 class="section-title">推荐阅读</h2><div class="section-divider"></div></div><div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div></div></section>)}
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
+  });
+</script>

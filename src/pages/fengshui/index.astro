@@ -1,0 +1,64 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { siteName } from '@data/site';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'fengshui')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const topics = [
+  { title: '风水基础理论', desc: '气、阴阳、五行、八卦在风水中的应用，理解"藏风聚气"的核心理念。' },
+  { title: '形势派风水', desc: '龙、穴、砂、水、向五要素，通过观察山川地形判断吉凶。' },
+  { title: '理气派风水', desc: '以罗盘为工具，用八卦九宫、玄空飞星等方法分析空间气场。' },
+  { title: '家居风水', desc: '住宅选址、室内布局、门窗朝向等日常生活风水知识。' },
+  { title: '办公室风水', desc: '办公桌摆放、财位布局、化解煞气等职场风水要点。' },
+  { title: '风水与现代建筑', desc: '传统风水理念在现代城市规划与建筑设计中的应用与融合。' },
+];
+---
+
+<BaseLayout title={`风水堪舆 - ${siteName}`} description="形势理气双修，学习环境风水知识">
+  <Header />
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-water to-water-light rounded-full flex items-center justify-center shadow-lg">
+        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+      </div>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">风水堪舆</h1>
+      <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">形势理气双修 · 藏风聚气之道 · 人与环境的和谐共生</p>
+    </div>
+  </section>
+
+  <section class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up"><span class="section-label">概述</span><h2 class="section-title">走进风水</h2><div class="section-divider"></div></div>
+      <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
+        <p>风水，又称堪舆，是中国传统的环境学说。它研究人与自然环境的和谐关系，通过选址、布局、朝向等方式，创造有利于人的居住和工作环境。</p>
+        <p>风水学派主要分为形势派和理气派两大体系。形势派注重山水形势的观察与判断，理气派则侧重于方位、气场、时间的精密计算。二者相辅相成，缺一不可。</p>
+        <p>现代风水学不仅是传统文化的传承，更与环境心理学、建筑学、生态学等现代学科有着深层的契合。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-paper">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up"><span class="section-label">知识体系</span><h2 class="section-title">核心内容</h2><div class="section-divider"></div></div>
+      <div class="grid md:grid-cols-2 gap-6">{topics.map((t, i) => (<div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}><h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{t.title}</h3><p class="text-sm text-ink-light/70 leading-relaxed">{t.desc}</p></div>))}</div>
+    </div>
+  </section>
+
+  {posts.length > 0 && (<section class="py-16 bg-white"><div class="max-w-4xl mx-auto px-4"><div class="text-center mb-12 fade-in-up"><span class="section-label">相关文章</span><h2 class="section-title">推荐阅读</h2><div class="section-divider"></div></div><div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div></div></section>)}
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
+  });
+</script>

@@ -1,0 +1,113 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { siteName } from '@data/site';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'bazi')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const topics = [
+  { title: '天干地支基础', desc: '十天干与十二地支的五行属性、阴阳特征、生克关系，是八字的基石。' },
+  { title: '四柱排盘', desc: '根据出生年月日时排出年柱、月柱、日柱、时柱，构成完整的八字命盘。' },
+  { title: '十神详解', desc: '比肩、劫财、食神、伤官、正财、偏财、正官、七杀、正印、偏印的含义与推断。' },
+  { title: '格局分析', desc: '正格、变格、从格等格局类型的判断与分析方法。' },
+  { title: '大运流年', desc: '排大运、看流年，了解运势变化的规律与时机把握。' },
+  { title: '八字实战', desc: '结合具体命例，综合分析五行旺衰、喜忌用神、事业婚姻等。' },
+];
+---
+
+<BaseLayout title={`八字命理 - ${siteName}`} description="四柱预测精要，学习八字排盘与命理分析">
+  <Header />
+
+  <!-- Hero -->
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-vermilion to-vermilion-light rounded-full flex items-center justify-center shadow-lg">
+        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      </div>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">八字命理</h1>
+      <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">四柱预测精要 · 天干地支五行 · 十神格局大运</p>
+      <div class="mt-6">
+        <a href="/bazi/paipan/" class="btn-primary">
+          <span>在线排盘</span>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intro -->
+  <section class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">概述</span>
+        <h2 class="section-title">什么是八字</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
+        <p>四柱八字，又称"子平术"，是中国传统命理学中最重要的流派之一。它以一个人出生的年、月、日、时各用一组天干地支表示，形成四柱共八个字，据此推演命运走势。</p>
+        <p>八字命理的核心在于五行生克和十神关系。通过分析八字中金、木、水、火、土的旺衰分布，以及各干支对日主（日干）的作用关系，推断性格特征、事业财运、婚姻健康等方面的趋势。</p>
+        <p>学习八字不是为了宿命论，而是为了更好地认识自己、了解规律，在人生的关键时刻做出更明智的选择。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Topics -->
+  <section class="py-16 bg-paper">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">知识体系</span>
+        <h2 class="section-title">核心内容</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6">
+        {topics.map((topic, i) => (
+          <div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}>
+            <h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{topic.title}</h3>
+            <p class="text-sm text-ink-light/70 leading-relaxed">{topic.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Articles -->
+  {posts.length > 0 && (
+    <section class="py-16 bg-white">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="text-center mb-12 fade-in-up">
+          <span class="section-label">相关文章</span>
+          <h2 class="section-title">推荐阅读</h2>
+          <div class="section-divider"></div>
+        </div>
+        <div class="space-y-6">
+          {posts.map((post) => (
+            <a href={`/blog/${post.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up">
+              <h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{post.data.title}</h3>
+              <p class="text-sm text-ink-light/70 line-clamp-2">{post.data.description}</p>
+              <div class="text-xs text-ink-light/50 mt-3">
+                {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const fadeElements = document.querySelectorAll('.fade-in-up');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    fadeElements.forEach((el) => observer.observe(el));
+  });
+</script>

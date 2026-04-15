@@ -2,59 +2,90 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
-import SectionHeading from '@components/SectionHeading.astro';
-import { siteName } from '@data/site';
+import { siteName, categories, masters } from '@data/site';
 ---
 
-<BaseLayout title={`关于 ${siteName}`} description="了解命理知书的创立初衷与理念">
+<BaseLayout title={`关于${siteName}`} description="了解国学院的创立初衷与理念">
   <Header />
 
-  <main class="max-w-3xl mx-auto px-4 py-10 flex-1">
-    <SectionHeading title="关于命理知书" subtitle="知命者不怨天，知己者不尤人" />
-
-    <div class="font-song text-mo leading-loose space-y-6">
-      <p>
-        <strong class="font-kai text-xuan">命理知书</strong>，是一个致力于传播中国传统命理文化的知识平台。
-        我们相信，八字、紫微斗数等命理之学，是中华文明数千年来对天地运行规律与人生轨迹关系的深刻思考，
-        值得被认真了解、学习和传承。
-      </p>
-
-      <h2 class="font-kai text-xl text-xuan mt-8 mb-4">我们的理念</h2>
-
-      <p>
-        <strong class="text-xuan">传承国学</strong>——我们将命理之学视为中国传统文化的一部分，
-        以严肃、认真的态度整理和传播相关知识，力求还原古人的智慧原貌。
-      </p>
-
-      <p>
-        <strong class="text-xuan">理性看待</strong>——命理不是迷信，也不是绝对的宿命论。
-        它是一种认识自我、了解规律的视角。我们倡导以开放而理性的态度学习命理，
-        取其精华，去其糟粕。
-      </p>
-
-      <p>
-        <strong class="text-xuan">自助学习</strong>——我们提供排盘工具和系统化的知识文章，
-        帮助每一位有兴趣了解命理的人，从入门到进阶，循序渐进地掌握这门学问。
-      </p>
-
-      <h2 class="font-kai text-xl text-xuan mt-8 mb-4">内容范围</h2>
-
-      <ul class="list-disc list-inside space-y-2 ml-4">
-        <li><strong class="text-xuan">四柱八字</strong>：天干地支、五行生克、十神关系、格局分析、大运流年</li>
-        <li><strong class="text-xuan">紫微斗数</strong>：十四主星、十二宫位、吉凶星曜、四化飞星</li>
-        <li><strong class="text-xuan">五行基础</strong>：五行特性、相生相克、天干地支的五行归属</li>
-        <li><strong class="text-xuan">历法知识</strong>：农历与公历的转换、节气与干支纪年</li>
-      </ul>
-
-      <h2 class="font-kai text-xl text-xuan mt-8 mb-4">免责声明</h2>
-
-      <p class="text-sm text-mo-light">
-        本站内容仅供学习与文化交流之用。命理之说，源于古代先贤对自然与人生的观察和总结，
-        具有一定的文化价值和研究意义，但不可作为决策的唯一依据。
-        我们提倡科学理性的态度，切勿迷信盲从。
-      </p>
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <span class="section-label">关于我们</span>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mt-3 mb-4">国学院</h1>
+      <div class="section-divider"></div>
+      <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">知命者不怨天，知己者不尤人</p>
     </div>
-  </main>
+  </section>
+
+  <section class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up"><span class="section-label">我们的理念</span><h2 class="section-title">传承与发扬</h2><div class="section-divider"></div></div>
+      <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
+        <p><strong class="text-ink font-serif-cn">{siteName}</strong>是一个致力于传播中国传统命理文化的知识平台。我们相信，八字、紫微斗数、周易等命理之学，是中华文明数千年来对天地运行规律与人生轨迹关系的深刻思考，值得被认真了解、学习和传承。</p>
+
+        <div class="grid md:grid-cols-3 gap-6 my-10">
+          <div class="bg-paper rounded-2xl p-6 text-center border border-gold/10">
+            <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-vermilion to-vermilion-light rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <h3 class="font-serif-cn text-lg font-bold text-ink mb-2">传承国学</h3>
+            <p class="text-sm text-ink-light/70">以严肃认真的态度整理和传播命理知识，还原古人智慧原貌。</p>
+          </div>
+          <div class="bg-paper rounded-2xl p-6 text-center border border-gold/10">
+            <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-jade to-jade-light rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </div>
+            <h3 class="font-serif-cn text-lg font-bold text-ink mb-2">理性看待</h3>
+            <p class="text-sm text-ink-light/70">倡导以开放理性的态度学习命理，取其精华，去其糟粕。</p>
+          </div>
+          <div class="bg-paper rounded-2xl p-6 text-center border border-gold/10">
+            <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-gold to-gold-light rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <h3 class="font-serif-cn text-lg font-bold text-ink mb-2">自助学习</h3>
+            <p class="text-sm text-ink-light/70">提供排盘工具与系统化知识文章，从入门到进阶循序渐进。</p>
+          </div>
+        </div>
+
+        <h2 class="font-serif-cn text-2xl font-bold text-ink mt-8 mb-4">内容范围</h2>
+        <ul class="list-disc list-inside space-y-2 ml-4">
+          {categories.map((cat) => (
+            <li><strong class="text-ink">{cat.name}</strong>：{cat.desc}</li>
+          ))}
+        </ul>
+
+        <h2 class="font-serif-cn text-2xl font-bold text-ink mt-8 mb-4">大师团队</h2>
+        <p>我们邀请了多位国内知名易学研究学者加入，他们深耕易学数十载，各有专长，为读者带来专业、深入的解读。</p>
+
+        <div class="mt-6 space-y-4">
+          {masters.map((m) => (
+            <div class="flex items-center gap-4 bg-paper rounded-xl p-4 border border-gold/10">
+              <img src={m.image} alt={m.name} class="w-16 h-16 rounded-full object-cover border-2 border-gold" loading="lazy" />
+              <div>
+                <h4 class="font-serif-cn font-bold text-ink">{m.name}</h4>
+                <p class="text-sm text-ink-light/70">{m.title} · {m.articleCount}篇文章</p>
+                <p class="text-xs text-ink-light/50 mt-1">{m.bio.slice(0, 50)}...</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <h2 class="font-serif-cn text-2xl font-bold text-ink mt-8 mb-4">免责声明</h2>
+        <p class="text-sm text-ink-light/60">
+          本站内容仅供学习与文化交流之用。命理之说，源于古代先贤对自然与人生的观察和总结，具有一定的文化价值和研究意义，但不可作为决策的唯一依据。我们提倡科学理性的态度，切勿迷信盲从。
+        </p>
+      </div>
+    </div>
+  </section>
 
   <Footer />
 </BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
+  });
+</script>
