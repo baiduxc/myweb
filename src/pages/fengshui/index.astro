@@ -9,32 +9,79 @@ const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'fengshui')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const topics = [
-  { title: '风水基础理论', desc: '气、阴阳、五行、八卦在风水中的应用，理解"藏风聚气"的核心理念。' },
-  { title: '形势派风水', desc: '龙、穴、砂、水、向五要素，通过观察山川地形判断吉凶。' },
-  { title: '理气派风水', desc: '以罗盘为工具，用八卦九宫、玄空飞星等方法分析空间气场。' },
-  { title: '家居风水', desc: '住宅选址、室内布局、门窗朝向等日常生活风水知识。' },
-  { title: '办公室风水', desc: '办公桌摆放、财位布局、化解煞气等职场风水要点。' },
-  { title: '风水与现代建筑', desc: '传统风水理念在现代城市规划与建筑设计中的应用与融合。' },
+const scenes = [
+  {
+    name: '居家风水',
+    icon: 'home',
+    desc: '住宅选址、室内布局、门窗朝向，营造和谐宜居的居住环境',
+    tips: ['客厅宜宽敞明亮', '床头不宜对门', '厨房不与厕所相对'],
+    color: 'from-jade to-jade-light',
+    bg: 'from-jade/5 to-jade/10',
+  },
+  {
+    name: '办公风水',
+    icon: 'briefcase',
+    desc: '工位布局、财位摆设、煞气化解，提升工作效率与事业发展',
+    tips: ['办公桌后有靠山', '左青龙右白虎', '财位宜亮不宜暗'],
+    color: 'from-vermilion to-vermilion-light',
+    bg: 'from-vermilion/5 to-vermilion/10',
+  },
+  {
+    name: '商铺风水',
+    icon: 'store',
+    desc: '选址定向、门面设计、内部格局，助力生意兴隆财源广进',
+    tips: ['门面宜宽不宜窄', '收银台宜在财位', '避免路冲与角煞'],
+    color: 'from-gold to-gold-light',
+    bg: 'from-gold/5 to-gold/10',
+  },
+  {
+    name: '庭院风水',
+    icon: 'garden',
+    desc: '园林造景、水系布局、围墙设计，打造自然和谐的户外空间',
+    tips: ['假山不宜对大门', '水池宜曲不宜直', '植物宜生机旺盛'],
+    color: 'from-water to-water-light',
+    bg: 'from-water/5 to-water/10',
+  },
+];
+
+const schools = [
+  { name: '形势派', desc: '以观察山川形势为主，龙、穴、砂、水、向五要素并重，通过实地勘察判断环境吉凶。', master: '杨筠松' },
+  { name: '理气派', desc: '以罗盘为工具，运用八卦九宫、玄空飞星、八宅明镜等方法，精确计算方位与气场变化。', master: '蒋大鸿' },
+  { name: '八宅派', desc: '以人的命卦为基础，将住宅分为东四宅和西四宅，匹配人的命卦选择吉方居住。', master: '佚名' },
+  { name: '玄空派', desc: '以洛书九宫为基础，将时间与空间结合，通过飞星排盘分析不同时段各方位的吉凶。', master: '沈竹礽' },
+];
+
+const faqs = [
+  { q: '风水是迷信吗？', a: '风水是中国传统的环境学说，其核心理念是人与自然的和谐共生。现代环境心理学和建筑学的许多研究与风水理念不谋而合。学习风水应以理性态度，取其精华，去其糟粕。' },
+  { q: '罗盘怎么用？', a: '罗盘是风水师的重要工具，通过磁针确定方位，结合刻度读取二十四山的角度。使用时需远离金属物品和电子设备，保持平稳。初学者可先从认识二十四山和八卦方位入手。' },
+  { q: '什么是"藏风聚气"？', a: '"藏风聚气"是风水的核心理念。"藏风"指环境能挡风但不完全封闭，"聚气"指气场能在此聚集而不散逸。好的风水宝地往往背山面水、左右环抱，正是藏风聚气的体现。' },
+  { q: '家居风水最重要的三个要素是什么？', a: '一曰"门"，为气口，关乎气的进出；二曰"床"，人一生三分之一在此，关乎健康；三曰"灶"，饮食之源，关乎财运与健康。三者布置得当，是家居风水的基础。' },
 ];
 ---
 
-<BaseLayout title={`风水堪舆 - ${siteName}`} description="形势理气双修，学习环境风水知识">
+<BaseLayout title={`风水堪舆 - 环境风水学 - ${siteName}`} description="学习环境风水知识，居家、办公、商铺风水布局与调整">
   <Header />
+
+  <!-- Page Hero -->
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
     <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="absolute top-20 right-20 w-96 h-96 opacity-5 taiji-spin hidden lg:block">
+      <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="90" stroke="#2c5f6e" stroke-width="2"/><path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#2c5f6e"/><circle cx="100" cy="55" r="12" fill="#faf7f0"/><circle cx="100" cy="145" r="12" fill="#2c5f6e"/></svg>
+    </div>
     <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
-      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-water to-water-light rounded-full flex items-center justify-center shadow-lg">
-        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-      </div>
       <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">风水堪舆</h1>
       <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">形势理气双修 · 藏风聚气之道 · 人与环境的和谐共生</p>
     </div>
   </section>
 
+  <!-- Intro -->
   <section class="py-16 bg-white">
     <div class="max-w-4xl mx-auto px-4">
-      <div class="text-center mb-12 fade-in-up"><span class="section-label">概述</span><h2 class="section-title">走进风水</h2><div class="section-divider"></div></div>
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">概述</span>
+        <h2 class="section-title">走进风水</h2>
+        <div class="section-divider"></div>
+      </div>
       <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
         <p>风水，又称堪舆，是中国传统的环境学说。它研究人与自然环境的和谐关系，通过选址、布局、朝向等方式，创造有利于人的居住和工作环境。</p>
         <p>风水学派主要分为形势派和理气派两大体系。形势派注重山水形势的观察与判断，理气派则侧重于方位、气场、时间的精密计算。二者相辅相成，缺一不可。</p>
@@ -43,14 +90,148 @@ const topics = [
     </div>
   </section>
 
+  <!-- 四大场景入口 -->
   <section class="py-16 bg-paper">
-    <div class="max-w-4xl mx-auto px-4">
-      <div class="text-center mb-12 fade-in-up"><span class="section-label">知识体系</span><h2 class="section-title">核心内容</h2><div class="section-divider"></div></div>
-      <div class="grid md:grid-cols-2 gap-6">{topics.map((t, i) => (<div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}><h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{t.title}</h3><p class="text-sm text-ink-light/70 leading-relaxed">{t.desc}</p></div>))}</div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">场景应用</span>
+        <h2 class="section-title">风水应用</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">从居家到商铺，不同场景的风水要点各有侧重</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {scenes.map((scene, i) => (
+          <div class="group bg-white rounded-2xl border border-gold/10 overflow-hidden card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}>
+            <!-- 顶部色块 -->
+            <div class={`h-3 bg-gradient-to-r ${scene.color}`}></div>
+            <div class="p-6">
+              <!-- 图标 -->
+              <div class={`w-14 h-14 mb-4 bg-gradient-to-br ${scene.color} rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                {scene.icon === 'home' && <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>}
+                {scene.icon === 'briefcase' && <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>}
+                {scene.icon === 'store' && <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><line x1="9" y1="9" x2="9" y2="22"/></svg>}
+                {scene.icon === 'garden' && <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22V8"/><path d="M5 12l7-4 7 4"/><path d="M3 16l9-5 9 5"/><path d="M7 22h10"/></svg>}
+              </div>
+
+              <h3 class="font-serif-cn text-lg font-bold text-ink mb-2 group-hover:text-water transition-colors">{scene.name}</h3>
+              <p class="text-sm text-ink-light/60 mb-4 leading-relaxed">{scene.desc}</p>
+
+              <!-- 要点列表 -->
+              <div class="space-y-2">
+                {scene.tips.map((tip) => (
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-water rounded-full shrink-0"></span>
+                    <span class="text-xs text-ink-light/70">{tip}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
-  {posts.length > 0 && (<section class="py-16 bg-white"><div class="max-w-4xl mx-auto px-4"><div class="text-center mb-12 fade-in-up"><span class="section-label">相关文章</span><h2 class="section-title">推荐阅读</h2><div class="section-divider"></div></div><div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div></div></section>)}
+  <!-- 流派介绍 -->
+  <section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">学术流派</span>
+        <h2 class="section-title">风水流派</h2>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        {schools.map((school, i) => (
+          <div class="bg-paper rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}>
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="font-serif-cn text-lg font-bold text-ink">{school.name}</h3>
+              <span class="text-xs text-gold font-serif-cn bg-gold/10 px-2 py-1 rounded-full">{school.master}</span>
+            </div>
+            <p class="text-sm text-ink-light/70 leading-relaxed">{school.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 罗盘方位示意 -->
+  <section class="py-16 bg-gradient-to-br from-ink to-[#2a2a2a] text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-5">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-gold/30 rounded-full taiji-spin"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-gold/20 rounded-full" style="animation-direction:reverse;animation-duration:20s"></div>
+    </div>
+    <div class="max-w-5xl mx-auto px-4 relative z-10">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="text-gold text-sm font-medium tracking-widest">方位速查</span>
+        <h2 class="font-serif-cn text-3xl md:text-4xl font-bold text-white mt-3 mb-4">二十四山方位</h2>
+        <div class="w-24 h-1 bg-gradient-to-r from-vermilion to-gold mx-auto"></div>
+      </div>
+
+      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 fade-in-up">
+        {['子','癸','丑','艮','寅','甲','卯','乙','辰','巽','巳','丙','午','丁','未','坤','申','庚','酉','辛','戌','乾','亥','壬'].map((dir, i) => {
+          const angles = [0,15,30,45,60,75,90,105,120,135,150,165,180,195,210,225,240,255,270,285,300,315,330,345];
+          const isCardinal = ['子','午','卯','酉'].includes(dir);
+          return (
+            <div class={`text-center p-3 rounded-xl border transition-all duration-300 hover:-translate-y-1 ${isCardinal ? 'bg-vermilion/20 border-vermilion/40' : 'bg-white/5 border-white/10 hover:border-gold/30'}`}>
+              <div class={`font-serif-cn text-lg font-bold ${isCardinal ? 'text-vermilion' : 'text-paper/90'}`}>{dir}</div>
+              <div class="text-xs text-paper/40 mt-1">{angles[i]}°</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-16 bg-paper">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">常见疑问</span>
+        <h2 class="section-title">风水 FAQ</h2>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="space-y-4">
+        {faqs.map((faq, i) => (
+          <div class="bg-white rounded-xl border border-gold/10 overflow-hidden fade-in-up" style={`transition-delay: ${i * 80}ms;`}>
+            <button class="faq-toggle w-full text-left p-5 flex items-center justify-between gap-4 cursor-pointer">
+              <span class="font-serif-cn text-base font-bold text-ink">{faq.q}</span>
+              <svg class="faq-icon w-5 h-5 text-gold shrink-0 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-answer hidden px-5 pb-5">
+              <p class="text-sm text-ink-light/70 leading-relaxed">{faq.a}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 相关文章 -->
+  {posts.length > 0 && (
+    <section class="py-16 bg-white">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="text-center mb-12 fade-in-up">
+          <span class="section-label">相关文章</span>
+          <h2 class="section-title">推荐阅读</h2>
+          <div class="section-divider"></div>
+        </div>
+        <div class="space-y-6">
+          {posts.map((post) => (
+            <a href={`/blog/${post.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up">
+              <h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{post.data.title}</h3>
+              <p class="text-sm text-ink-light/70 line-clamp-2">{post.data.description}</p>
+              <div class="text-xs text-ink-light/50 mt-3">
+                {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <Footer />
 </BaseLayout>
@@ -60,5 +241,21 @@ const topics = [
     const els = document.querySelectorAll('.fade-in-up');
     const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
     els.forEach((el) => obs.observe(el));
+
+    // FAQ toggle
+    document.querySelectorAll('.faq-toggle').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const answer = btn.nextElementSibling;
+        const icon = btn.querySelector('.faq-icon');
+        const isOpen = !answer.classList.contains('hidden');
+        // Close all
+        document.querySelectorAll('.faq-answer').forEach((a) => a.classList.add('hidden'));
+        document.querySelectorAll('.faq-icon').forEach((ic) => ic.style.transform = 'rotate(0deg)');
+        if (!isOpen) {
+          answer.classList.remove('hidden');
+          icon.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
   });
 </script>

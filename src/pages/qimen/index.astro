@@ -9,48 +9,257 @@ const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'qimen')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const topics = [
-  { title: '奇门遁甲基础', desc: '九宫、八门、九星、八神、三奇六仪的概念与排盘方法。' },
-  { title: '八门详解', desc: '休、生、伤、杜、景、死、惊、开八门的吉凶含义与应用。' },
-  { title: '九星分析', desc: '天蓬、天任、天冲、天辅、天禽、天心、天柱、天英、天芮的特性。' },
-  { title: '三奇六仪', desc: '乙丙丁三奇与戊己庚辛壬癸六仪的组合与推断方法。' },
-  { title: '时家奇门', desc: '以时辰为单位排局，用于日常决策与择吉。' },
-  { title: '实战案例', desc: '结合真实案例，演示奇门遁甲在商业、择业、出行等方面的应用。' },
+// 九宫格元素
+const jiuGong = [
+  { pos: '巽4', star: '天辅', door: '杜门', god: '九天', stem: '乙', bg: 'from-jade/10 to-jade/5' },
+  { pos: '离9', star: '天英', door: '景门', god: '九地', stem: '丙', bg: 'from-vermilion/10 to-vermilion/5' },
+  { pos: '坤2', star: '天芮', door: '死门', god: '六合', stem: '丁', bg: 'from-earth/10 to-earth/5' },
+  { pos: '震3', star: '天冲', door: '伤门', god: '值符', stem: '戊', bg: 'from-jade/10 to-jade/5' },
+  { pos: '中5', star: '天禽', door: '—', god: '—', stem: '己', bg: 'from-gold/10 to-gold/5' },
+  { pos: '兑7', star: '天柱', door: '惊门', god: '白虎', stem: '庚', bg: 'from-gold/10 to-gold/5' },
+  { pos: '艮8', star: '天任', door: '生门', god: '太阴', stem: '辛', bg: 'from-earth/10 to-earth/5' },
+  { pos: '坎1', star: '天蓬', door: '休门', god: '玄武', stem: '壬', bg: 'from-water/10 to-water/5' },
+  { pos: '乾6', star: '天心', door: '开门', god: '螣蛇', stem: '癸', bg: 'from-gold/10 to-gold/5' },
+];
+
+// 六要素
+const liuYaoSu = [
+  {
+    title: '三奇',
+    icon: '✨',
+    desc: '乙、丙、丁三奇，为日月星三光之精，是奇门中最吉利的符号。',
+    items: [
+      { name: '乙奇', desc: '日奇，主文书喜事' },
+      { name: '丙奇', desc: '月奇，主权威势重' },
+      { name: '丁奇', desc: '星奇，主智慧机遇' },
+    ],
+    color: 'text-gold',
+  },
+  {
+    title: '六仪',
+    icon: '⚔',
+    desc: '戊、己、庚、辛、壬、癸六仪，代表天干的六种状态与力量。',
+    items: [
+      { name: '戊', desc: '天门，阳土' },
+      { name: '己', desc: '地户，阴土' },
+      { name: '庚', desc: '天刑，阳金' },
+      { name: '辛', desc: '天庭，阴金' },
+      { name: '壬', desc: '天牢，阳水' },
+      { name: '癸', desc: '天网，阴水' },
+    ],
+    color: 'text-ink',
+  },
+  {
+    title: '八门',
+    icon: '🚪',
+    desc: '休、生、伤、杜、景、死、惊、开八门，代表人事活动的八种状态。',
+    items: [
+      { name: '休门', desc: '大吉，休息养息', ji: '吉' },
+      { name: '生门', desc: '大吉，生长发展', ji: '吉' },
+      { name: '伤门', desc: '凶，损伤破败', ji: '凶' },
+      { name: '杜门', desc: '平，闭塞不通', ji: '平' },
+      { name: '景门', desc: '平，虚幻之事', ji: '平' },
+      { name: '死门', desc: '大凶，终结消亡', ji: '凶' },
+      { name: '惊门', desc: '凶，惊恐不安', ji: '凶' },
+      { name: '开门', desc: '大吉，开创通达', ji: '吉' },
+    ],
+    color: 'text-vermilion',
+  },
+  {
+    title: '九星',
+    icon: '⭐',
+    desc: '天蓬、天任、天冲、天辅、天禽、天心、天柱、天英、天芮。',
+    items: [
+      { name: '天蓬', desc: '大凶，破财损丁', ji: '凶' },
+      { name: '天任', desc: '大吉，富贵长寿', ji: '吉' },
+      { name: '天冲', desc: '次凶，冲动冒进', ji: '凶' },
+      { name: '天辅', desc: '大吉，文运亨通', ji: '吉' },
+      { name: '天禽', desc: '大吉，中正平和', ji: '吉' },
+      { name: '天心', desc: '大吉，智慧谋略', ji: '吉' },
+      { name: '天柱', desc: '次凶，口舌是非', ji: '凶' },
+      { name: '天英', desc: '次吉，虚名虚利', ji: '平' },
+      { name: '天芮', desc: '大凶，疾病灾祸', ji: '凶' },
+    ],
+    color: 'text-earth',
+  },
+  {
+    title: '八神',
+    icon: '🔮',
+    desc: '值符、螣蛇、太阴、六合、白虎、玄武、九地、九天。',
+    items: [
+      { name: '值符', desc: '最吉，百恶消散', ji: '吉' },
+      { name: '螣蛇', desc: '凶，虚惊怪异', ji: '凶' },
+      { name: '太阴', desc: '吉，阴佑庇护', ji: '吉' },
+      { name: '六合', desc: '吉，和合婚姻', ji: '吉' },
+      { name: '白虎', desc: '大凶，凶伤血光', ji: '凶' },
+      { name: '玄武', desc: '凶，盗贼暗昧', ji: '凶' },
+      { name: '九地', desc: '平，沉稳潜伏', ji: '平' },
+      { name: '九天', desc: '吉，显扬高远', ji: '吉' },
+    ],
+    color: 'text-water',
+  },
+  {
+    title: '格局',
+    icon: '📐',
+    desc: '奇门中的特殊组合，如龙回首、鸟跌穴、青龙逃走等经典格局。',
+    items: [
+      { name: '龙回首', desc: '戊+丙，大吉' },
+      { name: '鸟跌穴', desc: '丙+戊，大吉' },
+      { name: '青龙逃走', desc: '乙+辛，凶' },
+      { name: '白虎猖狂', desc: '辛+乙，凶' },
+      { name: '荧入太白', desc: '丙+庚，凶' },
+      { name: '太白入荧', desc: '庚+丙，凶' },
+    ],
+    color: 'text-purple',
+  },
 ];
 ---
 
-<BaseLayout title={`奇门遁甲 - ${siteName}`} description="三奇六仪布局，学习古代最高决策学">
+<BaseLayout title={`奇门遁甲 - 三奇六仪排盘 - ${siteName}`} description="古代最高决策学，九宫八卦与三奇六仪的时空分析体系">
   <Header />
+
+  <!-- Page Hero -->
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
     <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="absolute top-20 right-20 w-96 h-96 opacity-5 taiji-spin hidden lg:block">
+      <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="90" stroke="#8b6914" stroke-width="2"/><path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#8b6914"/><circle cx="100" cy="55" r="12" fill="#faf7f0"/><circle cx="100" cy="145" r="12" fill="#8b6914"/></svg>
+    </div>
     <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
-      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-earth to-earth-light rounded-full flex items-center justify-center shadow-lg">
-        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
       <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">奇门遁甲</h1>
       <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">三奇六仪布局 · 古代帝王决策学 · 趋吉避凶的智慧</p>
     </div>
   </section>
 
+  <!-- 九宫格交互盘 -->
   <section class="py-16 bg-white">
     <div class="max-w-4xl mx-auto px-4">
-      <div class="text-center mb-12 fade-in-up"><span class="section-label">概述</span><h2 class="section-title">走进奇门遁甲</h2><div class="section-divider"></div></div>
-      <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
-        <p>奇门遁甲是中国古代最高层次的预测学，与太乙神数、六壬神课并称为"三式"。相传源于黄帝战蚩尤时九天玄女所授，历代被视为秘传之学。</p>
-        <p>奇门遁甲以九宫八卦为基础，将天干、地支、八门、九星、八神等元素综合运用于时空分析，形成独特的预测体系。其核心在于通过排局找出特定时间空间中的有利方位与行动时机。</p>
-        <p>在古代，奇门遁甲主要用于军事决策、出行择吉、战争布局等。现代社会中，它被广泛应用于商业决策、项目启动、人际沟通等方面。</p>
+      <div class="text-center mb-10 fade-in-up">
+        <span class="section-label">九宫盘面</span>
+        <h2 class="section-title">奇门九宫盘</h2>
+        <div class="section-divider"></div>
+        <p class="mt-4 text-sm text-ink-light/60">点击宫位查看详情</p>
+      </div>
+
+      <!-- 九宫格 -->
+      <div class="max-w-lg mx-auto mb-8 fade-in-up">
+        <div class="grid grid-cols-3 gap-2">
+          {jiuGong.map((cell, i) => (
+            <div
+              class={`qimen-cell bg-gradient-to-br ${cell.bg} rounded-xl border-2 border-earth/10 p-3 md:p-4 min-h-[100px] cursor-pointer hover:border-vermilion/40 transition-all duration-300 hover:shadow-md fade-in-up`}
+              style={`transition-delay: ${i * 60}ms;`}
+              data-pos={cell.pos}
+              data-star={cell.star}
+              data-door={cell.door}
+              data-god={cell.god}
+              data-stem={cell.stem}
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] text-ink-light/40 font-sans-cn">{cell.pos}</span>
+                <span class="text-sm font-serif-cn font-bold text-earth">{cell.stem}</span>
+              </div>
+              <div class="space-y-1">
+                <div class="font-serif-cn text-xs font-bold text-ink">{cell.star}</div>
+                <div class="text-[11px] text-ink-light/60">{cell.door}</div>
+                {cell.god !== '—' && <div class="text-[10px] text-gold/80">{cell.god}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 宫位详情（点击后显示） -->
+      <div id="qimen-detail" class="hidden max-w-lg mx-auto fade-in-up">
+        <div class="bg-paper rounded-2xl p-6 border border-gold/20 shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <span id="qd-pos" class="font-serif-cn text-2xl font-bold text-earth"></span>
+            <span id="qd-stem" class="text-sm text-gold font-serif-cn bg-gold/10 px-2 py-1 rounded-full"></span>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="bg-white/50 rounded-lg p-3 text-center border border-gold/10">
+              <div class="text-xs text-ink-light/50">九星</div>
+              <div id="qd-star" class="font-serif-cn font-bold text-ink mt-1"></div>
+            </div>
+            <div class="bg-white/50 rounded-lg p-3 text-center border border-gold/10">
+              <div class="text-xs text-ink-light/50">八门</div>
+              <div id="qd-door" class="font-serif-cn font-bold text-ink mt-1"></div>
+            </div>
+            <div class="bg-white/50 rounded-lg p-3 text-center border border-gold/10">
+              <div class="text-xs text-ink-light/50">八神</div>
+              <div id="qd-god" class="font-serif-cn font-bold text-gold mt-1"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- 六要素卡片 -->
   <section class="py-16 bg-paper">
-    <div class="max-w-4xl mx-auto px-4">
-      <div class="text-center mb-12 fade-in-up"><span class="section-label">知识体系</span><h2 class="section-title">核心内容</h2><div class="section-divider"></div></div>
-      <div class="grid md:grid-cols-2 gap-6">{topics.map((t, i) => (<div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}><h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{t.title}</h3><p class="text-sm text-ink-light/70 leading-relaxed">{t.desc}</p></div>))}</div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">体系构成</span>
+        <h2 class="section-title">六要素</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">奇门遁甲由六大要素构成，综合运用方能准确推断</p>
+      </div>
+
+      <div class="space-y-10">
+        {liuYaoSu.map((elem, ei) => (
+          <div class="fade-in-up" style={`transition-delay: ${ei * 100}ms;`}>
+            <div class="flex items-center gap-3 mb-4">
+              <span class={`text-2xl ${elem.color}`}>{elem.icon}</span>
+              <h3 class="font-serif-cn text-xl font-bold text-ink">{elem.title}</h3>
+              <div class="flex-1 h-px bg-gradient-to-r from-gold/30 to-transparent"></div>
+            </div>
+            <p class="text-sm text-ink-light/70 mb-4 max-w-2xl">{elem.desc}</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+              {elem.items.map((item) => {
+                const isJi = item.ji === '吉';
+                const isXiong = item.ji === '凶';
+                return (
+                  <div class="bg-white rounded-xl p-3 border border-gold/10 card-hover">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="font-serif-cn font-bold text-sm text-ink">{item.name}</span>
+                      {item.ji && (
+                        <span class={`text-[10px] px-1.5 py-0.5 rounded-full font-sans-cn ${
+                          isJi ? 'bg-jade/10 text-jade' : isXiong ? 'bg-vermilion/10 text-vermilion' : 'bg-gold/10 text-earth'
+                        }`}>{item.ji}</span>
+                      )}
+                    </div>
+                    <div class="text-xs text-ink-light/60">{item.desc}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
-  {posts.length > 0 && (<section class="py-16 bg-white"><div class="max-w-4xl mx-auto px-4"><div class="text-center mb-12 fade-in-up"><span class="section-label">相关文章</span><h2 class="section-title">推荐阅读</h2><div class="section-divider"></div></div><div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div></div></section>)}
+  <!-- 相关文章 -->
+  {posts.length > 0 && (
+    <section class="py-16 bg-white">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="text-center mb-12 fade-in-up">
+          <span class="section-label">相关文章</span>
+          <h2 class="section-title">推荐阅读</h2>
+          <div class="section-divider"></div>
+        </div>
+        <div class="space-y-6">
+          {posts.map((post) => (
+            <a href={`/blog/${post.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up">
+              <h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{post.data.title}</h3>
+              <p class="text-sm text-ink-light/70 line-clamp-2">{post.data.description}</p>
+              <div class="text-xs text-ink-light/50 mt-3">
+                {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <Footer />
 </BaseLayout>
@@ -60,5 +269,23 @@ const topics = [
     const els = document.querySelectorAll('.fade-in-up');
     const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
     els.forEach((el) => obs.observe(el));
+
+    // Qimen cell click
+    document.querySelectorAll('.qimen-cell').forEach((cell) => {
+      cell.addEventListener('click', () => {
+        document.querySelectorAll('.qimen-cell').forEach((c) => c.classList.remove('border-vermilion/40', 'shadow-md'));
+        cell.classList.add('border-vermilion/40', 'shadow-md');
+
+        const detail = document.getElementById('qimen-detail');
+        document.getElementById('qd-pos').textContent = cell.dataset.pos + '宫';
+        document.getElementById('qd-stem').textContent = '天干: ' + cell.dataset.stem;
+        document.getElementById('qd-star').textContent = cell.dataset.star;
+        document.getElementById('qd-door').textContent = cell.dataset.door;
+        document.getElementById('qd-god').textContent = cell.dataset.god === '—' ? '—' : cell.dataset.god;
+
+        detail.classList.remove('hidden');
+        detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    });
   });
 </script>

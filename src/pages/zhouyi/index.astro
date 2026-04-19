@@ -9,72 +9,220 @@ const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'zhouyi')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const topics = [
-  { title: '六十四卦总论', desc: '卦序、卦名、卦辞、爻辞的系统解读，掌握八卦的基本结构与变化规律。' },
-  { title: '上经三十卦', desc: '从乾卦到离卦，论述天道运行之理，涵盖天地万物的生成与演化。' },
-  { title: '下经三十四卦', desc: '从咸卦到未济卦，阐述人伦日用之道，指导人事处世与修身齐家。' },
-  { title: '象数理占', desc: '象数与义理并重，理解卦象背后的自然法则与人生哲理。' },
-  { title: '系辞传解读', desc: '孔子所作的系辞传，是理解周易核心思想的钥匙，揭示"变易、不易、简易"三义。' },
-  { title: '周易与现代生活', desc: '将古老智慧应用于当代职场、家庭、人际关系，让经典焕发现代价值。' },
+const baguaData = [
+  { name: '乾', nature: '天', wuxing: '金', dir: '西北', family: '父', symbol: '☰', yao: '111', desc: '刚健中正，自强不息', shuxing: '阳' },
+  { name: '坤', nature: '地', wuxing: '土', dir: '西南', family: '母', symbol: '☷', yao: '000', desc: '厚德载物，柔顺包容', shuxing: '阴' },
+  { name: '震', nature: '雷', wuxing: '木', dir: '东', family: '长男', symbol: '☳', yao: '001', desc: '动也，奋发向上', shuxing: '阳' },
+  { name: '巽', nature: '风', wuxing: '木', dir: '东南', family: '长女', symbol: '☴', yao: '110', desc: '入也，柔顺渐进', shuxing: '阴' },
+  { name: '坎', nature: '水', wuxing: '水', dir: '北', family: '中男', symbol: '☵', yao: '010', desc: '陷也，险中求胜', shuxing: '阳' },
+  { name: '离', nature: '火', wuxing: '火', dir: '南', family: '中女', symbol: '☲', yao: '101', desc: '丽也，光明附丽', shuxing: '阴' },
+  { name: '艮', nature: '山', wuxing: '土', dir: '东北', family: '少男', symbol: '☶', yao: '100', desc: '止也，沉着稳重', shuxing: '阳' },
+  { name: '兑', nature: '泽', wuxing: '金', dir: '西', family: '少女', symbol: '☱', yao: '011', desc: '说也，和悦沟通', shuxing: '阴' },
+];
+
+// 64卦精选（按宫分组）
+const guaByGong = [
+  {
+    gong: '乾宫',
+    gua: [
+      { name: '乾为天', desc: '刚健中正，元亨利贞' },
+      { name: '天风姤', desc: '风云际会，不期而遇' },
+      { name: '天山遁', desc: '退避隐居，明哲保身' },
+      { name: '天地否', desc: '上下不通，闭塞之时' },
+      { name: '风地观', desc: '观瞻四方，审时度势' },
+      { name: '山地剥', desc: '剥落衰退，顺势而止' },
+      { name: '火地晋', desc: '光明上进，步步高升' },
+      { name: '火天大有', desc: '丰盛拥有，大有收获' },
+    ],
+  },
+  {
+    gong: '坤宫',
+    gua: [
+      { name: '坤为地', desc: '厚德载物，顺势而为' },
+      { name: '地雷复', desc: '一阳来复，否极泰来' },
+      { name: '地泽临', desc: '居高临下，亲临指导' },
+      { name: '地天泰', desc: '天地交泰，通泰亨通' },
+      { name: '雷天大壮', desc: '壮大强盛，刚健有为' },
+      { name: '泽天夬', desc: '决断果敢，去除小人' },
+      { name: '水天需', desc: '耐心等待，待时而动' },
+      { name: '水地比', desc: '亲密比辅，和谐共处' },
+    ],
+  },
+];
+
+const learningPath = [
+  { step: 1, title: '八卦基础', desc: '理解先天八卦与后天八卦的排列，掌握八卦的卦象、卦德与五行属性。', icon: '☰' },
+  { step: 2, title: '六十四卦', desc: '学习每卦的卦辞与六爻爻辞，理解上下经的编排逻辑。', icon: '⚊' },
+  { step: 3, title: '象数理占', desc: '象数派与义理派并重，掌握卦变、互体、错卦等分析方法。', icon: '☯' },
+  { step: 4, title: '系辞精读', desc: '深入研读系辞传，理解"变易、不易、简易"三义与周易哲学。', icon: '📖' },
+  { step: 5, title: '占卜实践', desc: '以蓍草或铜钱起卦，练习断卦技巧，将理论应用于实际。', icon: '🪙' },
 ];
 ---
 
-<BaseLayout title={`周易 - ${siteName}`} description="六十四卦精解，系统学习周易八卦的象数理占">
+<BaseLayout title={`周易八卦 - 六十四卦精解 - ${siteName}`} description="系统学习周易八卦，六十四卦卦辞爻辞解读，象数理占并重">
   <Header />
 
-  <!-- Hero -->
+  <!-- Page Hero -->
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
     <div class="absolute inset-0 bg-pattern opacity-30"></div>
     <div class="absolute top-20 right-20 w-96 h-96 opacity-5 taiji-spin hidden lg:block">
       <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="90" stroke="#1a1a1a" stroke-width="2"/><path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#1a1a1a"/><circle cx="100" cy="55" r="12" fill="#faf7f0"/><circle cx="100" cy="145" r="12" fill="#1a1a1a"/></svg>
     </div>
     <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
-      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-ink to-ink-light rounded-full flex items-center justify-center shadow-lg">
-        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-      </div>
       <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">周易八卦</h1>
       <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">六十四卦精解 · 象数理占并重 · 以现代视角解读千年智慧</p>
     </div>
   </section>
 
-  <!-- Intro -->
+  <!-- Intro: 左右分栏（八卦速查侧栏 + 正文） -->
+  <section class="py-16 bg-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-10">
+        <!-- 左侧：八卦速查面板 -->
+        <div class="lg:col-span-4 fade-in-up">
+          <div class="sticky top-28">
+            <h3 class="font-serif-cn text-xl font-bold text-ink mb-6 flex items-center gap-2">
+              <span class="w-8 h-8 flex items-center justify-center bg-ink text-white rounded-full text-sm">☰</span>
+              八卦速查
+            </h3>
+            <div class="grid grid-cols-2 lg:grid-cols-1 gap-2">
+              {baguaData.map((bg, i) => (
+                <button
+                  class="bagua-nav-btn flex items-center gap-3 bg-paper rounded-xl p-3 border border-gold/10 hover:border-vermilion/40 hover:bg-vermilion/5 transition-all duration-300 text-left cursor-pointer group fade-in-up"
+                  style={`transition-delay: ${i * 50}ms;`}
+                  data-bagua={bg.name}
+                >
+                  <span class="text-2xl font-serif-cn w-10 text-center group-hover:text-vermilion transition-colors">{bg.symbol}</span>
+                  <div class="min-w-0">
+                    <span class="font-serif-cn font-bold text-ink text-sm group-hover:text-vermilion transition-colors">{bg.name}为{bg.nature}</span>
+                    <span class="block text-xs text-ink-light/50">{bg.dir} · {bg.wuxing} · {bg.family}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：正文 -->
+        <div class="lg:col-span-8">
+          <div class="text-center lg:text-left mb-12 fade-in-up">
+            <span class="section-label">概述</span>
+            <h2 class="section-title">走进周易</h2>
+            <div class="section-divider lg:mx-0"></div>
+          </div>
+          <div id="zhouyi-intro" class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
+            <p>《周易》是中国最古老的经典之一，被誉为"群经之首，大道之源"。它不仅是占卜之书，更是中华文明对宇宙运行规律深刻思考的结晶。</p>
+            <p>周易以八卦为基础，推演出六十四卦，每卦六爻，共三百八十四爻。通过卦象、卦辞、爻辞的组合，揭示事物发展变化的规律，为人类行为提供哲学指导。</p>
+            <p>学习周易，不是迷信占卜，而是理解古人对"变化"这一永恒主题的智慧洞察——变易中有不变之理，简易中藏深远之道。</p>
+          </div>
+
+          <!-- 八卦详情面板（点击侧栏后显示） -->
+          <div id="bagua-detail" class="hidden mt-10 fade-in-up">
+            <div class="bg-paper rounded-2xl p-6 border border-gold/20 shadow-sm">
+              <div class="flex items-center gap-4 mb-4">
+                <span id="bd-symbol" class="text-5xl font-serif-cn"></span>
+                <div>
+                  <h4 id="bd-title" class="font-serif-cn text-2xl font-bold text-ink"></h4>
+                  <p id="bd-nature" class="text-sm text-ink-light/60"></p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div class="bg-white/50 rounded-lg p-3 text-center border border-gold/10">
+                  <div class="text-xs text-ink-light/50">五行</div>
+                  <div id="bd-wuxing" class="font-serif-cn font-bold text-ink mt-1"></div>
+                </div>
+                <div class="bg-white/50 rounded-lg p-3 text-center border border-gold/10">
+                  <div class="text-xs text-ink-light/50">方位</div>
+                  <div id="bd-dir" class="font-serif-cn font-bold text-ink mt-1"></div>
+                </div>
+                <div class="bg-white/50 rounded-lg p-3 text-center border border-gold/10">
+                  <div class="text-xs text-ink-light/50">代表</div>
+                  <div id="bd-family" class="font-serif-cn font-bold text-ink mt-1"></div>
+                </div>
+                <div class="bg-white/50 rounded-lg p-3 text-center border border-gold/10">
+                  <div class="text-xs text-ink-light/50">属性</div>
+                  <div id="bd-shuxing" class="font-serif-cn font-bold text-ink mt-1"></div>
+                </div>
+              </div>
+              <div class="mb-4">
+                <div class="text-xs text-ink-light/50 mb-2">卦画（下→上）</div>
+                <div id="bd-yao" class="flex items-center gap-1"></div>
+              </div>
+              <p id="bd-desc" class="font-serif-cn text-ink font-bold text-lg"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 64卦精选卡片 -->
+  <section class="py-16 bg-paper relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">六十四卦</span>
+        <h2 class="section-title">卦象精选</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">按宫分类，每宫八卦，共六十四卦，此处展示部分常用卦</p>
+      </div>
+
+      {guaByGong.map((gong, gi) => (
+        <div class="mb-10 last:mb-0">
+          <h3 class="font-serif-cn text-lg font-bold text-ink mb-4 fade-in-up flex items-center gap-2">
+            <span class="w-2 h-2 bg-vermilion rounded-full"></span>
+            {gong.gong}
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {gong.gua.map((gua, i) => (
+              <div class="bg-white rounded-xl p-4 border border-gold/10 card-hover fade-in-up cursor-pointer group" style={`transition-delay: ${(gi * 8 + i) * 50}ms;`}>
+                <div class="font-serif-cn text-base font-bold text-ink mb-1 group-hover:text-vermilion transition-colors">{gua.name}</div>
+                <div class="text-xs text-ink-light/60">{gua.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- 学习路径 -->
   <section class="py-16 bg-white">
     <div class="max-w-4xl mx-auto px-4">
       <div class="text-center mb-12 fade-in-up">
-        <span class="section-label">概述</span>
-        <h2 class="section-title">走进周易</h2>
+        <span class="section-label">循序渐进</span>
+        <h2 class="section-title">学习路径</h2>
         <div class="section-divider"></div>
       </div>
-      <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
-        <p>《周易》是中国最古老的经典之一，被誉为"群经之首，大道之源"。它不仅是占卜之书，更是中华文明对宇宙运行规律深刻思考的结晶。</p>
-        <p>周易以八卦为基础，推演出六十四卦，每卦六爻，共三百八十四爻。通过卦象、卦辞、爻辞的组合，揭示事物发展变化的规律，为人类行为提供哲学指导。</p>
-        <p>学习周易，不是迷信占卜，而是理解古人对"变化"这一永恒主题的智慧洞察——变易中有不变之理，简易中藏深远之道。</p>
+
+      <div class="relative">
+        <!-- 连接线 -->
+        <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-vermilion via-gold to-jade hidden md:block"></div>
+
+        <div class="space-y-6">
+          {learningPath.map((lp, i) => (
+            <div class="relative flex items-start gap-6 fade-in-up" style={`transition-delay: ${i * 100}ms;`}>
+              <!-- 步骤编号 -->
+              <div class="shrink-0 w-16 h-16 flex items-center justify-center bg-gradient-to-br from-vermilion to-gold text-white rounded-full text-2xl font-serif-cn font-bold shadow-md z-10">
+                {lp.icon}
+              </div>
+              <!-- 内容 -->
+              <div class="flex-1 bg-paper rounded-xl p-5 border border-gold/10">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="text-xs text-gold font-bold tracking-wider">STEP {lp.step}</span>
+                  <h4 class="font-serif-cn text-lg font-bold text-ink">{lp.title}</h4>
+                </div>
+                <p class="text-sm text-ink-light/70 leading-relaxed">{lp.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Topics -->
-  <section class="py-16 bg-paper">
-    <div class="max-w-4xl mx-auto px-4">
-      <div class="text-center mb-12 fade-in-up">
-        <span class="section-label">知识体系</span>
-        <h2 class="section-title">核心内容</h2>
-        <div class="section-divider"></div>
-      </div>
-      <div class="grid md:grid-cols-2 gap-6">
-        {topics.map((topic, i) => (
-          <div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}>
-            <h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{topic.title}</h3>
-            <p class="text-sm text-ink-light/70 leading-relaxed">{topic.desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Related Articles -->
+  <!-- 相关文章 -->
   {posts.length > 0 && (
-    <section class="py-16 bg-white">
+    <section class="py-16 bg-paper">
       <div class="max-w-4xl mx-auto px-4">
         <div class="text-center mb-12 fade-in-up">
           <span class="section-label">相关文章</span>
@@ -83,7 +231,7 @@ const topics = [
         </div>
         <div class="space-y-6">
           {posts.map((post) => (
-            <a href={`/blog/${post.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up">
+            <a href={`/blog/${post.slug}/`} class="block bg-white rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up">
               <h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{post.data.title}</h3>
               <p class="text-sm text-ink-light/70 line-clamp-2">{post.data.description}</p>
               <div class="text-xs text-ink-light/50 mt-3">
@@ -101,10 +249,61 @@ const topics = [
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
-    const fadeElements = document.querySelectorAll('.fade-in-up');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-    fadeElements.forEach((el) => observer.observe(el));
+    // Fade-in
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
+
+    // Bagua nav
+    const baguaData = [
+      { name: '乾', nature: '天', wuxing: '金', dir: '西北', family: '父', symbol: '☰', yao: '111', desc: '刚健中正，自强不息', shuxing: '阳' },
+      { name: '坤', nature: '地', wuxing: '土', dir: '西南', family: '母', symbol: '☷', yao: '000', desc: '厚德载物，柔顺包容', shuxing: '阴' },
+      { name: '震', nature: '雷', wuxing: '木', dir: '东', family: '长男', symbol: '☳', yao: '001', desc: '动也，奋发向上', shuxing: '阳' },
+      { name: '巽', nature: '风', wuxing: '木', dir: '东南', family: '长女', symbol: '☴', yao: '110', desc: '入也，柔顺渐进', shuxing: '阴' },
+      { name: '坎', nature: '水', wuxing: '水', dir: '北', family: '中男', symbol: '☵', yao: '010', desc: '陷也，险中求胜', shuxing: '阳' },
+      { name: '离', nature: '火', wuxing: '火', dir: '南', family: '中女', symbol: '☲', yao: '101', desc: '丽也，光明附丽', shuxing: '阴' },
+      { name: '艮', nature: '山', wuxing: '土', dir: '东北', family: '少男', symbol: '☶', yao: '100', desc: '止也，沉着稳重', shuxing: '阳' },
+      { name: '兑', nature: '泽', wuxing: '金', dir: '西', family: '少女', symbol: '☱', yao: '011', desc: '说也，和悦沟通', shuxing: '阴' },
+    ];
+
+    const WUXING_COLORS = {'木':'#4a7c59','火':'#c41e3a','土':'#8b6914','金':'#c5a456','水':'#2c5f6e'};
+
+    document.querySelectorAll('.bagua-nav-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const name = btn.getAttribute('data-bagua');
+        const bg = baguaData.find((b) => b.name === name);
+        if (!bg) return;
+
+        // Highlight active
+        document.querySelectorAll('.bagua-nav-btn').forEach((b) => b.classList.remove('border-vermilion/40', 'bg-vermilion/5'));
+        btn.classList.add('border-vermilion/40', 'bg-vermilion/5');
+
+        // Show detail
+        const detail = document.getElementById('bagua-detail');
+        document.getElementById('bd-symbol').textContent = bg.symbol;
+        document.getElementById('bd-title').textContent = `${bg.name}为${bg.nature}`;
+        document.getElementById('bd-nature').textContent = `${bg.name}卦 · ${bg.nature}象`;
+        document.getElementById('bd-wuxing').innerHTML = `<span style="color:${WUXING_COLORS[bg.wuxing]}">${bg.wuxing}</span>`;
+        document.getElementById('bd-dir').textContent = bg.dir;
+        document.getElementById('bd-family').textContent = bg.family;
+        document.getElementById('bd-shuxing').textContent = bg.shuxing;
+        document.getElementById('bd-desc').textContent = bg.desc;
+
+        // Yao lines
+        const yaoEl = document.getElementById('bd-yao');
+        yaoEl.innerHTML = '';
+        for (let i = 2; i >= 0; i--) {
+          const bit = bg.yao[i];
+          if (bit === '1') {
+            yaoEl.innerHTML += '<div class="w-12 h-2 bg-ink rounded-sm"></div>';
+          } else {
+            yaoEl.innerHTML += '<div class="flex gap-2"><div class="w-5 h-2 bg-ink rounded-sm"></div><div class="w-5 h-2 bg-ink rounded-sm"></div></div>';
+          }
+        }
+
+        detail.classList.remove('hidden');
+        detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    });
   });
 </script>

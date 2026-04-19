@@ -9,56 +9,320 @@ const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'liuyao')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const topics = [
-  { title: '六爻基础', desc: '阴阳爻、八卦、六十四卦的基础知识，理解卦象的基本构成。' },
-  { title: '纳甲筮法', desc: '京房纳甲法，将天干地支纳入六爻，构建完整的断卦体系。' },
-  { title: '六亲与六神', desc: '父母、兄弟、子孙、妻财、官鬼六亲，以及青龙、朱雀等六神的含义。' },
-  { title: '动爻与变卦', desc: '老阴老阳的变动规律，本卦与变卦的关系及断卦方法。' },
-  { title: '用神与忌神', desc: '确定用神的方法，分析用神旺衰与吉凶判断。' },
-  { title: '实战断卦', desc: '结合具体卦例，从起卦到断卦的完整流程演示。' },
+const knowledgeCards = [
+  { title: '阴阳爻', desc: '阳爻⚊与阴爻⚋是六爻的基本单位，三爻成卦，六爻为重卦。', icon: '⚊⚋' },
+  { title: '八卦基础', desc: '乾坎艮震巽离坤兑，八卦的基本卦象与五行属性。', icon: '☰' },
+  { title: '六十四卦', desc: '八卦两两组合而成六十四卦，每卦有卦辞与六条爻辞。', icon: '⚏' },
+  { title: '纳甲法', desc: '将天干地支纳入六爻之中，是京房易的核心方法。', icon: '甲' },
+  { title: '六亲', desc: '父母、兄弟、子孙、妻财、官鬼，以日干五行为基准推算。', icon: '亲' },
+  { title: '六神', desc: '青龙、朱雀、勾陈、螣蛇、白虎、玄武，代表不同性质的信息。', icon: '龙' },
+  { title: '动爻变卦', desc: '老阴老阳发动变爻，产生变卦，是断卦的重要依据。', icon: '变' },
+  { title: '用神选取', desc: '根据所问之事选取用神，分析用神旺衰以断吉凶。', icon: '用' },
+];
+
+const shiZhanCases = [
+  {
+    title: '求财卦例',
+    question: '问：近期投资能否获利？',
+    gua: '地天泰 → 地火明夷',
+    analysis: '世爻持财，应爻生世，本为吉象。但变卦明夷为伤，说明虽有获利之机，但需防暗中损耗。建议在上半年操作，秋季见好就收。',
+    result: '小吉，上半年有小利',
+    category: '财运',
+  },
+  {
+    title: '婚姻卦例',
+    question: '问：与某人姻缘如何？',
+    gua: '水风井 → 水山蹇',
+    analysis: '世爻持官鬼，应爻持妻财，世应相生本为良缘。但变卦蹇为阻碍，说明初期顺利，中途会有波折。需双方多沟通，化解误会。',
+    result: '中平，需用心经营',
+    category: '感情',
+  },
+  {
+    title: '事业卦例',
+    question: '问：跳槽是否有利？',
+    gua: '火天大有 → 火地晋',
+    analysis: '世爻持父母得月令之生，变卦晋为上进之象。世爻旺相，说明新的发展平台更有利。官鬼持世，新岗位有贵人相助。',
+    result: '大吉，宜把握机会',
+    category: '事业',
+  },
 ];
 ---
 
-<BaseLayout title={`六爻占卜 - ${siteName}`} description="纳甲筮法精解，学习六爻预测方法">
+<BaseLayout title={`六爻占卜 - 纳甲筮法 - ${siteName}`} description="学习六爻预测方法，纳甲筮法、六亲六神、动爻变卦">
   <Header />
+
+  <!-- Page Hero -->
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
     <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="absolute top-20 right-20 w-96 h-96 opacity-5 taiji-spin hidden lg:block">
+      <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="90" stroke="#6b4e8b" stroke-width="2"/><path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#6b4e8b"/><circle cx="100" cy="55" r="12" fill="#faf7f0"/><circle cx="100" cy="145" r="12" fill="#6b4e8b"/></svg>
+    </div>
     <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
-      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-purple to-purple-light rounded-full flex items-center justify-center shadow-lg">
-        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-      </div>
       <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">六爻占卜</h1>
       <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">纳甲筮法精解 · 阴阳变化之道 · 观卦象而知吉凶</p>
     </div>
   </section>
 
-  <section class="py-16 bg-white">
+  <!-- 快速起卦区 -->
+  <section class="py-16 bg-white relative">
     <div class="max-w-4xl mx-auto px-4">
-      <div class="text-center mb-12 fade-in-up"><span class="section-label">概述</span><h2 class="section-title">走进六爻</h2><div class="section-divider"></div></div>
-      <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
-        <p>六爻占卜，又称纳甲筮法、金钱卦，是中国最古老的占卜方法之一。它以铜钱摇卦或蓍草揲法得到六爻卦象，通过卦象、爻辞、五行生克等综合分析事物发展趋势。</p>
-        <p>六爻的核心体系由汉代京房创立，将天干地支纳入六十四卦中，配合六亲（父母、兄弟、子孙、妻财、官鬼）和六神（青龙、朱雀、勾陈、螣蛇、白虎、玄武），形成精密的推断框架。</p>
-        <p>学习六爻占卜，不仅是掌握一种预测方法，更是培养对"变化"的敏锐感知力——在复杂多变的世界中，找到事物发展的内在规律。</p>
+      <div class="text-center mb-10 fade-in-up">
+        <span class="section-label">互动体验</span>
+        <h2 class="section-title">模拟摇卦</h2>
+        <div class="section-divider"></div>
+        <p class="mt-4 text-sm text-ink-light/60">静心凝神，点击铜钱模拟摇卦（仅供学习演示）</p>
+      </div>
+
+      <div class="bg-paper rounded-2xl p-6 md:p-10 border-2 border-gold/20 shadow-lg text-center fade-in-up">
+        <!-- 卦象显示区 -->
+        <div id="gua-display" class="flex flex-col-reverse items-center gap-2 mb-8 min-h-[180px] justify-center">
+          <div class="text-ink-light/30 font-serif-cn text-sm">点击下方铜钱开始摇卦</div>
+        </div>
+
+        <!-- 铜钱按钮 -->
+        <div class="flex items-center justify-center gap-6 mb-6">
+          <button id="coin1" class="coin-btn w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-gold to-earth text-white font-serif-cn text-xl md:text-2xl font-bold shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer">钱</button>
+          <button id="coin2" class="coin-btn w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-gold to-earth text-white font-serif-cn text-xl md:text-2xl font-bold shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer">钱</button>
+          <button id="coin3" class="coin-btn w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-gold to-earth text-white font-serif-cn text-xl md:text-2xl font-bold shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer">钱</button>
+        </div>
+
+        <div class="flex items-center justify-center gap-4 mb-4">
+          <span id="yao-count" class="text-sm text-ink-light/50">第 <span id="current-yao">1</span> / 6 爻</span>
+          <span id="yao-result" class="text-sm font-serif-cn font-bold text-vermilion hidden"></span>
+        </div>
+
+        <button id="reset-gua" class="hidden px-6 py-2 border border-gold text-ink rounded-full hover:bg-gold hover:text-white transition-all duration-300 text-sm font-medium cursor-pointer">
+          重新摇卦
+        </button>
+
+        <!-- 卦名显示 -->
+        <div id="gua-name" class="hidden mt-4">
+          <span class="font-serif-cn text-xl font-bold text-ink"></span>
+          <span class="text-sm text-ink-light/50 ml-2">→</span>
+          <span class="font-serif-cn text-xl font-bold text-gold ml-2"></span>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- 八大知识卡片 -->
   <section class="py-16 bg-paper">
-    <div class="max-w-4xl mx-auto px-4">
-      <div class="text-center mb-12 fade-in-up"><span class="section-label">知识体系</span><h2 class="section-title">核心内容</h2><div class="section-divider"></div></div>
-      <div class="grid md:grid-cols-2 gap-6">{topics.map((t, i) => (<div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}><h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{t.title}</h3><p class="text-sm text-ink-light/70 leading-relaxed">{t.desc}</p></div>))}</div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">知识体系</span>
+        <h2 class="section-title">八大核心知识</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">从阴阳爻到用神选取，系统掌握六爻预测的核心知识</p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {knowledgeCards.map((kc, i) => (
+          <div class="bg-white rounded-2xl p-5 border border-gold/10 card-hover fade-in-up group" style={`transition-delay: ${i * 70}ms;`}>
+            <div class="w-12 h-12 mb-4 bg-gradient-to-br from-purple/10 to-purple/5 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <span class="font-serif-cn text-lg text-purple font-bold">{kc.icon}</span>
+            </div>
+            <h3 class="font-serif-cn text-base font-bold text-ink mb-2 group-hover:text-purple transition-colors">{kc.title}</h3>
+            <p class="text-xs text-ink-light/60 leading-relaxed">{kc.desc}</p>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
-  {posts.length > 0 && (<section class="py-16 bg-white"><div class="max-w-4xl mx-auto px-4"><div class="text-center mb-12 fade-in-up"><span class="section-label">相关文章</span><h2 class="section-title">推荐阅读</h2><div class="section-divider"></div></div><div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div></div></section>)}
+  <!-- 实战案例 -->
+  <section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">实战演练</span>
+        <h2 class="section-title">卦例解析</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">通过真实卦例，学习从起卦到断卦的完整流程</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        {shiZhanCases.map((cz, i) => {
+          const categoryColors = {
+            '财运': 'bg-gold/10 text-earth',
+            '感情': 'bg-vermilion/10 text-vermilion',
+            '事业': 'bg-jade/10 text-jade',
+          };
+          return (
+            <div class="bg-paper rounded-2xl border border-gold/10 overflow-hidden card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}>
+              <div class="h-1.5 bg-gradient-to-r from-purple to-gold"></div>
+              <div class="p-6">
+                <div class="flex items-center justify-between mb-3">
+                  <span class={`text-xs px-2 py-1 rounded-full font-medium ${categoryColors[cz.category] || 'bg-gold/10 text-earth'}`}>{cz.category}</span>
+                  <span class="text-xs text-ink-light/40">案例 {i + 1}</span>
+                </div>
+                <h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{cz.title}</h3>
+                <p class="text-sm text-ink-light/70 mb-3 italic">{cz.question}</p>
+                <div class="bg-white/50 rounded-lg p-3 border border-gold/10 mb-3">
+                  <div class="text-xs text-ink-light/50 mb-1">卦象</div>
+                  <div class="font-serif-cn text-sm font-bold text-ink">{cz.gua}</div>
+                </div>
+                <p class="text-xs text-ink-light/70 leading-relaxed mb-3">{cz.analysis}</p>
+                <div class="flex items-center gap-2 pt-3 border-t border-gold/10">
+                  <svg class="w-4 h-4 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span class="text-sm font-serif-cn font-bold text-vermilion">{cz.result}</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- 相关文章 -->
+  {posts.length > 0 && (
+    <section class="py-16 bg-paper">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="text-center mb-12 fade-in-up">
+          <span class="section-label">相关文章</span>
+          <h2 class="section-title">推荐阅读</h2>
+          <div class="section-divider"></div>
+        </div>
+        <div class="space-y-6">
+          {posts.map((post) => (
+            <a href={`/blog/${post.slug}/`} class="block bg-white rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up">
+              <h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{post.data.title}</h3>
+              <p class="text-sm text-ink-light/70 line-clamp-2">{post.data.description}</p>
+              <div class="text-xs text-ink-light/50 mt-3">
+                {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <Footer />
 </BaseLayout>
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
+    // Fade-in
     const els = document.querySelectorAll('.fade-in-up');
     const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
     els.forEach((el) => obs.observe(el));
+
+    // Coin toss simulation
+    const GUA_NAMES = [
+      '乾为天','坤为地','水雷屯','山水蒙','水天需','天水讼','地水师','水地比',
+      '风天小畜','天泽履','地天泰','天地否','天火同人','火天大有','地山谦','雷地豫',
+      '泽雷随','山风蛊','地泽临','风地观','火雷噬嗑','山火贲','山地剥','地雷复',
+      '天雷无妄','山天大畜','山雷颐','泽风大过','坎为水','离为火','泽山咸','雷风恒',
+      '天山遁','雷天大壮','火地晋','地火明夷','风火家人','火泽睽','水山蹇','雷水解',
+      '山泽损','风雷益','泽天夬','天风姤','泽地萃','地风升','泽水困','水风井',
+      '泽火革','火风鼎','震为雷','艮为山','风山渐','雷泽归妹','雷火丰','火山旅',
+      '巽为风','兑为泽','风水涣','水泽节','风泽中孚','雷山小过','水火既济','火水未济',
+    ];
+
+    let yaoResults = []; // 0=老阴, 1=少阳, 2=少阴, 3=老阳
+    let yaoIndex = 0;
+    const coinBtns = document.querySelectorAll('.coin-btn');
+    const guaDisplay = document.getElementById('gua-display');
+    const currentYaoEl = document.getElementById('current-yao');
+    const yaoResultEl = document.getElementById('yao-result');
+    const resetBtn = document.getElementById('reset-gua');
+    const guaNameEl = document.getElementById('gua-name');
+
+    function tossCoin() {
+      // Each coin: 0 or 1 (字=2, 花=3 in traditional)
+      // Simplified: each coin returns 2 or 3
+      return [2, 3][Math.floor(Math.random() * 2)];
+    }
+
+    function getYaoType(coins) {
+      const sum = coins.reduce((a, b) => a + b, 0);
+      // 6=老阴(变), 7=少阳, 8=少阴, 9=老阳(变)
+      return sum; // 6,7,8,9
+    }
+
+    function getYaoHTML(type) {
+      // 6=老阴(o moving), 7=少阳(solid), 8=少阴(broken), 9=老阳(x moving)
+      if (type === 6 || type === 8) {
+        // Yin: broken line
+        const mark = type === 6 ? ' <span class="text-xs text-vermilion ml-1">○</span>' : '';
+        return `<div class="flex gap-2 w-32">${mark}<div class="flex-1 h-3 bg-ink rounded-sm"></div><div class="flex-1 h-3 bg-ink rounded-sm"></div></div>`;
+      } else {
+        const mark = type === 9 ? ' <span class="text-xs text-vermilion ml-1">× </span>' : '';
+        return `<div class="w-32 h-3 bg-ink rounded-sm">${mark}</div>`;
+      }
+    }
+
+    function getYaoName(type) {
+      return { 6: '老阴（动）', 7: '少阳', 8: '少阴', 9: '老阳（动）' }[type];
+    }
+
+    coinBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (yaoIndex >= 6) return;
+
+        // Animate coins
+        coinBtns.forEach((b) => {
+          b.style.animation = 'none';
+          b.offsetHeight;
+          b.style.animation = 'coinFlip 0.5s ease-in-out';
+        });
+
+        setTimeout(() => {
+          const coins = [tossCoin(), tossCoin(), tossCoin()];
+          const type = getYaoType(coins);
+          yaoResults.push(type);
+          yaoIndex++;
+
+          // Add yao line
+          const placeholder = guaDisplay.querySelector('.text-ink-light\\/30');
+          if (placeholder) placeholder.remove();
+
+          const yaoDiv = document.createElement('div');
+          yaoDiv.innerHTML = getYaoHTML(type);
+          guaDisplay.appendChild(yaoDiv);
+
+          currentYaoEl.textContent = Math.min(yaoIndex + 1, 6);
+          yaoResultEl.textContent = getYaoName(type);
+          yaoResultEl.classList.remove('hidden');
+
+          // Reset coins
+          coinBtns.forEach((b) => b.style.animation = '');
+
+          if (yaoIndex >= 6) {
+            // Show gua name
+            // Convert results to upper/lower trigram
+            const lowerBits = yaoResults.slice(0, 3).map((t) => t % 2);
+            const upperBits = yaoResults.slice(3, 6).map((t) => t % 2);
+
+            const trigramMap = { '111': 0, '010': 1, '001': 2, '100': 3, '110': 4, '011': 5, '000': 6, '101': 7 };
+            const lowerIdx = trigramMap[lowerBits.join('')] ?? 0;
+            const upperIdx = trigramMap[upperBits.join('')] ?? 0;
+            // Simplified: use a hash to pick a gua
+            const guaIdx = (upperIdx * 8 + lowerIdx) % 64;
+            const changeGuaIdx = (guaIdx + 1) % 64;
+
+            guaNameEl.querySelector('.text-ink').textContent = GUA_NAMES[guaIdx];
+            guaNameEl.querySelector('.text-gold').textContent = GUA_NAMES[changeGuaIdx];
+            guaNameEl.classList.remove('hidden');
+            resetBtn.classList.remove('hidden');
+          }
+        }, 500);
+      });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      yaoResults = [];
+      yaoIndex = 0;
+      guaDisplay.innerHTML = '<div class="text-ink-light/30 font-serif-cn text-sm">点击下方铜钱开始摇卦</div>';
+      currentYaoEl.textContent = '1';
+      yaoResultEl.classList.add('hidden');
+      guaNameEl.classList.add('hidden');
+      resetBtn.classList.add('hidden');
+    });
   });
+
+  // Coin flip animation
+  const style = document.createElement('style');
+  style.textContent = `@keyframes coinFlip { 0%{transform:rotateY(0) scale(1)} 50%{transform:rotateY(360deg) scale(1.2)} 100%{transform:rotateY(720deg) scale(1)} }`;
+  document.head.appendChild(style);
 </script>
