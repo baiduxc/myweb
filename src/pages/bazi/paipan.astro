@@ -5,33 +5,51 @@ import Footer from '@components/Footer.astro';
 import { siteName } from '@data/site';
 ---
 
-<BaseLayout title={`八字排盘 - ${siteName}`} description="在线四柱八字排盘工具">
+<BaseLayout title={`八字排盘 - 在线四柱八字命盘计算器 - ${siteName}`} description="免费在线八字排盘，输入出生年月日时即可生成四柱命盘，包含五行分析、十神配置、大运流年等详细信息。">
   <Header />
 
+  <!-- Page Hero -->
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
     <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="absolute top-20 right-20 w-96 h-96 opacity-5 taiji-spin hidden lg:block">
+      <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="90" stroke="#1a1a1a" stroke-width="2"/><path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#1a1a1a"/><circle cx="100" cy="55" r="12" fill="#faf7f0"/><circle cx="100" cy="145" r="12" fill="#1a1a1a"/></svg>
+    </div>
     <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
-      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-vermilion to-vermilion-light rounded-full flex items-center justify-center shadow-lg">
-        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      </div>
       <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">八字排盘</h1>
       <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">输入出生年月日时，排出四柱命盘</p>
     </div>
   </section>
 
-  <section class="py-16 bg-white">
-    <div class="max-w-4xl mx-auto px-4">
-      <!-- Input Form -->
-      <div class="bg-paper rounded-2xl p-8 border border-gold/10 max-w-xl mx-auto mb-10 shadow-sm">
-        <form id="bazi-form" class="space-y-5">
-          <div class="grid grid-cols-2 gap-4">
+  <section class="py-12 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <!-- Input Form: Two Columns -->
+      <div class="grid md:grid-cols-5 gap-6 mb-12">
+        <!-- Left: Form -->
+        <div class="md:col-span-3 bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-lg font-bold text-ink mb-6">输入出生信息</h3>
+          <form id="bazi-form" class="space-y-5">
+            <!-- Date + Calendar -->
             <div>
-              <label for="birth-date" class="block text-sm font-serif-cn text-ink mb-1">出生日期</label>
-              <input type="date" id="birth-date" required
-                class="w-full px-4 py-3 border border-gold/30 rounded-xl bg-white font-sans-cn text-ink focus:border-vermilion focus:outline-none focus:ring-1 focus:ring-vermilion/30" />
+              <label class="block text-sm font-serif-cn text-ink mb-2">出生日期</label>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <input type="date" id="birth-date" required
+                  class="flex-1 px-4 py-3 border border-gold/30 rounded-xl bg-white font-sans-cn text-ink focus:border-vermilion focus:outline-none focus:ring-1 focus:ring-vermilion/30" />
+                <div class="flex items-center gap-3 shrink-0">
+                  <label class="flex items-center gap-1.5 text-sm font-serif-cn text-ink-light cursor-pointer">
+                    <input type="radio" name="calendar" value="solar" checked class="text-vermilion focus:ring-vermilion" />
+                    公历
+                  </label>
+                  <label class="flex items-center gap-1.5 text-sm font-serif-cn text-ink-light cursor-pointer">
+                    <input type="radio" name="calendar" value="lunar" class="text-vermilion focus:ring-vermilion" />
+                    农历
+                  </label>
+                </div>
+              </div>
             </div>
+
+            <!-- Time -->
             <div>
-              <label for="birth-time" class="block text-sm font-serif-cn text-ink mb-1">出生时辰</label>
+              <label for="birth-time" class="block text-sm font-serif-cn text-ink mb-2">出生时辰</label>
               <select id="birth-time" required
                 class="w-full px-4 py-3 border border-gold/30 rounded-xl bg-white font-sans-cn text-ink focus:border-vermilion focus:outline-none focus:ring-1 focus:ring-vermilion/30">
                 <option value="">请选择时辰</option>
@@ -49,83 +67,254 @@ import { siteName } from '@data/site';
                 <option value="21">亥时 (21:00-23:00)</option>
               </select>
             </div>
+
+            <!-- Gender -->
+            <div>
+              <label class="block text-sm font-serif-cn text-ink mb-2">性别</label>
+              <div class="flex items-center gap-6">
+                <label class="flex items-center gap-2 text-sm font-serif-cn text-ink cursor-pointer">
+                  <input type="radio" name="gender" value="male" checked class="text-vermilion focus:ring-vermilion" />
+                  男
+                </label>
+                <label class="flex items-center gap-2 text-sm font-serif-cn text-ink cursor-pointer">
+                  <input type="radio" name="gender" value="female" class="text-vermilion focus:ring-vermilion" />
+                  女
+                </label>
+              </div>
+            </div>
+
+            <!-- Name (optional) -->
+            <div>
+              <label for="user-name" class="block text-sm font-serif-cn text-ink mb-2">姓名（选填）</label>
+              <input type="text" id="user-name" placeholder="请输入姓名"
+                class="w-full px-4 py-3 border border-gold/30 rounded-xl bg-white font-sans-cn text-ink placeholder-ink-light/40 focus:border-vermilion focus:outline-none focus:ring-1 focus:ring-vermilion/30" />
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" id="paipan-btn"
+              class="w-full px-6 py-3.5 bg-vermilion text-white rounded-xl hover:bg-vermilion-light transition-all duration-300 font-serif-cn text-base tracking-wider flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+              <svg id="loading-spinner" class="hidden w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4" stroke-dashoffset="10" />
+              </svg>
+              <span id="btn-text">开始排盘</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Right: Instructions -->
+        <div class="md:col-span-2 bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-lg font-bold text-ink mb-6">排盘须知</h3>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="text-sm text-ink-light/80 leading-relaxed">请输入准确的出生时间（年月日时），精确到时辰</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="text-sm text-ink-light/80 leading-relaxed">时辰影响日柱和时柱的推算，请尽量准确</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="text-sm text-ink-light/80 leading-relaxed">农历日期会自动转换为公历计算</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="text-sm text-ink-light/80 leading-relaxed">排盘结果仅供参考学习，切勿迷信盲从</span>
+            </li>
+          </ul>
+          <div class="mt-6 p-4 bg-gold/5 rounded-xl border border-gold/10">
+            <p class="text-xs text-ink-light/60 leading-relaxed">
+              <strong class="font-serif-cn text-ink">提示：</strong>
+              四柱八字是以出生时刻的天干地支为基础的命理体系。
+              年柱以立春为界，月柱以节气为界，日柱查万年历，时柱根据日干推算。
+            </p>
           </div>
-          <div class="flex items-center gap-3">
-            <label class="flex items-center gap-2 text-sm font-serif-cn text-ink-light cursor-pointer">
-              <input type="radio" name="calendar" value="solar" checked class="text-vermilion focus:ring-vermilion" />
-              公历
-            </label>
-            <label class="flex items-center gap-2 text-sm font-serif-cn text-ink-light cursor-pointer">
-              <input type="radio" name="calendar" value="lunar" class="text-vermilion focus:ring-vermilion" />
-              农历
-            </label>
-          </div>
-          <button type="submit" class="w-full px-6 py-3 bg-vermilion text-white rounded-xl hover:bg-vermilion-light transition-all duration-300 font-serif-cn tracking-wider">
-            开始排盘
-          </button>
-        </form>
+        </div>
       </div>
 
-      <!-- Result -->
+      <!-- ===== Result Area ===== -->
       <div id="bazi-result" class="hidden space-y-8">
-        <!-- 四柱命盘 -->
-        <div class="bg-paper rounded-2xl p-8 border border-gold/10 shadow-sm">
-          <h3 class="font-serif-cn text-xl text-ink text-center mb-8 tracking-widest">四 柱 命 盘</h3>
-          <div class="grid grid-cols-4 gap-4 text-center max-w-lg mx-auto">
-            <div class="font-serif-cn text-sm text-ink-light">年柱</div>
-            <div class="font-serif-cn text-sm text-ink-light">月柱</div>
-            <div class="font-serif-cn text-sm text-ink-light">日柱</div>
-            <div class="font-serif-cn text-sm text-ink-light">时柱</div>
 
-            <div id="year-gan" class="text-3xl font-serif-cn text-ink py-2"></div>
-            <div id="month-gan" class="text-3xl font-serif-cn text-ink py-2"></div>
-            <div id="day-gan" class="text-3xl font-serif-cn text-vermilion py-2"></div>
-            <div id="hour-gan" class="text-3xl font-serif-cn text-ink py-2"></div>
-
-            <div id="year-zhi" class="text-3xl font-serif-cn text-ink py-2"></div>
-            <div id="month-zhi" class="text-3xl font-serif-cn text-ink py-2"></div>
-            <div id="day-zhi" class="text-3xl font-serif-cn text-vermilion py-2"></div>
-            <div id="hour-zhi" class="text-3xl font-serif-cn text-ink py-2"></div>
-
-            <div id="year-wuxing" class="text-xs text-ink-light/60"></div>
-            <div id="month-wuxing" class="text-xs text-ink-light/60"></div>
-            <div id="day-wuxing" class="text-xs text-ink-light/60"></div>
-            <div id="hour-wuxing" class="text-xs text-ink-light/60"></div>
+        <!-- 命主信息 -->
+        <div class="bg-paper rounded-2xl p-6 border border-gold/10 shadow-sm">
+          <div class="flex flex-wrap items-center gap-x-8 gap-y-3">
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">姓名：</span>
+              <span id="info-name" class="font-serif-cn text-ink font-bold">—</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">性别：</span>
+              <span id="info-gender" class="text-ink">—</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">出生：</span>
+              <span id="info-birth" class="text-ink">—</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">日主：</span>
+              <span id="info-daymaster" class="font-serif-cn text-lg font-bold text-gold">—</span>
+            </div>
           </div>
+        </div>
 
-          <div class="w-24 h-1 bg-gradient-to-r from-vermilion to-gold mx-auto my-6"></div>
+        <!-- 四柱八字（核心区域） -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border-2 border-gold/30 shadow-lg relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-vermilion via-gold to-vermilion"></div>
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-8 tracking-widest">四 柱 八 字</h3>
 
-          <!-- 十神 -->
-          <div class="grid grid-cols-4 gap-4 text-center max-w-lg mx-auto mb-4">
-            <div id="year-shishen" class="text-sm text-gold font-serif-cn"></div>
-            <div id="month-shishen" class="text-sm text-gold font-serif-cn"></div>
-            <div class="text-sm text-ink-light/60 font-serif-cn">日主</div>
-            <div id="hour-shishen" class="text-sm text-gold font-serif-cn"></div>
+          <!-- Main pillars table -->
+          <div class="max-w-2xl mx-auto">
+            <div class="grid grid-cols-4 gap-3 md:gap-4 text-center">
+              <!-- Headers -->
+              <div class="font-serif-cn text-sm text-ink-light/70">年柱</div>
+              <div class="font-serif-cn text-sm text-ink-light/70">月柱</div>
+              <div class="font-serif-cn text-sm text-ink-light/70">日柱</div>
+              <div class="font-serif-cn text-sm text-ink-light/70">时柱</div>
+
+              <!-- Heavenly Stems -->
+              <div id="year-gan" class="bazi-gan text-3xl md:text-4xl font-serif-cn py-3 rounded-xl bg-white/50 border border-gold/10"></div>
+              <div id="month-gan" class="bazi-gan text-3xl md:text-4xl font-serif-cn py-3 rounded-xl bg-white/50 border border-gold/10"></div>
+              <div id="day-gan" class="bazi-gan text-3xl md:text-4xl font-serif-cn py-3 rounded-xl bg-vermilion/5 border-2 border-vermilion/40 relative">
+                <span class="absolute -top-2 -right-2 text-[10px] text-vermilion bg-vermilion/10 px-1.5 py-0.5 rounded-full font-sans-cn">日主</span>
+              </div>
+              <div id="hour-gan" class="bazi-gan text-3xl md:text-4xl font-serif-cn py-3 rounded-xl bg-white/50 border border-gold/10"></div>
+
+              <!-- Earthly Branches -->
+              <div id="year-zhi" class="bazi-zhi text-3xl md:text-4xl font-serif-cn py-3 rounded-xl bg-white/50 border border-gold/10"></div>
+              <div id="month-zhi" class="bazi-zhi text-3xl md:text-4xl font-serif-cn py-3 rounded-xl bg-white/50 border border-gold/10"></div>
+              <div id="day-zhi" class="bazi-zhi text-3xl md:text-4xl font-serif-cn py-3 rounded-xl bg-vermilion/5 border-2 border-vermilion/40"></div>
+              <div id="hour-zhi" class="bazi-zhi text-3xl md:text-4xl font-serif-cn py-3 rounded-xl bg-white/50 border border-gold/10"></div>
+
+              <!-- Wu Xing labels -->
+              <div id="year-wuxing-label" class="text-xs text-ink-light/50 font-sans-cn"></div>
+              <div id="month-wuxing-label" class="text-xs text-ink-light/50 font-sans-cn"></div>
+              <div id="day-wuxing-label" class="text-xs text-ink-light/50 font-sans-cn"></div>
+              <div id="hour-wuxing-label" class="text-xs text-ink-light/50 font-sans-cn"></div>
+            </div>
+
+            <!-- Shi Shen + Cang Gan -->
+            <div class="mt-6 pt-6 border-t border-gold/15">
+              <div class="grid grid-cols-4 gap-3 md:gap-4 text-center mb-4">
+                <div class="text-xs text-gold/70 font-serif-cn">十神</div>
+                <div class="text-xs text-gold/70 font-serif-cn">十神</div>
+                <div class="text-xs text-ink-light/40 font-serif-cn">—</div>
+                <div class="text-xs text-gold/70 font-serif-cn">十神</div>
+
+                <div id="year-shishen" class="text-sm font-serif-cn py-1 text-gold"></div>
+                <div id="month-shishen" class="text-sm font-serif-cn py-1 text-gold"></div>
+                <div class="text-sm text-ink-light/40 font-serif-cn">日主</div>
+                <div id="hour-shishen" class="text-sm font-serif-cn py-1 text-gold"></div>
+              </div>
+
+              <div class="grid grid-cols-4 gap-3 md:gap-4 text-center pt-4 border-t border-gold/10">
+                <div class="text-xs text-ink-light/50 font-serif-cn">藏干</div>
+                <div class="text-xs text-ink-light/50 font-serif-cn">藏干</div>
+                <div class="text-xs text-ink-light/50 font-serif-cn">藏干</div>
+                <div class="text-xs text-ink-light/50 font-serif-cn">藏干</div>
+
+                <div id="year-canggan" class="text-xs font-serif-cn py-1 text-ink-light"></div>
+                <div id="month-canggan" class="text-xs font-serif-cn py-1 text-ink-light"></div>
+                <div id="day-canggan" class="text-xs font-serif-cn py-1 text-ink-light"></div>
+                <div id="hour-canggan" class="text-xs font-serif-cn py-1 text-ink-light"></div>
+              </div>
+            </div>
           </div>
 
           <!-- 纳音 -->
-          <div class="text-center text-sm text-ink-light/60">
-            <span>纳音：</span>
-            <span id="nayin-year"></span> · <span id="nayin-month"></span> · <span id="nayin-day"></span> · <span id="nayin-hour"></span>
+          <div class="mt-6 pt-4 border-t border-gold/15 text-center text-sm text-ink-light/60">
+            <span class="font-serif-cn text-ink-light/80">纳音：</span>
+            <span id="nayin-year" class="mx-1"></span> ·
+            <span id="nayin-month" class="mx-1"></span> ·
+            <span id="nayin-day" class="mx-1"></span> ·
+            <span id="nayin-hour" class="mx-1"></span>
           </div>
         </div>
 
-        <!-- 五行统计 -->
-        <div class="bg-paper rounded-2xl p-8 border border-gold/10 shadow-sm">
-          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">五行统计</h3>
-          <div id="wuxing-stats" class="flex items-center justify-center gap-8"></div>
+        <!-- 五行分析 -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">五行分析</h3>
+          <div class="max-w-2xl mx-auto">
+            <!-- Count display -->
+            <div id="wuxing-counts" class="flex items-center justify-center gap-4 md:gap-8 mb-6"></div>
+
+            <!-- Progress bars -->
+            <div id="wuxing-bars" class="space-y-3 mb-4"></div>
+
+            <!-- Missing & strongest -->
+            <div class="flex flex-wrap gap-4 justify-center mt-4 pt-4 border-t border-gold/10">
+              <div id="wuxing-missing" class="text-sm"></div>
+              <div id="wuxing-strongest" class="text-sm"></div>
+            </div>
+          </div>
         </div>
 
-        <!-- 藏干 -->
-        <div class="bg-paper rounded-2xl p-8 border border-gold/10 shadow-sm">
-          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">地支藏干</h3>
-          <div id="canggan-grid" class="grid grid-cols-4 gap-4 text-center max-w-lg mx-auto"></div>
+        <!-- 十神分析 -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">十神分析</h3>
+          <div class="max-w-2xl mx-auto">
+            <div id="shishen-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+          </div>
         </div>
 
-        <!-- AI Analysis -->
-        <div class="bg-paper rounded-2xl p-8 border border-gold/10 shadow-sm">
+        <!-- 大运流年 -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">大运流年</h3>
+          <div class="max-w-3xl mx-auto">
+            <div id="dayun-timeline" class="flex gap-2 md:gap-3 overflow-x-auto pb-2"></div>
+            <div class="mt-4 flex flex-wrap gap-4 justify-center">
+              <div id="current-dayun" class="text-sm"></div>
+              <div id="current-year" class="text-sm"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 纳音五行 -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">纳音五行</h3>
+          <div class="max-w-2xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div class="bg-white/50 rounded-xl p-4 border border-gold/10">
+              <div class="text-xs text-ink-light/50 mb-1">年柱纳音</div>
+              <div id="nayin-year-card" class="font-serif-cn text-lg text-ink"></div>
+            </div>
+            <div class="bg-white/50 rounded-xl p-4 border border-gold/10">
+              <div class="text-xs text-ink-light/50 mb-1">月柱纳音</div>
+              <div id="nayin-month-card" class="font-serif-cn text-lg text-ink"></div>
+            </div>
+            <div class="bg-white/50 rounded-xl p-4 border border-gold/10">
+              <div class="text-xs text-ink-light/50 mb-1">日柱纳音</div>
+              <div id="nayin-day-card" class="font-serif-cn text-lg text-ink"></div>
+            </div>
+            <div class="bg-white/50 rounded-xl p-4 border border-gold/10">
+              <div class="text-xs text-ink-light/50 mb-1">时柱纳音</div>
+              <div id="nayin-hour-card" class="font-serif-cn text-lg text-ink"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI 命理简析 -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
           <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">AI 命理简析</h3>
-          <div id="ai-analysis" class="font-sans-cn text-ink-light/80 leading-loose text-sm"></div>
+          <div id="ai-analysis" class="max-w-2xl mx-auto font-sans-cn text-ink-light/80 leading-loose text-sm"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-4 pb-8">
+          <button id="btn-save" class="px-6 py-3 bg-vermilion text-white rounded-xl hover:bg-vermilion-light transition-all duration-300 font-serif-cn text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            保存命盘
+          </button>
+          <button id="btn-share" class="px-6 py-3 bg-white text-ink border border-gold rounded-xl hover:bg-gold hover:text-white transition-all duration-300 font-serif-cn text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            分享命盘
+          </button>
+          <button class="px-6 py-3 bg-white text-ink border border-gold rounded-xl hover:bg-gold hover:text-white transition-all duration-300 font-serif-cn text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            详细解读
+          </button>
+          <button id="btn-reset" class="px-6 py-3 bg-ink text-white rounded-xl hover:bg-ink-light transition-all duration-300 font-serif-cn text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            重新排盘
+          </button>
         </div>
       </div>
     </div>
@@ -134,124 +323,322 @@ import { siteName } from '@data/site';
   <Footer />
 </BaseLayout>
 
-<script>
-import { tianGan, diZhi, ganWuxing, zhiWuxing, ganYinYang, cangGan, shiShenMap, naYin, getShiChenName } from '../../utils/bazi';
+<script is:inline>
+// ===== Bazi Calculation Engine =====
+const TIAN_GAN = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const DI_ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const GAN_WUXING = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'};
+const ZHI_WUXING = {'寅':'木','卯':'木','巳':'火','午':'火','辰':'土','戌':'土','丑':'土','未':'土','申':'金','酉':'金','子':'水','亥':'水'};
+const GAN_YINYANG = {'甲':'阳','乙':'阴','丙':'阳','丁':'阴','戊':'阳','己':'阴','庚':'阳','辛':'阴','壬':'阳','癸':'阴'};
+const CANG_GAN = {
+  '子':['癸'],'丑':['己','癸','辛'],'寅':['甲','丙','戊'],'卯':['乙'],
+  '辰':['戊','乙','癸'],'巳':['丙','庚','戊'],'午':['丁','己'],'未':['己','丁','乙'],
+  '申':['庚','壬','戊'],'酉':['辛'],'戌':['戊','辛','丁'],'亥':['壬','甲']
+};
+const SHI_SHEN = {
+  '甲':{'甲':'比肩','乙':'劫财','丙':'食神','丁':'伤官','戊':'偏财','己':'正财','庚':'七杀','辛':'正官','壬':'偏印','癸':'正印'},
+  '乙':{'甲':'劫财','乙':'比肩','丙':'伤官','丁':'食神','戊':'正财','己':'偏财','庚':'正官','辛':'七杀','壬':'正印','癸':'偏印'},
+  '丙':{'甲':'偏印','乙':'正印','丙':'比肩','丁':'劫财','戊':'食神','己':'伤官','庚':'偏财','辛':'正财','壬':'七杀','癸':'正官'},
+  '丁':{'甲':'正印','乙':'偏印','丙':'劫财','丁':'比肩','戊':'伤官','己':'食神','庚':'正财','辛':'偏财','壬':'正官','癸':'七杀'},
+  '戊':{'甲':'七杀','乙':'正官','丙':'偏印','丁':'正印','戊':'比肩','己':'劫财','庚':'食神','辛':'伤官','壬':'偏财','癸':'正财'},
+  '己':{'甲':'正官','乙':'七杀','丙':'正印','丁':'偏印','戊':'劫财','己':'比肩','庚':'伤官','辛':'食神','壬':'正财','癸':'偏财'},
+  '庚':{'甲':'偏财','乙':'正财','丙':'七杀','丁':'正官','戊':'偏印','己':'正印','庚':'比肩','辛':'劫财','壬':'食神','癸':'伤官'},
+  '辛':{'甲':'正财','乙':'偏财','丙':'正官','丁':'七杀','戊':'正印','己':'偏印','庚':'劫财','辛':'比肩','壬':'伤官','癸':'食神'},
+  '壬':{'甲':'食神','乙':'伤官','丙':'偏财','丁':'正财','戊':'七杀','己':'正官','庚':'偏印','辛':'正印','壬':'比肩','癸':'劫财'},
+  '癸':{'甲':'伤官','乙':'食神','丙':'正财','丁':'偏财','戊':'正官','己':'七杀','庚':'正印','辛':'偏印','壬':'劫财','癸':'比肩'}
+};
+const NA_YIN = {
+  '甲子':'海中金','乙丑':'海中金','丙寅':'炉中火','丁卯':'炉中火','戊辰':'大林木','己巳':'大林木',
+  '庚午':'路旁土','辛未':'路旁土','壬申':'剑锋金','癸酉':'剑锋金','甲戌':'山头火','乙亥':'山头火',
+  '丙子':'涧下水','丁丑':'涧下水','戊寅':'城头土','己卯':'城头土','庚辰':'白蜡金','辛巳':'白蜡金',
+  '壬午':'杨柳木','癸未':'杨柳木','甲申':'泉中水','乙酉':'泉中水','丙戌':'屋上土','丁亥':'屋上土',
+  '戊子':'霹雳火','己丑':'霹雳火','庚寅':'松柏木','辛卯':'松柏木','壬辰':'长流水','癸巳':'长流水',
+  '甲午':'砂中金','乙未':'砂中金','丙申':'山下火','丁酉':'山下火','戊戌':'平地木','己亥':'平地木',
+  '庚子':'壁上土','辛丑':'壁上土','壬寅':'金箔金','癸卯':'金箔金','甲辰':'覆灯火','乙巳':'覆灯火',
+  '丙午':'天河水','丁未':'天河水','戊申':'大驿土','己酉':'大驿土','庚戌':'钗钏金','辛亥':'钗钏金',
+  '壬子':'桑柘木','癸丑':'桑柘木','甲寅':'大溪水','乙卯':'大溪水','丙辰':'沙中土','丁巳':'沙中土',
+  '戊午':'天上火','己未':'天上火','庚申':'石榴木','辛酉':'石榴木','壬戌':'大海水','癸亥':'大海水'
+};
 
-function getYearGanZhi(year: number): [string, string] {
-  return [tianGan[(year - 4) % 10], diZhi[(year - 4) % 12]];
+const WUXING_COLORS = {'木':'#4a7c59','火':'#c41e3a','土':'#8b6914','金':'#c5a456','水':'#2c5f6e'};
+const WUXING_NAMES_CN = ['木','火','土','金','水'];
+const SHI_SHEN_LIST = ['比肩','劫财','食神','伤官','正财','偏财','正官','七杀','正印','偏印'];
+
+// Calculation functions
+function getYearGZ(year) { return [TIAN_GAN[(year-4)%10], DI_ZHI[(year-4)%12]]; }
+function getMonthGZ(year, month) {
+  const yg = (year-4)%10;
+  const base = {0:2,5:2,1:4,6:4,2:6,7:6,3:8,8:8,4:0,9:0}[yg] ?? 2;
+  return [TIAN_GAN[(base+month-1)%10], ['寅','卯','辰','巳','午','未','申','酉','戌','亥','子','丑'][month-1]];
+}
+function getDayGZ(year, month, day) {
+  const base = new Date(1900, 0, 31);
+  const target = new Date(year, month-1, day);
+  const diff = Math.floor((target-base)/(1000*60*60*24));
+  return [TIAN_GAN[((diff)%10+10)%10], DI_ZHI[((10+diff)%12+12)%12]];
+}
+function getHourGZ(dayGan, hour) {
+  const dg = TIAN_GAN.indexOf(dayGan);
+  const base = {0:0,5:0,1:2,6:2,2:4,7:4,3:6,8:6,4:8,9:8}[dg] ?? 0;
+  let zi = (hour>=23||hour<1) ? 0 : Math.floor((hour+1)/2);
+  return [TIAN_GAN[(base+zi)%10], DI_ZHI[zi]];
+}
+function getShiShen(dayGan, gan) { return SHI_SHEN[dayGan]?.[gan] || ''; }
+function getWuxingColor(wx) { return WUXING_COLORS[wx] || '#3D3D3D'; }
+function getWuxingTag(wx) {
+  const c = getWuxingColor(wx);
+  return `<span style="color:${c}" class="font-serif-cn">${wx}</span>`;
 }
 
-function getMonthGan(year: number, month: number): string {
-  const yearGanIndex = (year - 4) % 10;
-  const startGan: Record<number, number> = { 0: 2, 5: 2, 1: 4, 6: 4, 2: 6, 7: 6, 3: 8, 8: 8, 4: 0, 9: 0 };
-  return tianGan[((startGan[yearGanIndex] ?? 2) + month - 1) % 10];
+function calcDayun(yearGan, monthGan, monthZhi, gender, birthYear) {
+  const yg = TIAN_GAN.indexOf(yearGan);
+  const isYangYear = yg % 2 === 0;
+  const isMale = gender === 'male';
+  const forward = (isYangYear && isMale) || (!isYangYear && !isMale);
+
+  const mgi = TIAN_GAN.indexOf(monthGan);
+  const mzi = DI_ZHI.indexOf(monthZhi);
+
+  const dayun = [];
+  let startAge = 3; // simplified: always start at age 3
+  for (let i = 0; i < 8; i++) {
+    let gi, zi;
+    if (forward) {
+      gi = (mgi + 1 + i) % 10;
+      zi = (mzi + 1 + i) % 12;
+    } else {
+      gi = (mgi - 1 - i + 10) % 10;
+      zi = (mzi - 1 - i + 12) % 12;
+    }
+    const age = startAge + i * 10;
+    dayun.push({
+      gan: TIAN_GAN[gi],
+      zhi: DI_ZHI[zi],
+      age: age,
+      endAge: age + 9
+    });
+  }
+  return dayun;
 }
 
-function getMonthZhi(month: number): string {
-  return ['寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑'][month - 1] || '寅';
+function getCurrentDayunIndex(dayun, currentYear, birthYear) {
+  const age = currentYear - birthYear;
+  for (let i = 0; i < dayun.length; i++) {
+    if (age >= dayun[i].age && age <= dayun[i].endAge) return i;
+  }
+  return dayun.length - 1;
 }
 
-function getDayGanZhi(year: number, month: number, day: number): [string, string] {
-  const baseDate = new Date(1900, 0, 31);
-  const targetDate = new Date(year, month - 1, day);
-  const diffDays = Math.floor((targetDate.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
-  return [tianGan[((diffDays) % 10 + 10) % 10], diZhi[((10 + diffDays) % 12 + 12) % 12]];
-}
+// Main handler
+const form = document.getElementById('bazi-form');
+const btn = document.getElementById('paipan-btn');
+const spinner = document.getElementById('loading-spinner');
+const btnText = document.getElementById('btn-text');
+const resultDiv = document.getElementById('bazi-result');
+const resetBtn = document.getElementById('btn-reset');
 
-function getHourGan(dayGan: string, hour: number): string {
-  const dayGanIndex = tianGan.indexOf(dayGan);
-  const startGan: Record<number, number> = { 0: 0, 5: 0, 1: 2, 6: 2, 2: 4, 7: 4, 3: 6, 8: 6, 4: 8, 9: 8 };
-  let hourZhiIndex = 0;
-  if (hour >= 23 || hour < 1) hourZhiIndex = 0;
-  else hourZhiIndex = Math.floor((hour + 1) / 2);
-  return tianGan[((startGan[dayGanIndex] ?? 0) + hourZhiIndex) % 10];
-}
-
-function getHourZhi(hour: number): string {
-  if (hour >= 23 || hour < 1) return '子';
-  return ['', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'][Math.floor((hour + 1) / 2)] || '子';
-}
-
-function getShiShen(dayGan: string, targetGan: string): string {
-  return shiShenMap[dayGan]?.[targetGan] || '';
-}
-
-const form = document.getElementById('bazi-form') as HTMLFormElement;
-form?.addEventListener('submit', (e) => {
+form?.addEventListener('submit', function(e) {
   e.preventDefault();
-  const dateInput = (document.getElementById('birth-date') as HTMLInputElement).value;
-  const hourInput = (document.getElementById('birth-time') as HTMLSelectElement).value;
-  if (!dateInput || !hourInput) return;
 
-  const [year, month, day] = dateInput.split('-').map(Number);
-  const hour = parseInt(hourInput);
+  const dateInput = document.getElementById('birth-date').value;
+  const hourInput = document.getElementById('birth-time').value;
+  const genderInput = document.querySelector('input[name="gender"]:checked')?.value || 'male';
+  const nameInput = document.getElementById('user-name').value || '命主';
 
-  const [yearGan, yearZhi] = getYearGanZhi(year);
-  const monthGan = getMonthGan(year, month);
-  const monthZhi = getMonthZhi(month);
-  const [dayGan, dayZhi] = getDayGanZhi(year, month, day);
-  const hourGan = getHourGan(dayGan, hour);
-  const hourZhi = getHourZhi(hour);
+  if (!dateInput || !hourInput) {
+    alert('请填写完整的出生信息');
+    return;
+  }
 
-  const allGans = [yearGan, monthGan, dayGan, hourGan];
-  const allZhis = [yearZhi, monthZhi, dayZhi, hourZhi];
+  // Loading state
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+  btnText.textContent = '排盘中...';
 
-  document.getElementById('year-gan')!.textContent = yearGan;
-  document.getElementById('month-gan')!.textContent = monthGan;
-  document.getElementById('day-gan')!.textContent = dayGan;
-  document.getElementById('hour-gan')!.textContent = hourGan;
-  document.getElementById('year-zhi')!.textContent = yearZhi;
-  document.getElementById('month-zhi')!.textContent = monthZhi;
-  document.getElementById('day-zhi')!.textContent = dayZhi;
-  document.getElementById('hour-zhi')!.textContent = hourZhi;
+  setTimeout(() => {
+    const [year, month, day] = dateInput.split('-').map(Number);
+    const hour = parseInt(hourInput);
 
-  document.getElementById('year-wuxing')!.textContent = `${ganWuxing[yearGan]}${zhiWuxing[yearZhi]}`;
-  document.getElementById('month-wuxing')!.textContent = `${ganWuxing[monthGan]}${zhiWuxing[monthZhi]}`;
-  document.getElementById('day-wuxing')!.textContent = `${ganWuxing[dayGan]}${zhiWuxing[dayZhi]}`;
-  document.getElementById('hour-wuxing')!.textContent = `${ganWuxing[hourGan]}${zhiWuxing[hourZhi]}`;
+    const [yearGan, yearZhi] = getYearGZ(year);
+    const [monthGan, monthZhi] = getMonthGZ(year, month);
+    const [dayGan, dayZhi] = getDayGZ(year, month, day);
+    const [hourGan, hourZhi] = getHourGZ(dayGan, hour);
 
-  document.getElementById('year-shishen')!.textContent = getShiShen(dayGan, yearGan);
-  document.getElementById('month-shishen')!.textContent = getShiShen(dayGan, monthGan);
-  document.getElementById('hour-shishen')!.textContent = getShiShen(dayGan, hourGan);
+    const allGans = [yearGan, monthGan, dayGan, hourGan];
+    const allZhis = [yearZhi, monthZhi, dayZhi, hourZhi];
 
-  document.getElementById('nayin-year')!.textContent = naYin[yearGan + yearZhi] || '';
-  document.getElementById('nayin-month')!.textContent = naYin[monthGan + monthZhi] || '';
-  document.getElementById('nayin-day')!.textContent = naYin[dayGan + dayZhi] || '';
-  document.getElementById('nayin-hour')!.textContent = naYin[hourGan + hourZhi] || '';
+    // 命主信息
+    const genderText = genderInput === 'male' ? '男' : '女';
+    const shichenText = DI_ZHI[(hour>=23||hour<1)?0:Math.floor((hour+1)/2)] + '时';
+    document.getElementById('info-name').textContent = nameInput;
+    document.getElementById('info-gender').textContent = genderText;
+    document.getElementById('info-birth').textContent = `${year}年${month}月${day}日 ${shichenText}`;
+    document.getElementById('info-daymaster').textContent = `${dayGan}${dayZhi} (${GAN_WUXING[dayGan]}${GAN_YINYANG[dayGan]})`;
 
-  const stats: Record<string, number> = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 };
-  allGans.forEach(g => stats[ganWuxing[g]]++);
-  allZhis.forEach(z => stats[zhiWuxing[z]]++);
+    // 四柱 - 天干（带五行颜色）
+    ['year','month','day','hour'].forEach((prefix, i) => {
+      const gan = allGans[i];
+      const zhi = allZhis[i];
+      const ganEl = document.getElementById(`${prefix}-gan`);
+      const zhiEl = document.getElementById(`${prefix}-zhi`);
+      ganEl.innerHTML = `<span style="color:${getWuxingColor(GAN_WUXING[gan])}">${gan}</span>`;
+      zhiEl.innerHTML = `<span style="color:${getWuxingColor(ZHI_WUXING[zhi])}">${zhi}</span>`;
+      document.getElementById(`${prefix}-wuxing-label`).innerHTML = `${getWuxingTag(GAN_WUXING[gan])}${getWuxingTag(ZHI_WUXING[zhi])}`;
+    });
 
-  const colors: Record<string, string> = { '木': '#4a7c59', '火': '#c41e3a', '土': '#8b6914', '金': '#c5a456', '水': '#2c5f6e' };
-  document.getElementById('wuxing-stats')!.innerHTML = Object.entries(stats).map(([w, c]) => {
-    const bars = Array(c).fill('■').join('');
-    return `<div class="text-center"><div style="color:${colors[w]}" class="text-2xl font-serif-cn">${w}</div><div class="text-gold text-sm mt-1">${bars || '—'}</div><div class="text-xs text-ink-light/50">${c}</div></div>`;
-  }).join('');
+    // 十神
+    document.getElementById('year-shishen').textContent = getShiShen(dayGan, yearGan);
+    document.getElementById('month-shishen').textContent = getShiShen(dayGan, monthGan);
+    document.getElementById('hour-shishen').textContent = getShiShen(dayGan, hourGan);
 
-  document.getElementById('canggan-grid')!.innerHTML = allZhis.map(zhi => {
-    const cgs = cangGan[zhi] || [];
-    const ss = cgs.map(cg => getShiShen(dayGan, cg)).join(' ');
-    return `<div><div class="font-serif-cn text-2xl text-ink">${zhi}</div><div class="text-xs text-ink-light/60 mt-1">${cgs.join(' ')}</div><div class="text-xs text-gold mt-1">${ss}</div></div>`;
-  }).join('');
+    // 藏干
+    ['year','month','day','hour'].forEach((prefix, i) => {
+      const zhi = allZhis[i];
+      const cgs = CANG_GAN[zhi] || [];
+      document.getElementById(`${prefix}-canggan`).innerHTML = cgs.map(cg =>
+        `<span style="color:${getWuxingColor(GAN_WUXING[cg])}">${cg}</span>`
+      ).join(' ') || '—';
+    });
 
-  const wuxingChars = ['木', '火', '土', '金', '水'];
-  const missing = wuxingChars.filter(w => stats[w] === 0);
-  const strongest = wuxingChars.reduce((a, b) => stats[a] > stats[b] ? a : b);
-  const strongDesc: Record<string, string> = {
-    '木': '仁爱心，生发向上', '火': '礼仪之德，热情明朗',
-    '土': '诚信厚道，沉稳包容', '金': '义气果断，刚毅明理', '水': '智慧灵动，善于变通'
-  };
+    // 纳音
+    ['year','month','day','hour'].forEach((prefix, i) => {
+      const ny = NA_YIN[allGans[i]+allZhis[i]] || '';
+      const el1 = document.getElementById(`nayin-${prefix}`);
+      const el2 = document.getElementById(`nayin-${prefix}-card`);
+      if (el1) el1.textContent = ny;
+      if (el2) el2.textContent = ny;
+    });
 
-  document.getElementById('ai-analysis')!.innerHTML = `
-    <p class="mb-4">日主为<strong class="text-ink">${dayGan}${dayZhi}</strong>，${dayGan}属${ganWuxing[dayGan]}，${ganYinYang[dayGan]}性。日干代表命主自身，是八字分析的核心。</p>
-    <p class="mb-4">五行分布：${wuxingChars.map(w => `${w} ${stats[w]}`).join(' · ')}</p>
-    ${missing.length > 0 ? `<p class="mb-4">五行中缺<strong class="text-vermilion">${missing.join('、')}</strong>，可在日常生活中适当补益相关的色彩、方位与事物。</p>` : ''}
-    <p class="mb-4">五行中<strong class="text-gold">${strongest}</strong>最旺，${strongest}旺者多有${strongDesc[strongest]}之性。</p>
-    <p class="text-ink-light/50 mt-4">以上为五行基础分析，完整的八字推演还需考虑十神关系、格局、大运流年等诸多因素。</p>
-  `;
+    // 五行统计
+    const stats = {'木':0,'火':0,'土':0,'金':0,'水':0};
+    allGans.forEach(g => stats[GAN_WUXING[g]]++);
+    allZhis.forEach(z => stats[ZHI_WUXING[z]]++);
+    const total = Object.values(stats).reduce((a,b) => a+b, 0);
 
-  document.getElementById('bazi-result')!.classList.remove('hidden');
-  document.getElementById('bazi-result')!.scrollIntoView({ behavior: 'smooth' });
+    // Count display
+    document.getElementById('wuxing-counts').innerHTML = WUXING_NAMES_CN.map(wx =>
+      `<div class="text-center"><span class="text-2xl font-serif-cn font-bold" style="color:${WUXING_COLORS[wx]}">${wx}</span><span class="text-ink-light/50 ml-1 text-sm">${stats[wx]}</span></div>`
+    ).join('');
+
+    // Progress bars
+    document.getElementById('wuxing-bars').innerHTML = WUXING_NAMES_CN.map(wx => {
+      const pct = total > 0 ? Math.round(stats[wx]/total*100) : 0;
+      return `<div class="flex items-center gap-3">
+        <span class="w-6 text-sm font-serif-cn font-bold" style="color:${WUXING_COLORS[wx]}">${wx}</span>
+        <div class="flex-1 bg-white/50 rounded-full h-3 overflow-hidden border border-gold/10">
+          <div class="wuxing-bar h-full rounded-full transition-all duration-1000 ease-out" style="width:0%;background:${WUXING_COLORS[wx]}" data-target="${pct}"></div>
+        </div>
+        <span class="w-12 text-xs text-ink-light/50 text-right">${pct}%</span>
+      </div>`;
+    }).join('');
+
+    // Missing & strongest
+    const missing = WUXING_NAMES_CN.filter(wx => stats[wx] === 0);
+    const strongest = WUXING_NAMES_CN.reduce((a,b) => stats[a] > stats[b] ? a : b);
+    document.getElementById('wuxing-missing').innerHTML = missing.length > 0
+      ? `<span class="text-vermilion font-serif-cn">五行缺失：${missing.join('、')}</span>`
+      : '<span class="text-jade font-serif-cn">五行俱全</span>';
+    const strongDesc = {'木':'仁爱心，生发向上','火':'礼仪之德，热情明朗','土':'诚信厚道，沉稳包容','金':'义气果断，刚毅明理','水':'智慧灵动，善于变通'};
+    document.getElementById('wuxing-strongest').innerHTML = `<span class="text-gold font-serif-cn">五行最旺：${strongest}（${strongDesc[strongest]}）</span>`;
+
+    // 十神网格
+    const ssCounts = {};
+    SHI_SHEN_LIST.forEach(ss => ssCounts[ss] = 0);
+    [yearGan, monthGan, hourGan].forEach(g => {
+      const ss = getShiShen(dayGan, g);
+      if (ss) ssCounts[ss]++;
+    });
+    // Also count hidden stems
+    allZhis.forEach(zhi => {
+      (CANG_GAN[zhi]||[]).forEach(cg => {
+        const ss = getShiShen(dayGan, cg);
+        if (ss) ssCounts[ss]++;
+      });
+    });
+
+    document.getElementById('shishen-grid').innerHTML = SHI_SHEN_LIST.map(ss => {
+      const count = ssCounts[ss];
+      const bar = count > 0 ? '<div class="mt-1 bg-white/50 rounded-full h-1.5 overflow-hidden"><div class="h-full rounded-full bg-gold/60" style="width:' + Math.min(count/4*100,100) + '%"></div></div>' : '';
+      return `<div class="bg-white/50 rounded-xl p-3 text-center border border-gold/10">
+        <div class="font-serif-cn text-sm text-ink mb-1">${ss}</div>
+        <div class="text-lg font-bold text-ink">${count}</div>
+        ${bar}
+      </div>`;
+    }).join('');
+
+    // 大运
+    const dayun = calcDayun(yearGan, monthGan, monthZhi, genderInput, year);
+    const currentDayunIdx = getCurrentDayunIndex(dayun, new Date().getFullYear(), year);
+    const currentYearGZ = getYearGZ(new Date().getFullYear());
+
+    document.getElementById('dayun-timeline').innerHTML = dayun.map((dy, i) => {
+      const isCurrent = i === currentDayunIdx;
+      return `<div class="shrink-0 w-20 md:w-24 text-center ${isCurrent ? 'bg-vermilion/10 border-vermilion/40' : 'bg-white/50 border-gold/10'} border rounded-xl p-3 transition-all duration-300">
+        <div class="text-xs text-ink-light/50">${dy.age}-${dy.endAge}岁</div>
+        <div class="font-serif-cn text-lg my-1"><span style="color:${getWuxingColor(GAN_WUXING[dy.gan])}">${dy.gan}</span><span style="color:${getWuxingColor(ZHI_WUXING[dy.zhi])}">${dy.zhi}</span></div>
+        <div class="text-xs text-ink-light/40">大运</div>
+        ${isCurrent ? '<div class="mt-1 text-[10px] text-vermilion font-bold">当前</div>' : ''}
+      </div>`;
+    }).join('');
+
+    document.getElementById('current-dayun').innerHTML = `<span class="text-ink-light/60">当前大运：</span><span class="font-serif-cn font-bold text-ink">${dayun[currentDayunIdx]?.gan}${dayun[currentDayunIdx]?.zhi} (${dayun[currentDayunIdx]?.age}-${dayun[currentDayunIdx]?.endAge}岁)</span>`;
+    document.getElementById('current-year').innerHTML = `<span class="text-ink-light/60">${new Date().getFullYear()}流年：</span><span class="font-serif-cn font-bold text-ink">${currentYearGZ[0]}${currentYearGZ[1]}</span>`;
+
+    // AI Analysis
+    const wuxingDesc = WUXING_NAMES_CN.map(wx => `${wx} ${stats[wx]}`).join(' · ');
+    const missingText = missing.length > 0 ? `<p class="mb-3 text-vermilion/90">五行缺<strong>${missing.join('、')}</strong>，可在日常生活中适当补益相关的色彩、方位与事物。</p>` : '';
+
+    document.getElementById('ai-analysis').innerHTML = `
+      <p class="mb-3">日主为<strong class="text-ink">${dayGan}${dayZhi}</strong>，${dayGan}属${GAN_WUXING[dayGan]}，${GAN_YINYANG[dayGan]}性。日干代表命主自身，是八字分析的核心。</p>
+      <p class="mb-3">五行分布：${wuxingDesc}，${strongest}最旺，多有${strongDesc[strongest]}之性。</p>
+      ${missingText}
+      <p class="mb-3">纳音：年柱${NA_YIN[yearGan+yearZhi]}，月柱${NA_YIN[monthGan+monthZhi]}，日柱${NA_YIN[dayGan+dayZhi]}，时柱${NA_YIN[hourGan+hourZhi]}。</p>
+      <p class="mb-3">当前行${dayun[currentDayunIdx]?.gan}${dayun[currentDayunIdx]?.zhi}大运（${dayun[currentDayunIdx]?.age}-${dayun[currentDayunIdx]?.endAge}岁），${new Date().getFullYear()}年流年${currentYearGZ[0]}${currentYearGZ[1]}。</p>
+      <p class="text-ink-light/40 mt-4">以上为五行基础分析，完整的八字推演还需考虑十神关系、格局、用神等诸多因素，建议系统深入学习。</p>
+    `;
+
+    // Show result
+    resultDiv.classList.remove('hidden');
+
+    // Animate wuxing bars
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        document.querySelectorAll('.wuxing-bar').forEach(bar => {
+          bar.style.width = bar.dataset.target + '%';
+        });
+      }, 100);
+    });
+
+    // Scroll to result
+    setTimeout(() => {
+      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+
+    // Reset loading
+    btn.disabled = false;
+    spinner.classList.add('hidden');
+    btnText.textContent = '开始排盘';
+  }, 800);
+});
+
+// Reset button
+resetBtn?.addEventListener('click', function() {
+  resultDiv.classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Save button
+document.getElementById('btn-save')?.addEventListener('click', function() {
+  alert('命盘已保存（功能开发中）');
+});
+
+// Share button
+document.getElementById('btn-share')?.addEventListener('click', function() {
+  if (navigator.share) {
+    navigator.share({ title: '八字排盘', url: window.location.href });
+  } else {
+    navigator.clipboard?.writeText(window.location.href);
+    alert('链接已复制到剪贴板');
+  }
 });
 </script>

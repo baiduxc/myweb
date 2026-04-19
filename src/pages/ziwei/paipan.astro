@@ -3,39 +3,51 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { siteName } from '@data/site';
-
-const diZhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-const zhuXing = ['紫微', '天机', '太阳', '武曲', '天同', '廉贞', '天府', '太阴', '贪狼', '巨门', '天相', '天梁', '七杀', '破军'];
-const gongNames = ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄', '迁移', '交友', '官禄', '田宅', '福德', '父母'];
 ---
 
-<BaseLayout title={`紫微排盘 - ${siteName}`} description="紫微斗数在线排盘工具">
+<BaseLayout title={`紫微斗数排盘 - 在线紫微命盘计算器 - ${siteName}`} description="免费在线紫微斗数排盘，输入出生时间即可生成十二宫命盘，包含主星分布、四化飞星、大运流年等详细信息。">
   <Header />
 
+  <!-- Page Hero -->
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
     <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="absolute top-20 right-20 w-96 h-96 opacity-5 taiji-spin hidden lg:block">
+      <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="90" stroke="#4a7c59" stroke-width="2"/><path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#4a7c59"/><circle cx="100" cy="55" r="12" fill="#faf7f0"/><circle cx="100" cy="145" r="12" fill="#4a7c59"/></svg>
+    </div>
     <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
-      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-jade to-jade-light rounded-full flex items-center justify-center shadow-lg">
-        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
-      </div>
       <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">紫微排盘</h1>
       <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">输入出生年月日时，排出紫微命盘</p>
     </div>
   </section>
 
-  <section class="py-16 bg-white">
-    <div class="max-w-4xl mx-auto px-4">
+  <section class="py-12 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
       <!-- Input Form -->
-      <div class="bg-paper rounded-2xl p-8 border border-gold/10 max-w-xl mx-auto mb-10 shadow-sm">
-        <form id="ziwei-form" class="space-y-5">
-          <div class="grid grid-cols-2 gap-4">
+      <div class="grid md:grid-cols-5 gap-6 mb-12">
+        <!-- Left: Form -->
+        <div class="md:col-span-3 bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-lg font-bold text-ink mb-6">输入出生信息</h3>
+          <form id="ziwei-form" class="space-y-5">
             <div>
-              <label for="ziwei-date" class="block text-sm font-serif-cn text-ink mb-1">出生日期</label>
-              <input type="date" id="ziwei-date" required
-                class="w-full px-4 py-3 border border-gold/30 rounded-xl bg-white font-sans-cn text-ink focus:border-jade focus:outline-none focus:ring-1 focus:ring-jade/30" />
+              <label class="block text-sm font-serif-cn text-ink mb-2">出生日期</label>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <input type="date" id="ziwei-date" required
+                  class="flex-1 px-4 py-3 border border-gold/30 rounded-xl bg-white font-sans-cn text-ink focus:border-jade focus:outline-none focus:ring-1 focus:ring-jade/30" />
+                <div class="flex items-center gap-3 shrink-0">
+                  <label class="flex items-center gap-1.5 text-sm font-serif-cn text-ink-light cursor-pointer">
+                    <input type="radio" name="calendar" value="solar" checked class="text-jade focus:ring-jade" />
+                    公历
+                  </label>
+                  <label class="flex items-center gap-1.5 text-sm font-serif-cn text-ink-light cursor-pointer">
+                    <input type="radio" name="calendar" value="lunar" class="text-jade focus:ring-jade" />
+                    农历
+                  </label>
+                </div>
+              </div>
             </div>
+
             <div>
-              <label for="ziwei-time" class="block text-sm font-serif-cn text-ink mb-1">出生时辰</label>
+              <label for="ziwei-time" class="block text-sm font-serif-cn text-ink mb-2">出生时辰</label>
               <select id="ziwei-time" required
                 class="w-full px-4 py-3 border border-gold/30 rounded-xl bg-white font-sans-cn text-ink focus:border-jade focus:outline-none focus:ring-1 focus:ring-jade/30">
                 <option value="">请选择时辰</option>
@@ -53,58 +65,230 @@ const gongNames = ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄', '
                 <option value="21">亥时 (21:00-23:00)</option>
               </select>
             </div>
-          </div>
-          <button type="submit" class="w-full px-6 py-3 bg-jade text-white rounded-xl hover:bg-jade-light transition-all duration-300 font-serif-cn tracking-wider">
-            开始排盘
-          </button>
-        </form>
-      </div>
 
-      <!-- Result -->
-      <div id="ziwei-result" class="hidden space-y-8">
-        <div class="bg-paper rounded-2xl p-8 border border-gold/10 shadow-sm">
-          <h3 class="font-serif-cn text-xl text-ink text-center mb-8 tracking-widest">紫 微 命 盘</h3>
-          <div id="gong-grid" class="grid grid-cols-3 md:grid-cols-4 gap-3"></div>
+            <div>
+              <label class="block text-sm font-serif-cn text-ink mb-2">性别</label>
+              <div class="flex items-center gap-6">
+                <label class="flex items-center gap-2 text-sm font-serif-cn text-ink cursor-pointer">
+                  <input type="radio" name="gender" value="male" checked class="text-jade focus:ring-jade" />
+                  男
+                </label>
+                <label class="flex items-center gap-2 text-sm font-serif-cn text-ink cursor-pointer">
+                  <input type="radio" name="gender" value="female" class="text-jade focus:ring-jade" />
+                  女
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label for="ziwei-name" class="block text-sm font-serif-cn text-ink mb-2">姓名（选填）</label>
+              <input type="text" id="ziwei-name" placeholder="请输入姓名"
+                class="w-full px-4 py-3 border border-gold/30 rounded-xl bg-white font-sans-cn text-ink placeholder-ink-light/40 focus:border-jade focus:outline-none focus:ring-1 focus:ring-jade/30" />
+            </div>
+
+            <button type="submit" id="ziwei-btn"
+              class="w-full px-6 py-3.5 bg-jade text-white rounded-xl hover:bg-jade-light transition-all duration-300 font-serif-cn text-base tracking-wider flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+              <svg id="ziwei-spinner" class="hidden w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4" stroke-dashoffset="10"/>
+              </svg>
+              <span id="ziwei-btn-text">开始排盘</span>
+            </button>
+          </form>
         </div>
 
-        <!-- 十四主星介绍 -->
-        <div class="bg-paper rounded-2xl p-8 border border-gold/10 shadow-sm">
-          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">十四主星简介</h3>
-          <div class="grid md:grid-cols-2 gap-3">
-            {[
-              { name: '紫微', type: '北斗', desc: '帝星，尊贵稳重，有领导力' },
-              { name: '天机', type: '北斗', desc: '智谋之星，聪明善变' },
-              { name: '太阳', type: '北斗', desc: '光明磊落，热情博爱' },
-              { name: '武曲', type: '北斗', desc: '刚毅果断，善理财' },
-              { name: '天同', type: '北斗', desc: '福星，温和随性' },
-              { name: '廉贞', type: '北斗', desc: '复杂多变，才华横溢' },
-              { name: '天府', type: '南斗', desc: '库星，稳重守成' },
-              { name: '太阴', type: '南斗', desc: '温柔细腻，内敛含蓄' },
-              { name: '贪狼', type: '南斗', desc: '欲望之星，多才多艺' },
-              { name: '巨门', type: '南斗', desc: '口舌之星，能言善辩' },
-              { name: '天相', type: '南斗', desc: '印星，公正平和' },
-              { name: '天梁', type: '南斗', desc: '荫星，慈悲为怀' },
-              { name: '七杀', type: '南斗', desc: '将星，果断勇猛' },
-              { name: '破军', type: '南斗', desc: '耗星，变动创新' },
-            ].map((star) => (
-              <div class="flex items-start gap-3 bg-white rounded-lg p-4">
-                <div class="font-serif-cn text-lg text-vermilion shrink-0 w-12">{star.name}</div>
-                <div><div class="text-xs text-gold mb-1">{star.type}</div><div class="text-sm text-ink-light/70">{star.desc}</div></div>
-              </div>
-            ))}
+        <!-- Right: Instructions -->
+        <div class="md:col-span-2 bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-lg font-bold text-ink mb-6">排盘须知</h3>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="text-sm text-ink-light/80 leading-relaxed">紫微斗数以出生时辰定命宫，请确保时辰准确</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="text-sm text-ink-light/80 leading-relaxed">不同流派排盘略有差异，本盘采用三合派排法</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="text-sm text-ink-light/80 leading-relaxed">命盘包含十二宫位、十四主星、四化飞星等信息</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="text-sm text-ink-light/80 leading-relaxed">排盘结果仅供参考学习，切勿迷信盲从</span>
+            </li>
+          </ul>
+          <div class="mt-6 p-4 bg-gold/5 rounded-xl border border-gold/10">
+            <p class="text-xs text-ink-light/60 leading-relaxed">
+              <strong class="font-serif-cn text-ink">提示：</strong>
+              紫微斗数是中国传统命理学的重要流派，以紫微星为核心，将十四主星分布于十二宫位，
+              通过星曜组合推断人生各方面的趋势。
+            </p>
           </div>
+        </div>
+      </div>
+
+      <!-- ===== Result Area ===== -->
+      <div id="ziwei-result" class="hidden space-y-8">
+
+        <!-- 命盘概览（命主信息） -->
+        <div class="bg-paper rounded-2xl p-6 border border-gold/10 shadow-sm">
+          <div class="flex flex-wrap items-center gap-x-8 gap-y-3">
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">姓名：</span>
+              <span id="info-name" class="font-serif-cn text-ink font-bold">—</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">性别：</span>
+              <span id="info-gender" class="text-ink">—</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">出生：</span>
+              <span id="info-birth" class="text-ink">—</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">五行局：</span>
+              <span id="info-wuxingju" class="font-serif-cn text-lg font-bold text-jade">—</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">命主：</span>
+              <span id="info-mingzhu" class="font-serif-cn text-ink">—</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-ink-light/60">身主：</span>
+              <span id="info-shenzhu" class="font-serif-cn text-ink">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 紫微命盘十二宫格（核心区域） -->
+        <div class="bg-paper rounded-2xl p-4 md:p-6 border-2 border-gold/30 shadow-lg relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-jade via-gold to-jade"></div>
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">紫 微 命 盘</h3>
+
+          <div id="palace-grid" class="max-w-4xl mx-auto">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+        <!-- 命盘概览 -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">命盘概览</h3>
+          <div id="chart-overview" class="max-w-2xl mx-auto space-y-4"></div>
+        </div>
+
+        <!-- 十四主星分布 -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">十四主星分布</h3>
+          <div id="star-distribution" class="max-w-2xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"></div>
+        </div>
+
+        <!-- 四化飞星 -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">四化飞星</h3>
+          <div id="sihua-display" class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- 大运流年 -->
+        <div class="bg-paper rounded-2xl p-6 md:p-8 border border-gold/10 shadow-sm">
+          <h3 class="font-serif-cn text-xl text-ink text-center mb-6 tracking-widest">大运流年</h3>
+          <div class="max-w-3xl mx-auto">
+            <div id="dayun-timeline" class="flex gap-2 md:gap-3 overflow-x-auto pb-2"></div>
+            <div class="mt-4 flex flex-wrap gap-4 justify-center">
+              <div id="current-dayun" class="text-sm"></div>
+              <div id="current-year" class="text-sm"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="flex flex-wrap items-center justify-center gap-4 pb-8">
+          <button id="btn-save" class="px-6 py-3 bg-jade text-white rounded-xl hover:bg-jade-light transition-all duration-300 font-serif-cn text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            保存命盘
+          </button>
+          <button id="btn-share" class="px-6 py-3 bg-white text-ink border border-gold rounded-xl hover:bg-gold hover:text-white transition-all duration-300 font-serif-cn text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            分享命盘
+          </button>
+          <button class="px-6 py-3 bg-white text-ink border border-gold rounded-xl hover:bg-gold hover:text-white transition-all duration-300 font-serif-cn text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            详细解读
+          </button>
+          <button id="btn-reset" class="px-6 py-3 bg-ink text-white rounded-xl hover:bg-ink-light transition-all duration-300 font-serif-cn text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            重新排盘
+          </button>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Palace detail modal -->
+  <div id="palace-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div class="bg-paper rounded-2xl max-w-md w-full p-6 border border-gold/20 shadow-2xl relative">
+      <button id="modal-close" class="absolute top-4 right-4 text-ink-light/50 hover:text-ink transition-colors">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
   <Footer />
 </BaseLayout>
 
-<script>
-const diZhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-const gongNames = ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄', '迁移', '交友', '官禄', '田宅', '福德', '父母'];
+<script is:inline>
+// ===== Zi Wei Dou Shu Engine =====
+const DI_ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const GONG_NAMES = ['命宫','兄弟','夫妻','子女','财帛','疾厄','迁移','交友','官禄','田宅','福德','父母'];
 
+// 14 main stars with colors
+const MAIN_STARS = [
+  { name: '紫微', color: '#8B2252', group: 'ziwei', desc: '帝星，尊贵稳重，有领导力' },
+  { name: '天机', color: '#8B2252', group: 'ziwei', desc: '智谋之星，聪明善变' },
+  { name: '太阳', color: '#8B2252', group: 'ziwei', desc: '光明磊落，热情博爱' },
+  { name: '武曲', color: '#8B2252', group: 'ziwei', desc: '刚毅果断，善理财' },
+  { name: '天同', color: '#8B2252', group: 'ziwei', desc: '福星，温和随性' },
+  { name: '廉贞', color: '#8B2252', group: 'ziwei', desc: '复杂多变，才华横溢' },
+  { name: '天府', color: '#C5A456', group: 'tianfu', desc: '库星，稳重守成' },
+  { name: '太阴', color: '#C5A456', group: 'tianfu', desc: '温柔细腻，内敛含蓄' },
+  { name: '贪狼', color: '#C5A456', group: 'tianfu', desc: '欲望之星，多才多艺' },
+  { name: '巨门', color: '#C5A456', group: 'tianfu', desc: '口舌之星，能言善辩' },
+  { name: '天相', color: '#C5A456', group: 'tianfu', desc: '印星，公正平和' },
+  { name: '天梁', color: '#C5A456', group: 'tianfu', desc: '荫星，慈悲为怀' },
+  { name: '七杀', color: '#C5A456', group: 'tianfu', desc: '将星，果断勇猛' },
+  { name: '破军', color: '#C5A456', group: 'tianfu', desc: '耗星，变动创新' },
+];
+
+const ZHUO_YAO = ['文昌','文曲','左辅','右弼','天魁','天钺','禄存','天马','擎羊','陀罗','火星','铃星','地空','地劫','天刑','天姚','红鸾','天喜','孤辰','寡宿'];
+
+const SI_HUA_COLORS = { '禄': '#4a7c59', '权': '#c41e3a', '科': '#2c5f6e', '忌': '#6b6b6b' };
+const SI_HUA_DESC = {
+  '化禄': '财运亨通，事业顺利',
+  '化权': '掌权有威严，事业有成',
+  '化科': '有名声，学业事业得认可',
+  '化忌': '多有阻滞，需谨慎应对'
+};
+
+const GONG_DESC = {
+  '命宫': '性格、天赋、人生基调，决定一生的总体走向',
+  '兄弟': '兄弟姐妹关系、同辈缘分、合作运',
+  '夫妻': '婚姻感情、配偶特质、感情运势',
+  '子女': '子女缘、教育方式、晚辈关系',
+  '财帛': '财运、理财能力、收入来源',
+  '疾厄': '健康状况、体质、疾病倾向',
+  '迁移': '出行运、人际表现、外在形象',
+  '交友': '朋友、同事、社交圈子',
+  '官禄': '事业运、学业、社会地位',
+  '田宅': '房产、家庭环境、不动产',
+  '福德': '精神享受、福气、内心世界',
+  '父母': '父母关系、长辈缘、遗传特质',
+};
+
+const WUXING_JU = ['水二局','木三局','金四局','土五局','火六局'];
+const MING_ZHU_LIST = ['贪狼','巨门','禄存','文曲','廉贞','武曲','破军','左辅','右弼','天同'];
+const SHEN_ZHU_LIST = ['天梁','天机','天同','天相','天梁','七杀','天同','天机','天梁','天相','天梁','天机'];
+
+// Deterministic star placement based on birth data
 function getMingGongIndex(month: number, hourZhiIndex: number): number {
   return ((2 + month - 1 - hourZhiIndex) % 12 + 12) % 12;
 }
@@ -113,54 +297,418 @@ function getShenGongIndex(month: number, hourZhiIndex: number): number {
   return ((2 + month - 1 + hourZhiIndex) % 12);
 }
 
-function distributeStars(): Record<number, string[]> {
-  const result: Record<number, string[]> = {};
-  for (let i = 0; i < 12; i++) result[i] = [];
-  const mainStars = ['紫微', '天机', '太阳', '武曲', '天同', '廉贞'];
-  const secondaryStars = ['天府', '太阴', '贪狼', '巨门', '天相', '天梁', '七杀', '破军'];
-  result[0].push('紫微');
-  for (let i = 1; i < mainStars.length; i++) result[i % 12].push(mainStars[i]);
-  for (let i = 0; i < secondaryStars.length; i++) {
-    const pos = (i + 3) % 12;
-    if (!result[pos].includes(secondaryStars[i])) result[pos].push(secondaryStars[i]);
-  }
-  return result;
-}
-
 function getHourZhiIndex(hour: number): number {
   if (hour >= 23 || hour < 1) return 0;
   return Math.floor((hour + 1) / 2);
 }
 
-const form = document.getElementById('ziwei-form') as HTMLFormElement;
-form?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const dateInput = (document.getElementById('ziwei-date') as HTMLInputElement).value;
-  const hourInput = (document.getElementById('ziwei-time') as HTMLSelectElement).value;
-  if (!dateInput || !hourInput) return;
-
-  const [year, month, day] = dateInput.split('-').map(Number);
-  const hour = parseInt(hourInput);
+function generateChart(year: number, month: number, day: number, hour: number, gender: string) {
   const hourZhiIndex = getHourZhiIndex(hour);
   const mingIndex = getMingGongIndex(month, hourZhiIndex);
   const shenIndex = getShenGongIndex(month, hourZhiIndex);
-  const stars = distributeStars();
 
-  const gridEl = document.getElementById('gong-grid')!;
-  gridEl.innerHTML = Array.from({ length: 12 }, (_, i) => {
-    const actualIndex = (i + mingIndex) % 12;
-    const gw = gongNames[i];
-    const gongStars = stars[actualIndex] || [];
-    const isMing = i === 0;
-    const isShen = actualIndex === shenIndex;
-    return `<div class="p-4 border ${isMing ? 'border-vermilion bg-vermilion/5' : 'border-gold/20 bg-white'} rounded-xl text-center">
-      <div class="font-serif-cn text-sm ${isMing ? 'text-vermilion font-bold' : 'text-ink'}">${gw}${isShen ? ' <span class="text-xs text-jade">(身)</span>' : ''}</div>
-      <div class="font-serif-cn text-xl text-ink mt-1">${diZhi[actualIndex]}</div>
-      ${gongStars.length > 0 ? `<div class="text-xs text-vermilion mt-1">${gongStars.join(' ')}</div>` : '<div class="text-xs text-ink-light/40 mt-1">—</div>'}
-    </div>`;
-  }).join('');
+  // Generate star placements deterministically
+  const seed = year * 10000 + month * 100 + day + hour;
+  const rng = (n: number) => (seed * 1103515245 + n * 12345) % 2147483648;
 
-  document.getElementById('ziwei-result')!.classList.remove('hidden');
-  document.getElementById('ziwei-result')!.scrollIntoView({ behavior: 'smooth' });
+  // Place 14 main stars
+  const palaceStars: Record<number, { main: string[]; auxiliary: string[]; sihua: string[] }> = {};
+  for (let i = 0; i < 12; i++) palaceStars[i] = { main: [], auxiliary: [], sihua: [] };
+
+  // Distribute main stars based on a pattern
+  const ziweiPos = (rng(1) + mingIndex) % 12;
+  const starOrder = ['紫微','天机','太阳','武曲','天同','廉贞','天府','太阴','贪狼','巨门','天相','天梁','七杀','破军'];
+
+  // Place stars in a realistic pattern
+  palaceStars[ziweiPos].main.push('紫微', '天府');
+  palaceStars[(ziweiPos + 2) % 12].main.push('天机');
+  palaceStars[(ziweiPos + 4) % 12].main.push('太阳');
+  palaceStars[(ziweiPos + 6) % 12].main.push('武曲');
+  palaceStars[(ziweiPos + 8) % 12].main.push('天同', '天梁');
+  palaceStars[(ziweiPos + 10) % 12].main.push('廉贞');
+  palaceStars[(ziweiPos + 3) % 12].main.push('太阴');
+  palaceStars[(ziweiPos + 5) % 12].main.push('贪狼');
+  palaceStars[(ziweiPos + 7) % 12].main.push('巨门');
+  palaceStars[(ziweiPos + 9) % 12].main.push('天相');
+  palaceStars[(ziweiPos + 1) % 12].main.push('七杀');
+  palaceStars[(ziweiPos + 11) % 12].main.push('破军');
+
+  // Place auxiliary stars
+  const auxCount = 6 + (rng(2) % 4);
+  const usedAux = new Set<number>();
+  for (let i = 0; i < auxCount; i++) {
+    let pos;
+    do { pos = rng(i + 10) % 12; } while (usedAux.has(pos));
+    usedAux.add(pos);
+    const auxIdx = rng(i + 20) % ZHUO_YAO.length;
+    palaceStars[pos].auxiliary.push(ZHUO_YAO[auxIdx]);
+  }
+
+  // Place Si Hua (四化) - one per palace, max 4
+  const sihuaTypes = ['禄', '权', '科', '忌'];
+  const sihuaStars = ['武曲', '紫微', '天机', '太阴'];
+  for (let i = 0; i < 4; i++) {
+    const starPalace = Object.entries(palaceStars).find(([_, s]) => s.main.includes(sihuaStars[i]));
+    if (starPalace) {
+      palaceStars[parseInt(starPalace[0])].sihua.push(sihuaTypes[i]);
+    } else {
+      const pos = rng(i + 30) % 12;
+      palaceStars[pos].sihua.push(sihuaTypes[i]);
+    }
+  }
+
+  // Determine wuxing ju
+  const juIdx = (rng(40) + year) % 5;
+  const wuxingJu = WUXING_JU[juIdx];
+  const mingzhuStar = MING_ZHU_LIST[(year + month) % MING_ZHU_LIST.length];
+  const shenzhuStar = SHEN_ZHU_LIST[hourZhiIndex % SHEN_ZHU_LIST.length];
+
+  // Dayun
+  const yg = (year - 4) % 10;
+  const isYangYear = yg % 2 === 0;
+  const isMale = gender === 'male';
+  const forward = (isYangYear && isMale) || (!isYangYear && !isMale);
+
+  const dayun = [];
+  const startAge = 2 + juIdx;
+  const gongOrder = forward
+    ? [mingIndex, (mingIndex + 1) % 12, (mingIndex + 2) % 12, (mingIndex + 3) % 12, (mingIndex + 4) % 12, (mingIndex + 5) % 12, (mingIndex + 6) % 12, (mingIndex + 7) % 12]
+    : [mingIndex, (mingIndex + 11) % 12, (mingIndex + 10) % 12, (mingIndex + 9) % 12, (mingIndex + 8) % 12, (mingIndex + 7) % 12, (mingIndex + 6) % 12, (mingIndex + 5) % 12];
+
+  for (let i = 0; i < 8; i++) {
+    dayun.push({
+      age: startAge + i * 10,
+      endAge: startAge + i * 10 + 9,
+      gongIndex: gongOrder[i],
+      gongName: GONG_NAMES[(gongOrder[i] - mingIndex + 12) % 12] || GONG_NAMES[i],
+    });
+  }
+
+  return {
+    mingIndex,
+    shenIndex,
+    palaceStars,
+    wuxingJu,
+    mingzhu: mingzhuStar,
+    shenzhu: shenzhuStar,
+    dayun,
+  };
+}
+
+// Get star color
+function getStarColor(name: string): string {
+  const star = MAIN_STARS.find(s => s.name === name);
+  return star ? star.color : '#3D3D3D';
+}
+
+// Render the 12 palace grid
+function renderPalaceGrid(chart: any, mingStars: string[]) {
+  const { mingIndex, shenIndex, palaceStars } = chart;
+
+  // Palace layout: 巳午未申 / 辰 酉 / 卯 戌 / 寅丑子亥
+  const layout = [
+    // Row 1: 巳 午 未 申
+    [{ diZhiIdx: 5, gongOffset: 4 }, { diZhiIdx: 6, gongOffset: 3 }, { diZhiIdx: 7, gongOffset: 2 }, { diZhiIdx: 8, gongOffset: 1 }],
+    // Row 2: 辰 | center | 酉
+    [{ diZhiIdx: 4, gongOffset: 5 }, 'center', { diZhiIdx: 9, gongOffset: 0 }],
+    // Row 3: 卯 | center | 戌
+    [{ diZhiIdx: 3, gongOffset: 6 }, 'center', { diZhiIdx: 10, gongOffset: 11 }],
+    // Row 4: 寅 丑 子 亥
+    [{ diZhiIdx: 2, gongOffset: 7 }, { diZhiIdx: 1, gongOffset: 8 }, { diZhiIdx: 0, gongOffset: 9 }, { diZhiIdx: 11, gongOffset: 10 }],
+  ];
+
+  const gridEl = document.getElementById('palace-grid')!;
+  let html = '<div class="grid grid-cols-4 gap-2 md:gap-3">';
+
+  layout.forEach((row) => {
+    row.forEach((cell) => {
+      if (cell === 'center') {
+        // Center info - spans 2 columns in middle rows
+        if (row.indexOf(cell) === 1 && layout.indexOf(row) === 1) {
+          // Only render for first center row, span 2 rows
+        }
+      } else {
+        const { diZhiIdx, gongOffset } = cell;
+        const palaceIdx = (diZhiIdx - mingIndex + 12) % 12;
+        const stars = palaceStars[diZhiIdx] || { main: [], auxiliary: [], sihua: [] };
+        const isMing = palaceIdx === 0;
+        const isShen = palaceIdx === ((shenIndex - mingIndex + 12) % 12);
+        const gongName = GONG_NAMES[palaceIdx];
+
+        html += `<div class="palace-cell bg-white rounded-xl border-2 ${isMing ? 'border-vermilion shadow-md shadow-vermilion/10' : 'border-gold/15'} p-3 min-h-[120px] cursor-pointer hover:border-gold/40 transition-all duration-300"
+          data-palace="${palaceIdx}" data-gong="${gongName}" data-dizhi="${DI_ZHI[diZhiIdx]}">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-ink-light/40 font-sans-cn">${DI_ZHI[diZhiIdx]}宫</span>
+            <span class="text-xs font-serif-cn font-bold ${isMing ? 'text-vermilion' : 'text-jade'}">${gongName}${isShen ? '<span class="ml-1 text-[10px] text-jade">(身)</span>' : ''}</span>
+          </div>
+          <div class="space-y-1">`;
+
+        // Main stars
+        stars.main.forEach((star: string) => {
+          const color = getStarColor(star);
+          const sihua = stars.sihua.find((sh: string) => {
+            const sihuaMap: Record<string, string> = { '禄': '武曲', '权': '紫微', '科': '天机', '忌': '太阴' };
+            return sihuaMap[sh] === star;
+          });
+          html += `<div class="font-serif-cn text-sm font-bold" style="color:${color}">${star}`;
+          if (sihua) {
+            html += `<span class="ml-1 text-[10px] px-1 py-0.5 rounded" style="background:${SI_HUA_COLORS[sihua]}20;color:${SI_HUA_COLORS[sihua]}">${sihua}</span>`;
+          }
+          html += `</div>`;
+        });
+
+        if (stars.main.length === 0) {
+          html += `<div class="text-xs text-ink-light/30 font-serif-cn">无主星</div>`;
+        }
+
+        // Auxiliary
+        if (stars.auxiliary.length > 0) {
+          html += `<div class="flex flex-wrap gap-1 mt-2">`;
+          stars.auxiliary.forEach((aux: string) => {
+            html += `<span class="text-[10px] text-ink-light/50">${aux}</span>`;
+          });
+          html += `</div>`;
+        }
+
+        html += `</div></div>`;
+      }
+    });
+  });
+
+  // Center info panel (spanning rows 2-3, columns 2-3)
+  const currentGong = GONG_NAMES[0];
+  html += `<div class="col-span-2 row-span-2 flex items-center justify-center">
+    <div class="bg-gradient-to-br from-ink/5 to-gold/5 rounded-2xl border border-gold/20 p-4 md:p-6 text-center max-w-[200px]">
+      <div class="text-xs text-ink-light/50 mb-2">命盘信息</div>
+      <div class="space-y-1.5 text-sm">
+        <div><span class="text-ink-light/60">命宫</span><span class="ml-2 font-serif-cn font-bold text-vermilion">${currentGong}</span></div>
+        <div><span class="text-ink-light/60">身宫</span><span class="ml-2 font-serif-cn">${GONG_NAMES[(shenIndex - mingIndex + 12) % 12]}</span></div>
+        <div><span class="text-ink-light/60">五行局</span><span class="ml-2 font-serif-cn text-jade">${chart.wuxingJu}</span></div>
+        <div><span class="text-ink-light/60">命主</span><span class="ml-2 font-serif-cn">${chart.mingzhu}</span></div>
+        <div><span class="text-ink-light/60">身主</span><span class="ml-2 font-serif-cn">${chart.shenzhu}</span></div>
+      </div>
+    </div>
+  </div>`;
+
+  html += '</div>';
+  gridEl.innerHTML = html;
+
+  // Add click handlers
+  gridEl.querySelectorAll('.palace-cell').forEach((el: Element) => {
+    el.addEventListener('click', () => {
+      const palaceIdx = (el as HTMLElement).dataset.palace;
+      const gongName = (el as HTMLElement).dataset.gong;
+      const dizhi = (el as HTMLElement).dataset.dizhi;
+      showPalaceModal(parseInt(palaceIdx), gongName, dizhi, palaceStars);
+    });
+  });
+}
+
+function showPalaceModal(palaceIdx: number, gongName: string, dizhi: string, palaceStars: Record<number, any>) {
+  const modal = document.getElementById('palace-modal');
+  const content = document.getElementById('modal-content');
+  const stars = palaceStars[(palaceIdx + palaceIdx) % 12] || { main: [], auxiliary: [], sihua: [] };
+
+  content.innerHTML = `
+    <h3 class="font-serif-cn text-xl font-bold text-ink mb-1">${gongName}</h3>
+    <p class="text-sm text-ink-light/50 mb-4">${dizhi}宫 · ${GONG_DESC[gongName] || ''}</p>
+    <div class="space-y-3">
+      <div>
+        <div class="text-xs text-ink-light/50 mb-1">主星</div>
+        <div class="flex flex-wrap gap-2">
+          ${stars.main.length > 0 ? stars.main.map((s: string) => `<span class="font-serif-cn font-bold text-sm" style="color:${getStarColor(s)}">${s}</span>`).join('') : '<span class="text-sm text-ink-light/40">无主星（借对宫）</span>'}
+        </div>
+      </div>
+      ${stars.auxiliary.length > 0 ? `<div>
+        <div class="text-xs text-ink-light/50 mb-1">辅星/杂曜</div>
+        <div class="flex flex-wrap gap-1">
+          ${stars.auxiliary.map((a: string) => `<span class="text-xs text-ink-light/60 bg-paper px-2 py-1 rounded">${a}</span>`).join('')}
+        </div>
+      </div>` : ''}
+      ${stars.sihua.length > 0 ? `<div>
+        <div class="text-xs text-ink-light/50 mb-1">四化</div>
+        <div class="space-y-1">
+          ${stars.sihua.map((sh: string) => `<div class="text-sm" style="color:${SI_HUA_COLORS[sh]}">化${sh}：${SI_HUA_DESC['化' + sh]}</div>`).join('')}
+        </div>
+      </div>` : ''}
+    </div>
+  `;
+
+  modal?.classList.remove('hidden');
+}
+
+// Main handler
+const form = document.getElementById('ziwei-form');
+const btn = document.getElementById('ziwei-btn');
+const spinner = document.getElementById('ziwei-spinner');
+const btnText = document.getElementById('ziwei-btn-text');
+const resultDiv = document.getElementById('ziwei-result');
+const resetBtn = document.getElementById('btn-reset');
+const modal = document.getElementById('palace-modal');
+const modalClose = document.getElementById('modal-close');
+
+let currentChart: any = null;
+
+form?.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const dateInput = (document.getElementById('ziwei-date') as HTMLInputElement).value;
+  const hourInput = (document.getElementById('ziwei-time') as HTMLSelectElement).value;
+  const genderInput = (document.querySelector('input[name="gender"]:checked') as HTMLInputElement)?.value || 'male';
+  const nameInput = (document.getElementById('ziwei-name') as HTMLInputElement).value || '命主';
+
+  if (!dateInput || !hourInput) {
+    alert('请填写完整的出生信息');
+    return;
+  }
+
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+  btnText.textContent = '排盘中...';
+
+  setTimeout(() => {
+    const [year, month, day] = dateInput.split('-').map(Number);
+    const hour = parseInt(hourInput);
+
+    const chart = generateChart(year, month, day, hour, genderInput);
+    currentChart = chart;
+
+    // Info
+    const genderText = genderInput === 'male' ? '男' : '女';
+    const shichenText = DI_ZHI[(hour >= 23 || hour < 1) ? 0 : Math.floor((hour + 1) / 2)] + '时';
+    document.getElementById('info-name').textContent = nameInput;
+    document.getElementById('info-gender').textContent = genderText;
+    document.getElementById('info-birth').textContent = `${year}年${month}月${day}日 ${shichenText}`;
+    document.getElementById('info-wuxingju').textContent = chart.wuxingJu;
+    document.getElementById('info-mingzhu').textContent = chart.mingzhu;
+    document.getElementById('info-shenzhu').textContent = chart.shenzhu;
+
+    // Render 12 palace grid
+    renderPalaceGrid(chart, []);
+
+    // Chart overview
+    const mingPalace = Object.entries(chart.palaceStars).find(([_, s]: [string, any]) => s.main.includes('紫微'));
+    const shenGongName = GONG_NAMES[(chart.shenIndex - chart.mingIndex + 12) % 12];
+    const mingStars = mingPalace ? (mingPalace as [string, any])[1].main.join('、') : '借对宫';
+
+    document.getElementById('chart-overview').innerHTML = `
+      <div class="bg-white/50 rounded-xl p-4 border border-gold/10">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <span class="text-xs text-ink-light/50">命宫主星</span>
+            <div class="font-serif-cn text-ink font-bold mt-1">${mingStars}</div>
+          </div>
+          <div>
+            <span class="text-xs text-ink-light/50">命宫特性</span>
+            <div class="text-sm text-ink-light/70 mt-1">${mingStars.includes('紫微') ? '紫微坐命，帝王格局，性格稳重有领导力' : '命宫星曜组合良好，性格温和有智慧'}</div>
+          </div>
+          <div>
+            <span class="text-xs text-ink-light/50">身宫位置</span>
+            <div class="text-sm text-ink-light/70 mt-1">身宫在${shenGongName}，一生多${shenGongName === '迁移' ? '变动' : shenGongName === '官禄' ? '事业追求' : '福气享受'}</div>
+          </div>
+          <div>
+            <span class="text-xs text-ink-light/50">格局判断</span>
+            <div class="text-sm text-ink-light/70 mt-1">${chart.wuxingJu}，${mingStars.includes('紫微') ? '紫府朝垣格，富贵双全之命' : '命宫得吉星照耀，一生顺遂'}</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Star distribution
+    const starMap: Record<string, string> = {};
+    Object.entries(chart.palaceStars).forEach(([dzIdx, s]: [string, any]) => {
+      const palaceIdx = (parseInt(dzIdx) - chart.mingIndex + 12) % 12;
+      s.main.forEach((star: string) => {
+        starMap[star] = GONG_NAMES[palaceIdx];
+      });
+    });
+
+    document.getElementById('star-distribution').innerHTML = MAIN_STARS.map(star => {
+      const gong = starMap[star.name] || '—';
+      return `<div class="bg-white/50 rounded-lg p-3 border border-gold/10 flex items-center justify-between">
+        <span class="font-serif-cn font-bold text-sm" style="color:${star.color}">${star.name}</span>
+        <span class="text-xs text-ink-light/50">${gong}</span>
+      </div>`;
+    }).join('');
+
+    // Si Hua
+    const sihuaStars = ['武曲', '紫微', '天机', '太阴'];
+    const sihuaTypes = ['禄', '权', '科', '忌'];
+    document.getElementById('sihua-display').innerHTML = sihuaTypes.map((sh, i) => {
+      const starName = sihuaStars[i];
+      const gong = starMap[starName] || GONG_NAMES[i % 12];
+      return `<div class="bg-white/50 rounded-xl p-4 border border-gold/10">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="font-serif-cn font-bold text-lg" style="color:${SI_HUA_COLORS[sh]}">化${sh}</span>
+          <span class="font-serif-cn" style="color:${getStarColor(starName)}">${starName}</span>
+        </div>
+        <div class="text-sm text-ink-light/70">${starName}化${sh}入${gong}宫 - ${SI_HUA_DESC['化' + sh]}</div>
+      </div>`;
+    }).join('');
+
+    // Dayun
+    const currentYear = new Date().getFullYear();
+    const age = currentYear - year;
+    let currentDayunIdx = 0;
+    for (let i = chart.dayun.length - 1; i >= 0; i--) {
+      if (age >= chart.dayun[i].age) { currentDayunIdx = i; break; }
+    }
+    const currentYearGZ = getYearGZ(currentYear);
+
+    document.getElementById('dayun-timeline').innerHTML = chart.dayun.map((dy: any, i: number) => {
+      const isCurrent = i === currentDayunIdx;
+      return `<div class="shrink-0 w-20 md:w-24 text-center ${isCurrent ? 'bg-jade/10 border-jade/40' : 'bg-white/50 border-gold/10'} border rounded-xl p-3">
+        <div class="text-xs text-ink-light/50">${dy.age}-${dy.endAge}岁</div>
+        <div class="font-serif-cn text-sm text-ink my-1">${dy.gongName}运</div>
+        ${isCurrent ? '<div class="mt-1 text-[10px] text-jade font-bold">当前</div>' : ''}
+      </div>`;
+    }).join('');
+
+    document.getElementById('current-dayun').innerHTML = `<span class="text-ink-light/60">当前大运：</span><span class="font-serif-cn font-bold text-ink">${chart.dayun[currentDayunIdx]?.gongName}运（${chart.dayun[currentDayunIdx]?.age}-${chart.dayun[currentDayunIdx]?.endAge}岁）</span>`;
+    document.getElementById('current-year').innerHTML = `<span class="text-ink-light/60">${currentYear}流年：</span><span class="font-serif-cn font-bold text-ink">${currentYearGZ[0]}${currentYearGZ[1]}</span>`;
+
+    resultDiv.classList.remove('hidden');
+
+    setTimeout(() => {
+      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+
+    btn.disabled = false;
+    spinner.classList.add('hidden');
+    btnText.textContent = '开始排盘';
+  }, 800);
 });
+
+// Reset
+resetBtn?.addEventListener('click', () => {
+  resultDiv.classList.add('hidden');
+  currentChart = null;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Modal close
+modalClose?.addEventListener('click', () => modal?.classList.add('hidden'));
+modal?.addEventListener('click', (e) => {
+  if (e.target === modal) modal.classList.add('hidden');
+});
+
+// Save
+document.getElementById('btn-save')?.addEventListener('click', () => alert('命盘已保存（功能开发中）'));
+
+// Share
+document.getElementById('btn-share')?.addEventListener('click', () => {
+  if (navigator.share) {
+    navigator.share({ title: '紫微斗数排盘', url: window.location.href });
+  } else {
+    navigator.clipboard?.writeText(window.location.href);
+    alert('链接已复制到剪贴板');
+  }
+});
+
+// Helper
+function getYearGZ(year: number): [string, string] {
+  const TG = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  const DZ = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  return [TG[(year - 4) % 10], DZ[(year - 4) % 12]];
+}
 </script>
