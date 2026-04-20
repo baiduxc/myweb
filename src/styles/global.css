@@ -64,10 +64,10 @@
     background-size: 100px 50px;
   }
 
-  .wuxing-wood { @apply bg-gradient-to-br from-jade to-jade-light; }
+  .wuxing-jade { @apply bg-gradient-to-br from-jade to-jade-light; }
   .wuxing-fire { @apply bg-gradient-to-br from-vermilion to-vermilion-light; }
   .wuxing-earth { @apply bg-gradient-to-br from-earth to-earth-light; }
-  .wuxing-metal { @apply bg-gradient-to-br from-gold to-gold-light; }
+  .wuxing-gold { @apply bg-gradient-to-br from-gold to-gold-light; }
   .wuxing-water { @apply bg-gradient-to-br from-water to-water-light; }
 
   .ink-wash {
