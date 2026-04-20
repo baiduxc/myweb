@@ -10,33 +10,24 @@ const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'bazi'
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const topics = [
-  { title: '天干地支基础', desc: '十天干与十二地支的五行属性、阴阳特征、生克关系，是八字的基石。' },
-  { title: '四柱排盘', desc: '根据出生年月日时排出年柱、月柱、日柱、时柱，构成完整的八字命盘。' },
-  { title: '十神详解', desc: '比肩、劫财、食神、伤官、正财、偏财、正官、七杀、正印、偏印的含义与推断。' },
-  { title: '格局分析', desc: '正格、变格、从格等格局类型的判断与分析方法。' },
-  { title: '大运流年', desc: '排大运、看流年，了解运势变化的规律与时机把握。' },
-  { title: '八字实战', desc: '结合具体命例，综合分析五行旺衰、喜忌用神、事业婚姻等。' },
+  { title: '天干地支', desc: '十天干（甲乙丙丁戊己庚辛壬癸）与十二地支（子丑寅卯辰巳午未申酉戌亥）的基础知识，阴阳五行属性，是八字的基石。' },
+  { title: '四柱排法', desc: '根据出生年月日时排出年柱、月柱、日柱、时柱。年柱查干支历，月柱按节气，日柱查万年历，时柱由五鼠遁推算。' },
+  { title: '五行分析', desc: '统计八字中金木水火土的数量分布，分析五行旺衰与缺失，判断日主强弱，为取用神提供依据。' },
+  { title: '十神体系', desc: '比肩、劫财、食神、伤官、正财、偏财、正官、七杀、正印、偏印。以日干为基准，分析各干支与日主的生克关系。' },
+  { title: '大运流年', desc: '排大运：以月柱为基准，阳年男命顺排、阴年男命逆排。流年则以每年干支推断对命局的影响。' },
+  { title: '格局用神', desc: '正格（正官格、七杀格、正财格等）与变格（从格、化气格）。选取用神以补八字之不足，调和五行。' },
 ];
 ---
 
-<BaseLayout title={`八字命理 - ${siteName}`} description="四柱预测精要，学习八字排盘与命理分析">
+<BaseLayout title={`八字命理 - 四柱预测精要 - ${siteName}`} description="系统学习八字命理，天干地支、四柱排盘、十神格局、大运流年">
   <Header />
 
   <!-- Hero -->
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
     <div class="absolute inset-0 bg-pattern opacity-30"></div>
     <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
-      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-vermilion to-vermilion-light rounded-full flex items-center justify-center shadow-lg">
-        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      </div>
       <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">八字命理</h1>
       <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">四柱预测精要 · 天干地支五行 · 十神格局大运</p>
-      <div class="mt-6">
-        <a href="/bazi/paipan/" class="btn-primary">
-          <span>在线排盘</span>
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-      </div>
     </div>
   </section>
 
@@ -56,18 +47,24 @@ const topics = [
     </div>
   </section>
 
-  <!-- Topics -->
+  <!-- Knowledge Structure -->
   <section class="py-16 bg-paper">
-    <div class="max-w-4xl mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12 fade-in-up">
         <span class="section-label">知识体系</span>
-        <h2 class="section-title">核心内容</h2>
+        <h2 class="section-title">八字核心知识</h2>
         <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">从基础到进阶，系统掌握八字命理的六大知识模块</p>
       </div>
-      <div class="grid md:grid-cols-2 gap-6">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {topics.map((topic, i) => (
-          <div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up" style={`transition-delay: ${i * 100}ms;`}>
-            <h3 class="font-serif-cn text-lg font-bold text-ink mb-2">{topic.title}</h3>
+          <div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up group" style={`transition-delay: ${i * 80}ms;`}>
+            <!-- 编号图标 -->
+            <div class="w-12 h-12 mb-4 bg-gradient-to-br from-vermilion/10 to-vermilion/5 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <span class="font-serif-cn text-lg font-bold text-vermilion">0{i + 1}</span>
+            </div>
+            <h3 class="font-serif-cn text-lg font-bold text-ink mb-3 group-hover:text-vermilion transition-colors">{topic.title}</h3>
             <p class="text-sm text-ink-light/70 leading-relaxed">{topic.desc}</p>
           </div>
         ))}
@@ -75,7 +72,76 @@ const topics = [
     </div>
   </section>
 
-  <!-- Related Articles -->
+  <!-- 八字基础速查 -->
+  <section class="py-16 bg-gradient-to-br from-ink to-[#2a2a2a] text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-5">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-gold/30 rounded-full taiji-spin"></div>
+    </div>
+    <div class="max-w-5xl mx-auto px-4 relative z-10">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="text-gold text-sm font-medium tracking-widest">基础速查</span>
+        <h2 class="font-serif-cn text-3xl md:text-4xl font-bold text-white mt-3 mb-4">天干地支与五行</h2>
+        <div class="w-24 h-1 bg-gradient-to-r from-vermilion to-gold mx-auto"></div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 fade-in-up">
+        <!-- 十天干 -->
+        <div>
+          <h3 class="font-serif-cn text-lg font-bold text-gold mb-4 flex items-center gap-2">
+            <span class="w-6 h-6 bg-gold/20 rounded-full flex items-center justify-center text-xs">天</span>
+            十天干
+          </h3>
+          <div class="grid grid-cols-5 gap-2">
+            {['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'].map((gan, i) => {
+              const wx = ['木','木','火','火','土','土','金','金','水','水'][i];
+              const yy = ['阳','阴','阳','阴','阳','阴','阳','阴','阳','阴'][i];
+              const colors = {'木':'#4a7c59','火':'#c41e3a','土':'#8b6914','金':'#c5a456','水':'#2c5f6e'};
+              return (
+                <div class="bg-white/5 rounded-lg p-2 text-center border border-white/10 hover:border-gold/30 transition-all duration-300">
+                  <div class="font-serif-cn text-xl font-bold" style={`color:${colors[wx]}`}>{gan}</div>
+                  <div class="text-[10px] text-paper/40 mt-0.5">{wx}·{yy}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <!-- 十二地支 -->
+        <div>
+          <h3 class="font-serif-cn text-lg font-bold text-gold mb-4 flex items-center gap-2">
+            <span class="w-6 h-6 bg-gold/20 rounded-full flex items-center justify-center text-xs">地</span>
+            十二地支
+          </h3>
+          <div class="grid grid-cols-4 gap-2">
+            {[
+              {zhi:'子',wx:'水',shichen:'23-1'},
+              {zhi:'丑',wx:'土',shichen:'1-3'},
+              {zhi:'寅',wx:'木',shichen:'3-5'},
+              {zhi:'卯',wx:'木',shichen:'5-7'},
+              {zhi:'辰',wx:'土',shichen:'7-9'},
+              {zhi:'巳',wx:'火',shichen:'9-11'},
+              {zhi:'午',wx:'火',shichen:'11-13'},
+              {zhi:'未',wx:'土',shichen:'13-15'},
+              {zhi:'申',wx:'金',shichen:'15-17'},
+              {zhi:'酉',wx:'金',shichen:'17-19'},
+              {zhi:'戌',wx:'土',shichen:'19-21'},
+              {zhi:'亥',wx:'水',shichen:'21-23'},
+            ].map((item) => {
+              const colors = {'木':'#4a7c59','火':'#c41e3a','土':'#8b6914','金':'#c5a456','水':'#2c5f6e'};
+              return (
+                <div class="bg-white/5 rounded-lg p-2 text-center border border-white/10 hover:border-gold/30 transition-all duration-300">
+                  <div class="font-serif-cn text-xl font-bold" style={`color:${colors[item.wx]}`}>{item.zhi}</div>
+                  <div class="text-[10px] text-paper/40 mt-0.5">{item.shichen}时</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 相关文章 -->
   {posts.length > 0 && (
     <section class="py-16 bg-white">
       <div class="max-w-4xl mx-auto px-4">
@@ -95,6 +161,13 @@ const topics = [
             </a>
           ))}
         </div>
+
+        <div class="text-center mt-10">
+          <a href="/articles/" class="btn-outline">
+            <span>查看更多文章</span>
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
       </div>
     </section>
   )}
@@ -104,10 +177,8 @@ const topics = [
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
-    const fadeElements = document.querySelectorAll('.fade-in-up');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-    fadeElements.forEach((el) => observer.observe(el));
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
   });
 </script>

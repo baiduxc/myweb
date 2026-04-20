@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html><head><title></title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>国学院官网</title><script src="./tailwindcss.js"></script><script src="./iconify-icon.min.js"></script></head><body><style id="style01">
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+:root {
+--color-ink: #1a1a1a;
+--color-ink-light: #2d2d2d;
+--color-vermilion: #c41e3a;
+--color-vermilion-light: #d43b4f;
+--color-paper: #faf7f0;
+--color-paper-dark: #f0ebe0;
+--color-gold: #c5a456;
+--color-gold-light: #d4b870;
+--color-jade: #4a7c59;
+--color-water: #2c5f6e;
+--color-earth: #8b6914;
+}
+
+body {
+font-family: 'Noto Sans SC', sans-serif;
+background-color: var(--color-paper);
+color: var(--color-ink);
+overflow-x: hidden;
+}
+
+.font-serif-cn {
+font-family: 'Noto Serif SC', serif;
+}
+
+.bg-pattern {
+background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c5a456' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.taiji-spin {
+animation: spin 30s linear infinite;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+.fade-in-up {
+opacity: 0;
+transform: translateY(30px);
+transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-in-up.visible {
+opacity: 1;
+transform: translateY(0);
+}
+
+.card-hover {
+transition: all 0.4s ease;
+}
+
+.card-hover:hover {
+transform: translateY(-8px);
+box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.line-clamp-2 {
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+
+.line-clamp-3 {
+display: -webkit-box;
+-webkit-line-clamp: 3;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+
+.wuxing-wood { background: linear-gradient(135deg, #4a7c59 0%, #5d9468 100%); }
+.wuxing-fire { background: linear-gradient(135deg, #c41e3a 0%, #d43b4f 100%); }
+.wuxing-earth { background: linear-gradient(135deg, #8b6914 0%, #a67c2e 100%); }
+.wuxing-metal { background: linear-gradient(135deg, #c5a456 0%, #d4b870 100%); }
+.wuxing-water { background: linear-gradient(135deg, #2c5f6e 0%, #3d7a8c 100%); }
+
+.scroll-indicator {
+animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+40% { transform: translateY(-10px); }
+60% { transform: translateY(-5px); }
+}
+
+.nav-scrolled {
+background: rgba(250, 247, 240, 0.98) !important;
+box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.ink-wash {
+background: radial-gradient(ellipse at center, rgba(26,26,26,0.8) 0%, rgba(26,26,26,0.4) 50%, transparent 70%);
+}
+
+.decoration-cloud {
+background-image: url("data:image/svg+xml,%3Csvg width='100' height='50' viewBox='0 0 100 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 25 Q30 10 40 25 Q50 10 60 25 Q70 10 80 25' stroke='%23c5a456' stroke-width='1' fill='none' opacity='0.3'/%3E%3C/svg%3E");
+background-size: 100px 50px;
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header id="header01" class="fixed top-0 left-0 w-full z-50 transition-all duration-500 bg-transparent">
+<div id="nav01" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div id="nav02" class="flex items-center justify-between h-20">
+<div id="nav03" class="flex items-center gap-3">
+<div id="nav04" class="relative w-10 h-10 flex items-center justify-center">
+<iconify-icon icon="mdi:yin-yang" class="text-3xl text-vermilion-600 text-[#c41e3a]"></iconify-icon>
+</div>
+<div id="nav05" class="flex flex-col">
+<span id="nav06" class="font-serif-cn text-xl font-bold text-[#1a1a1a] tracking-widest">国学院</span>
+<span id="nav07" class="text-xs text-[#8b6914] tracking-widest">传承千年智慧</span>
+</div>
+</div>
+<nav id="nav08" class="hidden md:flex items-center gap-8">
+<a id="nav09" href="#hero01" class="text-[#1a1a1a] hover:text-[#c41e3a] transition-colors duration-300 text-sm font-medium tracking-wide">首页</a>
+<a id="nav10" href="#categories01" class="text-[#1a1a1a] hover:text-[#c41e3a] transition-colors duration-300 text-sm font-medium tracking-wide">易学分类</a>
+<a id="nav11" href="#articles01" class="text-[#1a1a1a] hover:text-[#c41e3a] transition-colors duration-300 text-sm font-medium tracking-wide">最新文章</a>
+<a id="nav12" href="#wuxing01" class="text-[#1a1a1a] hover:text-[#c41e3a] transition-colors duration-300 text-sm font-medium tracking-wide">五行专题</a>
+<a id="nav13" href="#masters01" class="text-[#1a1a1a] hover:text-[#c41e3a] transition-colors duration-300 text-sm font-medium tracking-wide">大师专栏</a>
+<a id="nav14" href="#contact01" class="text-[#1a1a1a] hover:text-[#c41e3a] transition-colors duration-300 text-sm font-medium tracking-wide">联系我们</a>
+</nav>
+<div id="nav15" class="flex items-center gap-4">
+<button id="nav16" class="hidden md:flex items-center gap-2 px-6 py-2 bg-[#c41e3a] text-white rounded-full hover:bg-[#d43b4f] transition-all duration-300 text-sm font-medium">
+<iconify-icon icon="mdi:book-open-page-variant" class="text-lg"></iconify-icon>
+<span id="nav17">订阅专栏</span>
+</button>
+<button id="nav18" class="md:hidden text-2xl text-[#1a1a1a]">
+<iconify-icon icon="mdi:menu"></iconify-icon>
+</button>
+</div>
+</div>
+</div>
+<div id="nav19" class="md:hidden hidden bg-[#faf7f0] border-t border-[#c5a456]/20">
+<div id="nav20" class="px-4 py-4 space-y-3">
+<a id="nav21" href="#hero01" class="block text-[#1a1a1a] py-2 text-sm">首页</a>
+<a id="nav22" href="#categories01" class="block text-[#1a1a1a] py-2 text-sm">易学分类</a>
+<a id="nav23" href="#articles01" class="block text-[#1a1a1a] py-2 text-sm">最新文章</a>
+<a id="nav24" href="#wuxing01" class="block text-[#1a1a1a] py-2 text-sm">五行专题</a>
+<a id="nav25" href="#masters01" class="block text-[#1a1a1a] py-2 text-sm">大师专栏</a>
+<a id="nav26" href="#contact01" class="block text-[#1a1a1a] py-2 text-sm">联系我们</a>
+</div>
+</div>
+</header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="hero01" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#faf7f0] via-[#f0ebe0] to-[#e8e2d4]">
+<div id="hero02" class="absolute inset-0 bg-pattern opacity-30"></div>
+<div id="hero03" class="absolute top-20 right-20 w-96 h-96 opacity-5 taiji-spin hidden lg:block">
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="100" cy="100" r="90" stroke="#1a1a1a" stroke-width="2"></circle>
+<path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#1a1a1a"></path>
+<circle cx="100" cy="55" r="12" fill="#faf7f0"></circle>
+<circle cx="100" cy="145" r="12" fill="#1a1a1a"></circle>
+</svg>
+</div>
+<div id="hero04" class="absolute bottom-40 left-10 w-64 h-64 opacity-10 taiji-spin hidden lg:block" style="animation-direction: reverse;">
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="100" cy="100" r="90" stroke="#c5a456" stroke-width="2"></circle>
+<path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#c5a456"></path>
+<circle cx="100" cy="55" r="12" fill="#faf7f0"></circle>
+<circle cx="100" cy="145" r="12" fill="#c5a456"></circle>
+</svg>
+</div>
+<div id="hero05" class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<div id="hero06" class="mb-6 inline-block">
+<span id="hero07" class="px-6 py-2 bg-[#c5a456]/10 border border-[#c5a456]/30 rounded-full text-[#8b6914] text-sm tracking-widest font-medium">弘扬国学经典 · 传承易学智慧</span>
+</div>
+<h1 id="hero08" class="font-serif-cn text-5xl md:text-7xl font-bold text-[#1a1a1a] mb-6 leading-tight">
+探赜索隐<span class="text-[#c41e3a]">易道</span><br>
+<span class="text-4xl md:text-6xl">穷理尽性</span>
+</h1>
+<p id="hero09" class="text-lg md:text-xl text-[#2d2d2d]/80 mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+深入研习周易八卦、四柱八字、紫微斗数、奇门遁甲等传统易学知识<br class="hidden md:block">
+以现代视角解读千年智慧，助您明理知命、趋吉避凶
+</p>
+<div id="hero10" class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+<a id="hero11" href="#articles01" class="px-8 py-4 bg-[#c41e3a] text-white rounded-full hover:bg-[#d43b4f] transition-all duration-300 text-base font-medium shadow-lg hover:shadow-xl flex items-center gap-2">
+<span id="hero12">开始探索</span>
+<iconify-icon icon="mdi:arrow-right" class="text-lg"></iconify-icon>
+</a>
+<a id="hero13" href="#categories01" class="px-8 py-4 bg-white/80 backdrop-blur-sm border-2 border-[#c5a456] text-[#1a1a1a] rounded-full hover:bg-[#c5a456] hover:text-white transition-all duration-300 text-base font-medium flex items-center gap-2">
+<span id="hero14">浏览分类</span>
+<iconify-icon icon="mdi:grid" class="text-lg"></iconify-icon>
+</a>
+</div>
+<div id="hero15" class="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+<div id="hero16" class="text-center">
+<div id="hero17" class="text-3xl md:text-4xl font-bold text-[#c41e3a] font-serif-cn mb-1">500+</div>
+<div id="hero18" class="text-sm text-[#2d2d2d]/70">精选文章</div>
+</div>
+<div id="hero19" class="text-center border-x border-[#c5a456]/30">
+<div id="hero20" class="text-3xl md:text-4xl font-bold text-[#c5a456] font-serif-cn mb-1">12</div>
+<div id="hero21" class="text-sm text-[#2d2d2d]/70">易学流派</div>
+</div>
+<div id="hero22" class="text-center">
+<div id="hero23" class="text-3xl md:text-4xl font-bold text-[#4a7c59] font-serif-cn mb-1">10万+</div>
+<div id="hero24" class="text-sm text-[#2d2d2d]/70">国学爱好者</div>
+</div>
+</div>
+</div>
+<div id="hero25" class="absolute bottom-10 left-1/2 -translate-x-1/2 scroll-indicator">
+<div id="hero26" class="w-8 h-12 border-2 border-[#c5a456]/50 rounded-full flex items-start justify-center p-2">
+<div id="hero27" class="w-1 h-3 bg-[#c5a456] rounded-full animate-bounce"></div>
+</div>
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="categories01" class="py-20 bg-white relative">
+<div id="categories02" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div id="categories03" class="text-center mb-16 fade-in-up visible">
+<span id="categories04" class="text-[#c5a456] text-sm font-medium tracking-widest uppercase">知识体系</span>
+<h2 id="categories05" class="font-serif-cn text-4xl md:text-5xl font-bold text-[#1a1a1a] mt-3 mb-4">易学分类</h2>
+<div id="categories06" class="w-24 h-1 bg-gradient-to-r from-[#c41e3a] to-[#c5a456] mx-auto"></div>
+<p id="categories07" class="mt-6 text-[#2d2d2d]/70 max-w-2xl mx-auto">系统梳理中华易学脉络，从周易八卦到命理术数，构建完整的国学知识体系</p>
+</div>
+<div id="categories08" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+<div id="cat01" class="group relative bg-[#faf7f0] rounded-2xl p-6 text-center card-hover cursor-pointer fade-in-up border border-[#c5a456]/10 visible">
+<div id="cat02" class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+<iconify-icon icon="mdi:book-education" class="text-3xl text-[#c5a456]"></iconify-icon>
+</div>
+<h3 id="cat03" class="font-serif-cn text-lg font-bold text-[#1a1a1a] mb-2">周易</h3>
+<p id="cat04" class="text-xs text-[#2d2d2d]/60 mb-3">六十四卦精解</p>
+<div id="cat05" class="text-sm font-medium text-[#c41e3a]">86篇 <span class="text-[#2d2d2d]/40">·</span> 12.3万阅读</div>
+</div>
+<div id="cat02_1" class="group relative bg-[#faf7f0] rounded-2xl p-6 text-center card-hover cursor-pointer fade-in-up border border-[#c5a456]/10 visible" style="transition-delay: 100ms;">
+<div id="cat06" class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[#c41e3a] to-[#d43b4f] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+<iconify-icon icon="mdi:calendar-star" class="text-3xl text-white"></iconify-icon>
+</div>
+<h3 id="cat07" class="font-serif-cn text-lg font-bold text-[#1a1a1a] mb-2">八字命理</h3>
+<p id="cat08" class="text-xs text-[#2d2d2d]/60 mb-3">四柱预测精要</p>
+<div id="cat09" class="text-sm font-medium text-[#c41e3a]">124篇 <span class="text-[#2d2d2d]/40">·</span> 28.5万阅读</div>
+</div>
+<div id="cat03_1" class="group relative bg-[#faf7f0] rounded-2xl p-6 text-center card-hover cursor-pointer fade-in-up border border-[#c5a456]/10 visible" style="transition-delay: 200ms;">
+<div id="cat10" class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[#4a7c59] to-[#5d9468] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+<iconify-icon icon="mdi:star-four-points" class="text-3xl text-white"></iconify-icon>
+</div>
+<h3 id="cat11" class="font-serif-cn text-lg font-bold text-[#1a1a1a] mb-2">紫微斗数</h3>
+<p id="cat12" class="text-xs text-[#2d2d2d]/60 mb-3">十四主星详解</p>
+<div id="cat13" class="text-sm font-medium text-[#c41e3a]">98篇 <span class="text-[#2d2d2d]/40">·</span> 19.8万阅读</div>
+</div>
+<div id="cat04_1" class="group relative bg-[#faf7f0] rounded-2xl p-6 text-center card-hover cursor-pointer fade-in-up border border-[#c5a456]/10 visible" style="transition-delay: 300ms;">
+<div id="cat14" class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[#2c5f6e] to-[#3d7a8c] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+<iconify-icon icon="mdi:compass" class="text-3xl text-white"></iconify-icon>
+</div>
+<h3 id="cat15" class="font-serif-cn text-lg font-bold text-[#1a1a1a] mb-2">风水堪舆</h3>
+<p id="cat16" class="text-xs text-[#2d2d2d]/60 mb-3">形势理气双修</p>
+<div id="cat17" class="text-sm font-medium text-[#c41e3a]">76篇 <span class="text-[#2d2d2d]/40">·</span> 15.2万阅读</div>
+</div>
+<div id="cat05_1" class="group relative bg-[#faf7f0] rounded-2xl p-6 text-center card-hover cursor-pointer fade-in-up border border-[#c5a456]/10 visible" style="transition-delay: 400ms;">
+<div id="cat18" class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[#8b6914] to-[#a67c2e] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+<iconify-icon icon="mdi:chess-rook" class="text-3xl text-white"></iconify-icon>
+</div>
+<h3 id="cat19" class="font-serif-cn text-lg font-bold text-[#1a1a1a] mb-2">奇门遁甲</h3>
+<p id="cat20" class="text-xs text-[#2d2d2d]/60 mb-3">三奇六仪布局</p>
+<div id="cat21" class="text-sm font-medium text-[#c41e3a]">54篇 <span class="text-[#2d2d2d]/40">·</span> 9.6万阅读</div>
+</div>
+<div id="cat06_1" class="group relative bg-[#faf7f0] rounded-2xl p-6 text-center card-hover cursor-pointer fade-in-up border border-[#c5a456]/10 visible" style="transition-delay: 500ms;">
+<div id="cat22" class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[#6b4e8b] to-[#8a6ba8] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+<iconify-icon icon="mdi:hand-peace" class="text-3xl text-white"></iconify-icon>
+</div>
+<h3 id="cat23" class="font-serif-cn text-lg font-bold text-[#1a1a1a] mb-2">六爻占卜</h3>
+<p id="cat24" class="text-xs text-[#2d2d2d]/60 mb-3">纳甲筮法精解</p>
+<div id="cat25" class="text-sm font-medium text-[#c41e3a]">62篇 <span class="text-[#2d2d2d]/40">·</span> 11.4万阅读</div>
+</div>
+</div>
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="featured01" class="py-20 bg-[#faf7f0] relative overflow-hidden">
+<div id="feat01" class="absolute top-0 left-0 w-full h-2 decoration-cloud"></div>
+<div id="feat02" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div id="feat03" class="grid lg:grid-cols-2 gap-12 items-center">
+<div id="feat04" class="fade-in-up">
+<span id="feat05" class="text-[#c41e3a] text-sm font-medium tracking-widest uppercase">本周精选</span>
+<h2 id="feat06" class="font-serif-cn text-3xl md:text-4xl font-bold text-[#1a1a1a] mt-3 mb-6 leading-tight">
+<span class="text-[#c41e3a]">《周易》</span>乾卦详解：<br>
+潜龙勿用到飞龙在天的人生智慧
+</h2>
+<p id="feat07" class="text-[#2d2d2d]/70 mb-6 leading-relaxed">
+本文深入剖析乾卦六爻的深层含义，从"潜龙勿用"的韬光养晦，到"飞龙在天"的顺势而为，结合现代职场与人生发展，解读六十四卦之首的处世哲学。通过卦象、爻辞、象传的综合分析，帮助您理解易学中"变易、不易、简易"的核心思想。
+</p>
+<div id="feat08" class="flex flex-wrap items-center gap-4 mb-8">
+<div id="feat09" class="flex items-center gap-2">
+<iconify-icon icon="mdi:account-circle" class="text-xl text-[#c5a456]"></iconify-icon>
+<span id="feat10" class="text-sm text-[#2d2d2d]">作者：明易先生</span>
+</div>
+<div id="feat11" class="flex items-center gap-2">
+<iconify-icon icon="mdi:calendar" class="text-xl text-[#c5a456]"></iconify-icon>
+<span id="feat12" class="text-sm text-[#2d2d2d]">2024年3月15日</span>
+</div>
+<div id="feat13" class="flex items-center gap-2">
+<iconify-icon icon="mdi:eye" class="text-xl text-[#c5a456]"></iconify-icon>
+<span id="feat14" class="text-sm text-[#2d2d2d]">32.6k 阅读</span>
+</div>
+</div>
+<div id="feat15" class="flex items-center gap-4">
+<a id="feat16" href="#" class="px-8 py-3 bg-[#c41e3a] text-white rounded-full hover:bg-[#d43b4f] transition-all duration-300 font-medium flex items-center gap-2">
+<span id="feat17">阅读全文</span>
+<iconify-icon icon="mdi:arrow-right" class="text-lg"></iconify-icon>
+</a>
+<button id="feat18" class="px-6 py-3 border border-[#c5a456] text-[#1a1a1a] rounded-full hover:bg-[#c5a456] hover:text-white transition-all duration-300 font-medium flex items-center gap-2">
+<iconify-icon icon="mdi:bookmark-outline" class="text-lg"></iconify-icon>
+<span id="feat19">收藏</span>
+</button>
+</div>
+</div>
+<div id="feat20" class="relative fade-in-up">
+<div id="feat21" class="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+<img id="feat22" src="https://picsum.photos/seed/yijing-gua/800/600" alt="周易乾卦" class="w-full h-full object-cover">
+</div>
+<div id="feat23" class="absolute -bottom-6 -right-6 w-48 h-48 bg-gradient-to-br from-[#c41e3a] to-[#d43b4f] rounded-2xl flex items-center justify-center shadow-xl">
+<div id="feat24" class="text-center text-white">
+<div id="feat25" class="text-3xl font-bold font-serif-cn mb-1">TOP 1</div>
+<div id="feat26" class="text-sm opacity-90">本周最热</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+
+
+
+
+<section id="articles01" class="py-20 bg-white">
+<div id="art01" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div id="art02" class="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 fade-in-up">
+<div id="art03">
+<span id="art04" class="text-[#c5a456] text-sm font-medium tracking-widest uppercase">知识宝库</span>
+<h2 id="art05" class="font-serif-cn text-3xl md:text-4xl font-bold text-[#1a1a1a] mt-3">最新文章</h2>
+</div>
+<div id="art06" class="flex flex-wrap gap-3 mt-4 md:mt-0">
+<button id="art07" class="filter-btn active px-4 py-2 bg-[#c41e3a] text-white rounded-full text-sm font-medium transition-all" data-filter="all">全部</button>
+<button id="art08" class="filter-btn px-4 py-2 bg-[#faf7f0] text-[#1a1a1a] rounded-full text-sm font-medium hover:bg-[#c4
+e3b4f5] hover:text-white transition-all duration-300">
+<iconify-icon icon="mdi:arrow-right" class="text-xl"></iconify-icon>
+
+</button></div>
+</div>
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="masters01" class="py-20 bg-[#faf7f0]">
+<div id="mst01" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div id="mst02" class="text-center mb-16 fade-in-up">
+<span id="mst03" class="text-[#c5a456] text-sm font-medium tracking-widest uppercase">师资团队</span>
+<h2 id="mst04" class="font-serif-cn text-4xl md:text-5xl font-bold text-[#1a1a1a] mt-3 mb-4">大师专栏</h2>
+<div id="mst05" class="w-24 h-1 bg-gradient-to-r from-[#c41e3a] to-[#c5a456] mx-auto"></div>
+<p id="mst06" class="mt-6 text-[#2d2d2d]/70 max-w-2xl mx-auto">汇聚国内知名易学研究学者，为您带来专业深度的易学解读</p>
+</div>
+<div id="mst07" class="grid md:grid-cols-3 gap-8">
+<div id="mst08" class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover fade-in-up">
+<div id="mst09" class="relative h-48 overflow-hidden">
+<img id="mst10" src="https://picsum.photos/seed/master1/400/300" alt="明易先生" class="w-full h-full object-cover">
+<div id="mst11" class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div id="mst12" class="absolute bottom-4 left-4 text-white">
+<h3 id="mst13" class="text-xl font-bold font-serif-cn">明易先生</h3>
+<p id="mst14" class="text-sm opacity-90">周易研究专家</p>
+</div>
+</div>
+<div id="mst15" class="p-6">
+<p id="mst16" class="text-[#2d2d2d]/70 text-sm leading-relaxed mb-4">深耕易学三十余载，专研周易卦象与人生哲学，著有《易道人生》等多部专著。</p>
+<div id="mst17" class="flex items-center justify-between mb-4">
+<div id="mst18" class="flex items-center gap-1">
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<span id="mst19" class="text-sm text-[#2d2d2d]/60 ml-2">5.0</span>
+</div>
+<span id="mst20" class="text-sm text-[#c41e3a] font-medium">128篇文章</span>
+</div>
+<a id="mst21" href="#" class="block text-center py-3 border border-[#c5a456] text-[#1a1a1a] rounded-lg hover:bg-[#c5a456] hover:text-white transition-all duration-300 text-sm font-medium">进入专栏</a>
+</div>
+</div>
+<div id="mst22" class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover fade-in-up" style="transition-delay: 150ms;">
+<div id="mst23" class="relative h-48 overflow-hidden">
+<img id="mst24" src="https://picsum.photos/seed/master2/400/300" alt="玄微道长" class="w-full h-full object-cover">
+<div id="mst25" class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div id="mst26" class="absolute bottom-4 left-4 text-white">
+<h3 id="mst27" class="text-xl font-bold font-serif-cn">玄微道长</h3>
+<p id="mst28" class="text-sm opacity-90">八字命理大师</p>
+</div>
+</div>
+<div id="mst29" class="p-6">
+<p id="mst30" class="text-[#2d2d2d]/70 text-sm leading-relaxed mb-4">传承祖辈命理绝学，精通四柱八字、紫微斗数，擅长以现代视角解读传统命理。</p>
+<div id="mst31" class="flex items-center justify-between mb-4">
+<div id="mst32" class="flex items-center gap-1">
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<span id="mst33" class="text-sm text-[#2d2d2d]/60 ml-2">4.9</span>
+</div>
+<span id="mst34" class="text-sm text-[#c41e3a] font-medium">96篇文章</span>
+</div>
+<a id="mst35" href="#" class="block text-center py-3 border border-[#c5a456] text-[#1a1a1a] rounded-lg hover:bg-[#c5a456] hover:text-white transition-all duration-300 text-sm font-medium">进入专栏</a>
+</div>
+</div>
+<div id="mst36" class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover fade-in-up" style="transition-delay: 300ms;">
+<div id="mst37" class="relative h-48 overflow-hidden">
+<img id="mst38" src="https://picsum.photos/seed/master3/400/300" alt="清源居士" class="w-full h-full object-cover">
+<div id="mst39" class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div id="mst40" class="absolute bottom-4 left-4 text-white">
+<h3 id="mst41" class="text-xl font-bold font-serif-cn">清源居士</h3>
+<p id="mst42" class="text-sm opacity-90">奇门遁甲传人</p>
+</div>
+</div>
+<div id="mst43" class="p-6">
+<p id="mst44" class="text-[#2d2d2d]/70 text-sm leading-relaxed mb-4">师承民间隐士，掌握奇门遁甲、六壬神课等古法，致力于传统文化现代化传播。</p>
+<div id="mst45" class="flex items-center justify-between mb-4">
+<div id="mst46" class="flex items-center gap-1">
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star" class="text-yellow-400"></iconify-icon>
+<iconify-icon icon="mdi:star-half" class="text-yellow-400"></iconify-icon>
+<span id="mst47" class="text-sm text-[#2d2d2d]/60 ml-2">4.8</span>
+</div>
+<span id="mst48" class="text-sm text-[#c41e3a] font-medium">72篇文章</span>
+</div>
+<a id="mst49" href="#" class="block text-center py-3 border border-[#c5a456] text-[#1a1a1a] rounded-lg hover:bg-[#c5a456] hover:text-white transition-all duration-300 text-sm font-medium">进入专栏</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="testimonials01" class="py-20 bg-white relative overflow-hidden">
+<div id="test01" class="absolute top-0 right-0 w-96 h-96 bg-[#c41e3a]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+<div id="test02" class="absolute bottom-0 left-0 w-96 h-96 bg-[#c5a456]/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+<div id="test03" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div id="test04" class="text-center mb-16 fade-in-up">
+<span id="test05" class="text-[#c5a456] text-sm font-medium tracking-widest uppercase">学员反馈</span>
+<h2 id="test06" class="font-serif-cn text-4xl md:text-5xl font-bold text-[#1a1a1a] mt-3 mb-4">读者心声</h2>
+<div id="test07" class="w-24 h-1 bg-gradient-to-r from-[#c41e3a] to-[#c5a456] mx-auto"></div>
+<p id="test08" class="mt-6 text-[#2d2d2d]/70 max-w-2xl mx-auto">听听易学爱好者们的真实感受</p>
+</div>
+<div id="test09" class="grid md:grid-cols-3 gap-8">
+<div id="test10" class="bg-[#faf7f0] rounded-2xl p-8 relative card-hover fade-in-up">
+<div id="test11" class="absolute top-6 right-6 text-6xl text-[#c5a456]/20 font-serif-cn">"</div>
+<div id="test12" class="flex items-center gap-4 mb-6">
+<img id="test13" src="https://picsum.photos/seed/user1/80/80" alt="用户头像" class="w-14 h-14 rounded-full object-cover border-2 border-[#c5a456]">
+<div id="test14">
+<h4 id="test15" class="font-bold text-[#1a1a1a]">张先生</h4>
+<p id="test16" class="text-sm text-[#2d2d2d]/60">企业高管 · 北京</p>
+</div>
+</div>
+<p id="test17" class="text-[#2d2d2d]/80 leading-relaxed mb-4">通过国学院的系统学习，我对周易有了更深刻的理解。明易先生的乾卦解读让我在职场决策中找到了方向，受益匪浅。</p>
+<div id="test18" class="flex items-center gap-1 text-yellow-400">
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+</div>
+</div>
+<div id="test19" class="bg-[#faf7f0] rounded-2xl p-8 relative card-hover fade-in-up" style="transition-delay: 150ms;">
+<div id="test20" class="absolute top-6 right-6 text-6xl text-[#c5a456]/20 font-serif-cn">"</div>
+<div id="test21" class="flex items-center gap-4 mb-6">
+<img id="test22" src="https://picsum.photos/seed/user2/80/80" alt="用户头像" class="w-14 h-14 rounded-full object-cover border-2 border-[#c5a456]">
+<div id="test23">
+<h4 id="test24" class="font-bold text-[#1a1a1a]">李女士</h4>
+<p id="test25" class="text-sm text-[#2d2d2d]/60">传统文化爱好者 · 上海</p>
+</div>
+</div>
+<p id="test26" class="text-[#2d2d2d]/80 leading-relaxed mb-4">紫微斗数课程非常专业，玄微道长的讲解深入浅出。从命盘解读到流年运势分析，内容详实，是我见过最好的易学平台。</p>
+<div id="test27" class="flex items-center gap-1 text-yellow-400">
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+</div>
+</div>
+<div id="test28" class="bg-[#faf7f0] rounded-2xl p-8 relative card-hover fade-in-up" style="transition-delay: 300ms;">
+<div id="test29" class="absolute top-6 right-6 text-6xl text-[#c5a456]/20 font-serif-cn">"</div>
+<div id="test30" class="flex items-center gap-4 mb-6">
+<img id="test31" src="https://picsum.photos/seed/user3/80/80" alt="用户头像" class="w-14 h-14 rounded-full object-cover border-2 border-[#c5a456]">
+<div id="test32">
+<h4 id="test33" class="font-bold text-[#1a1a1a]">王先生</h4>
+<p id="test34" class="text-sm text-[#2d2d2d]/60">风水研究者 · 广州</p>
+</div>
+</div>
+<p id="test35" class="text-[#2d2d2d]/80 leading-relaxed mb-4">奇门遁甲的学习门槛很高，但清源居士的课程让我逐渐入门。网站的文章分类清晰，内容丰富，是易学爱好者的宝藏。</p>
+<div id="test36" class="flex items-center gap-1 text-yellow-400">
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star"></iconify-icon>
+<iconify-icon icon="mdi:star-half"></iconify-icon>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="subscribe01" class="py-20 bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d] relative overflow-hidden">
+<div id="sub01" class="absolute inset-0 opacity-10">
+<div id="sub02" class="absolute top-10 left-10 w-40 h-40 border border-[#c5a456] rounded-full"></div>
+<div id="sub03" class="absolute bottom-10 right-10 w-60 h-60 border border-[#c41e3a] rounded-full"></div>
+<div id="sub04" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 border border-[#c5a456]/30 rounded-full taiji-spin"></div>
+</div>
+<div id="sub05" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+<div id="sub06" class="inline-flex items-center justify-center w-16 h-16 bg-[#c41e3a] rounded-full mb-6">
+<iconify-icon icon="mdi:email-newsletter" class="text-3xl text-white"></iconify-icon>
+</div>
+<h2 id="sub07" class="font-serif-cn text-3xl md:text-5xl font-bold text-white mb-4">订阅易学周刊</h2>
+<p id="sub08" class="text-[#faf7f0]/70 text-lg mb-10 max-w-2xl mx-auto">每周精选易学干货、卦象解析、命理知识，直达您的邮箱</p>
+<div id="sub09" class="flex flex-col sm:flex-row items-center gap-4 max-w-xl mx-auto">
+<input id="sub10" type="email" placeholder="请输入您的邮箱地址" class="w-full sm:flex-1 px-6 py-4 bg-white/10 border border-[#c5a456]/30 rounded-full text-white placeholder-[#faf7f0]/50 focus:outline-none focus:border-[#c41e3a] transition-colors">
+<button id="sub11" class="w-full sm:w-auto px-8 py-4 bg-[#c41e3a] text-white rounded-full hover:bg-[#d43b4f] transition-all duration-300 font-medium whitespace-nowrap flex items-center justify-center gap-2">
+<span id="sub12">立即订阅</span>
+<iconify-icon icon="mdi:send" class="text-lg"></iconify-icon>
+</button>
+</div>
+<div id="sub13" class="flex flex-wrap items-center justify-center gap-6 mt-8 text-[#faf7f0]/50 text-sm">
+<div id="sub14" class="flex items-center gap-2">
+<iconify-icon icon="mdi:check-circle" class="text-[#c5a456]"></iconify-icon>
+<span id="sub15">每周更新</span>
+</div>
+<div id="sub16" class="flex items-center gap-2">
+<iconify-icon icon="mdi:check-circle" class="text-[#c5a456]"></iconify-icon>
+<span id="sub17">免费专享</span>
+</div>
+<div id="sub18" class="flex items-center gap-2">
+<iconify-icon icon="mdi:check-circle" class="text-[#c5a456]"></iconify-icon>
+<span id="sub19">随时退订</span>
+</div>
+</div>
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer id="footer01" class="bg-[#1a1a1a] text-[#faf7f0]/70 py-16">
+<div id="foot01" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div id="foot02" class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+<div id="foot03">
+<div id="foot04" class="flex items-center gap-3 mb-6">
+<div id="foot05" class="w-10 h-10 flex items-center justify-center">
+<iconify-icon icon="mdi:yin-yang" class="text-3xl text-[#c41e3a]"></iconify-icon>
+</div>
+<div id="foot06">
+<span id="foot07" class="font-serif-cn text-xl font-bold text-white tracking-widest">国学院</span>
+<span id="foot08" class="block text-xs text-[#c5a456]">传承千年智慧</span>
+</div>
+</div>
+<p id="foot09" class="text-sm leading-relaxed mb-4">致力于中华传统易学的传承与发扬，为易学爱好者提供专业、系统的学习平台。</p>
+<div id="foot10" class="flex items-center gap-4">
+<a id="foot11" href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c41e3a] transition-colors">
+<iconify-icon icon="mdi:weixin" class="text-xl text-white"></iconify-icon>
+</a>
+<a id="foot12" href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c41e3a] transition-colors">
+<iconify-icon icon="mdi:sina-weibo" class="text-xl text-white"></iconify-icon>
+</a>
+<a id="foot13" href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c41e3a] transition-colors">
+<iconify-icon icon="mdi:bilibili" class="text-xl text-white"></iconify-icon>
+</a>
+</div>
+</div>
+<div id="foot14">
+<h4 id="foot15" class="text-white font-bold mb-6 font-serif-cn">易学分类</h4>
+<ul id="foot16" class="space-y-3 text-sm">
+<li id="foot17"><a id="foot18" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>周易八卦</a></li>
+<li id="foot19"><a id="foot20" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>八字命理</a></li>
+<li id="foot21"><a id="foot22" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>紫微斗数</a></li>
+<li id="foot23"><a id="foot24" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>风水堪舆</a></li>
+<li id="foot25"><a id="foot26" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>奇门遁甲</a></li>
+</ul>
+</div>
+<div id="foot27">
+<h4 id="foot28" class="text-white font-bold mb-6 font-serif-cn">快速链接</h4>
+<ul id="foot29" class="space-y-3 text-sm">
+<li id="foot30"><a id="foot31" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>关于我们</a></li>
+<li id="foot32"><a id="foot33" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>大师团队</a></li>
+<li id="foot34"><a id="foot35" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>学员评价</a></li>
+<li id="foot36"><a id="foot37" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>联系我们</a></li>
+<li id="foot38"><a id="foot39" href="#" class="hover:text-[#c41e3a] transition-colors flex items-center gap-2"><iconify-icon icon="mdi:chevron-right" class="text-[#c5a456]"></iconify-icon>隐私政策</a></li>
+</ul>
+</div>
+<div id="foot40">
+<h4 id="foot41" class="text-white font-bold mb-6 font-serif-cn">联系方式</h4>
+<ul id="foot42" class="space-y-4 text-sm">
+<li id="foot43" class="flex items-start gap-3">
+<iconify-icon icon="mdi:map-marker" class="text-[#c41e3a] text-xl mt-0.5"></iconify-icon>
+<span id="foot44">北京市朝阳区国学文化产业园A座</span>
+</li>
+<li id="foot45" class="flex items-center gap-3">
+<iconify-icon icon="mdi:phone" class="text-[#c41e3a] text-xl"></iconify-icon>
+<span id="foot46">400-888-6666</span>
+</li>
+<li id="foot47" class="flex items-center gap-3">
+<iconify-icon icon="mdi:email" class="text-[#c41e3a] text-xl"></iconify-icon>
+<span id="foot48">contact@guoxue.com</span>
+</li>
+<li id="foot49" class="flex items-center gap-3">
+<iconify-icon icon="mdi:clock" class="text-[#c41e3a] text-xl"></iconify-icon>
+<span id="foot50">周一至周日 9:00-21:00</span>
+</li>
+</ul>
+</div>
+</div>
+<div id="foot51" class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+<p id="foot52" class="text-sm text-center md:text-left">© 2024 国学院. 保留所有权利. 京ICP备XXXXXXXX号</p>
+<div id="foot53" class="flex items-center gap-6 text-sm">
+<a id="foot54" href="#" class="hover:text-[#c41e3a] transition-colors">使用条款</a>
+<a id="foot55" href="#" class="hover:text-[#c41e3a] transition-colors">隐私政策</a>
+<a id="foot56" href="#" class="hover:text-[#c41e3a] transition-colors">免责声明</a>
+</div>
+</div>
+</div>
+</footer><script id="script01">(function() { 
+document.addEventListener('DOMContentLoaded', function() {
+  const header = document.getElementById('header01');
+  const mobileBtn = document.getElementById('nav18');
+  const mobileMenu = document.getElementById('nav19');
+  
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 50) {
+      header.classList.add('nav-scrolled');
+    } else {
+      header.classList.remove('nav-scrolled');
+    }
+  });
+  
+  if (mobileBtn && mobileMenu) {
+    mobileBtn.addEventListener('click', function() {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    mobileMenu.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+  }
+  
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const articleCards = document.querySelectorAll('[data-category]');
+  
+  filterBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      filterBtns.forEach(function(b) {
+        b.classList.remove('bg-[#c41e3a]', 'text-white');
+        b.classList.add('bg-[#faf7f0]', 'text-[#1a1a1a]');
+      });
+      this.classList.remove('bg-[#faf7f0]', 'text-[#1a1a1a]');
+      this.classList.add('bg-[#c41e3a]', 'text-white');
+      
+      const filter = this.getAttribute('data-filter');
+      
+      articleCards.forEach(function(card) {
+        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+          card.style.display = '';
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          setTimeout(function() {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, 50);
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+  
+  const fadeElements = document.querySelectorAll('.fade-in-up');
+  
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+  
+  fadeElements.forEach(function(el) {
+    observer.observe(el);
+  });
+  
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      const targetId = this.getAttribute('href');
+      if (targetId !== '#' && document.querySelector(targetId)) {
+        e.preventDefault();
+        const target = document.querySelector(targetId);
+        const headerHeight = header ? header.offsetHeight : 0;
+        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+        
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+});
+ })();</script></body></html>

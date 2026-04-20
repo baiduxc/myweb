@@ -13,6 +13,22 @@ const blogCollection = defineCollection({
   }),
 });
 
+// Book collection (for future PDF ebook parsing)
+const booksCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    author: z.string(),
+    dynasty: z.string().optional(),
+    category: z.enum(['shan', 'yi', 'ming', 'xiang', 'bu']),
+    description: z.string(),
+    coverUrl: z.string().optional(),
+    pdfUrl: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
 export const collections = {
   blog: blogCollection,
+  books: booksCollection,
 };

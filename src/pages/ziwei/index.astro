@@ -9,6 +9,15 @@ const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'ziwei')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
+const zhiShiModules = [
+  { title: '十四主星', desc: '紫微系（紫微、天机、太阳、武曲、天同、廉贞）与天府系（天府、太阴、贪狼、巨门、天相、天梁、七杀、破军）的特性与庙旺落陷。', icon: '01' },
+  { title: '十二宫位', desc: '命宫、兄弟、夫妻、子女、财帛、疾厄、迁移、交友、官禄、田宅、福德、父母，十二宫位各主何事，宫位之间的三合六冲关系。', icon: '02' },
+  { title: '四化飞星', desc: '化禄（财禄）、化权（权势）、化科（名声）、化忌（阻滞），四化随年干变化，是判断吉凶变化的核心依据。', icon: '03' },
+  { title: '辅星杂曜', desc: '文昌、文曲、左辅、右弼、天魁、天钺等吉星，以及擎羊、陀罗、火星、铃星、地空、地劫等煞星的影响。', icon: '04' },
+  { title: '三方四正', desc: '命宫、财帛宫、官禄宫构成三合，加上迁移宫构成四正。三方四正的综合分析是紫微断命的核心方法。', icon: '05' },
+  { title: '大运流年', desc: '以命宫为起点，每十年行一大限，配合流年小限，分析各阶段的运势起伏与关键时间节点。', icon: '06' },
+];
+
 const zhuXing = [
   { name: '紫微', type: '北斗', desc: '帝星，尊贵稳重，有领导力' },
   { name: '天机', type: '北斗', desc: '智谋之星，聪明善变' },
@@ -57,12 +66,6 @@ const gongWei = [
       </div>
       <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">紫微斗数</h1>
       <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">十四主星详解 · 十二宫位推断 · 观星曜而知命运</p>
-      <div class="mt-6">
-        <a href="/ziwei/paipan/" class="btn-primary">
-          <span>在线排盘</span>
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-      </div>
     </div>
   </section>
 
@@ -73,6 +76,30 @@ const gongWei = [
       <div class="font-sans-cn text-ink-light/80 leading-loose space-y-6 fade-in-up">
         <p>紫微斗数，简称"紫微"，是中国传统命理学中的重要流派。它以人的出生年月日时为基础，排出命盘，将诸星分布于十二宫位中，通过星曜的庙旺落陷、吉凶组合来推断命运。</p>
         <p>紫微斗数以紫微星为核心，布十四主星于命盘十二宫位。每颗星曜都有其独特的含义和特性，在不同宫位中表现出不同的影响。通过分析星曜之间的组合关系，可以推断人的性格、事业、财运、婚姻、健康等各方面的运势。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Knowledge Structure -->
+  <section class="py-16 bg-paper">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">知识体系</span>
+        <h2 class="section-title">紫微核心知识</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">从星曜到宫位，系统掌握紫微斗数的六大知识模块</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {zhiShiModules.map((mod, i) => (
+          <div class="bg-white rounded-2xl p-6 border border-gold/10 card-hover fade-in-up group" style={`transition-delay: ${i * 80}ms;`}>
+            <div class="w-12 h-12 mb-4 bg-gradient-to-br from-jade/10 to-jade/5 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <span class="font-serif-cn text-lg font-bold text-jade">{mod.icon}</span>
+            </div>
+            <h3 class="font-serif-cn text-lg font-bold text-ink mb-3 group-hover:text-jade transition-colors">{mod.title}</h3>
+            <p class="text-sm text-ink-light/70 leading-relaxed">{mod.desc}</p>
+          </div>
+        ))}
       </div>
     </div>
   </section>
@@ -118,6 +145,13 @@ const gongWei = [
       <div class="max-w-4xl mx-auto px-4">
         <div class="text-center mb-12 fade-in-up"><span class="section-label">相关文章</span><h2 class="section-title">推荐阅读</h2><div class="section-divider"></div></div>
         <div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-white rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div>
+
+        <div class="text-center mt-10">
+          <a href="/articles/" class="btn-outline">
+            <span>查看更多文章</span>
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
       </div>
     </section>
   )}

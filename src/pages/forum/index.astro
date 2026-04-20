@@ -1,0 +1,89 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { siteName } from '@data/site';
+
+const forumSections = [
+  { name: '综合讨论', desc: '易学交流、心得分享、疑问解答', icon: '💬', posts: '开放中' },
+  { name: '八字研讨', desc: '四柱八字案例分析、理论探讨', icon: '📊', posts: '开放中' },
+  { name: '紫微斗数', desc: '命盘解读、星曜分析、实战经验', icon: '⭐', posts: '开放中' },
+  { name: '风水实战', desc: '家居布局、选址勘察、案例分析', icon: '🧭', posts: '开放中' },
+  { name: '周易卦理', desc: '卦象解读、爻辞分析、象数义理', icon: '☰', posts: '开放中' },
+  { name: '学习资源', desc: '电子书分享、课程推荐、入门指南', icon: '📚', posts: '开放中' },
+];
+---
+
+<BaseLayout title={`易学论坛 - ${siteName}`} description="易学爱好者交流社区，分享学习心得与案例分析">
+  <Header />
+
+  <!-- Hero -->
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="absolute top-20 right-20 w-96 h-96 opacity-5 taiji-spin hidden lg:block">
+      <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="90" stroke="#c41e3a" stroke-width="2"/><path d="M100 10A90 90 0 0 1 100 190A45 45 0 0 0 100 100A45 45 0 0 1 100 10Z" fill="#c41e3a"/><circle cx="100" cy="55" r="12" fill="#faf7f0"/><circle cx="100" cy="145" r="12" fill="#c41e3a"/></svg>
+    </div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mb-4">易学论坛</h1>
+      <p class="text-lg text-ink-light/70 max-w-2xl mx-auto leading-relaxed">易学爱好者交流社区 · 分享心得 · 探讨命理</p>
+      <div class="mt-8">
+        <a href="https://forum.example.com" target="_blank" rel="noopener noreferrer" class="btn-primary">
+          <span>进入论坛</span>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forum Sections -->
+  <section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">论坛板块</span>
+        <h2 class="section-title">讨论分区</h2>
+        <div class="section-divider"></div>
+        <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">六大板块，覆盖易学各领域，找到志同道合的学友</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {forumSections.map((sec, i) => (
+          <a href="https://forum.example.com" target="_blank" rel="noopener noreferrer" class="bg-paper rounded-2xl p-6 border border-gold/10 card-hover fade-in-up group no-underline" style={`transition-delay: ${i * 80}ms;`}>
+            <div class="flex items-start gap-4">
+              <div class="text-3xl">{sec.icon}</div>
+              <div>
+                <h3 class="font-serif-cn text-lg font-bold text-ink group-hover:text-vermilion transition-colors mb-1">{sec.name}</h3>
+                <p class="text-sm text-ink-light/60 mb-3">{sec.desc}</p>
+                <span class="text-xs text-jade font-medium bg-jade/10 px-2 py-0.5 rounded-full">{sec.posts}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 bg-gradient-to-br from-ink to-ink-light text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 border border-gold/30 rounded-full taiji-spin"></div>
+    </div>
+    <div class="max-w-3xl mx-auto px-4 text-center relative z-10">
+      <h2 class="font-serif-cn text-3xl md:text-4xl font-bold mb-4">加入易学社区</h2>
+      <p class="text-paper/70 text-lg mb-8 leading-relaxed">与十万+易学爱好者一起探讨命理奥秘，分享学习心得，解答疑惑</p>
+      <a href="https://forum.example.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-8 py-4 bg-vermilion text-white rounded-full hover:bg-vermilion-light transition-all duration-300 text-base font-medium shadow-lg">
+        <span>立即加入</span>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
+  });
+</script>
