@@ -32,6 +32,21 @@ const keRelations = [
   { from: '火', to: '金', desc: '火能熔化金属' },
   { from: '金', to: '木', desc: '斧头可砍伐树木' },
 ];
+
+// Pentagon positions for the five elements: 木(top), 火(upper-right), 土(lower-right), 金(lower-left), 水(upper-left)
+// Ordered clockwise for 相生 cycle: 木→火→土→金→水→木
+const pentagonNodes = [
+  { ...wuxingData[0], x: 200, y: 55 },  // 木 - top
+  { ...wuxingData[1], x: 352, y: 165 }, // 火 - upper right
+  { ...wuxingData[2], x: 295, y: 340 }, // 土 - lower right
+  { ...wuxingData[3], x: 105, y: 340 }, // 金 - lower left
+  { ...wuxingData[4], x: 48, y: 165 },  // 水 - upper left
+];
+
+// 相生: outer pentagon (0→1→2→3→4→0)
+const shengEdges = [[0,1],[1,2],[2,3],[3,4],[4,0]];
+// 相克: inner star/pentagram (0→2→4→1→3→0)
+const keEdges = [[0,2],[2,4],[4,1],[1,3],[3,0]];
 ---
 
 <BaseLayout title={`五行基础 - ${siteName}`} description="五行生克制化的深入理解">
@@ -46,22 +61,85 @@ const keRelations = [
     </div>
   </section>
 
-  <!-- Five Elements Cards -->
+  <!-- Five Elements Pentagon Diagram -->
   <section class="py-16 bg-white">
     <div class="max-w-5xl mx-auto px-4">
       <div class="text-center mb-12 fade-in-up"><span class="section-label">五行概览</span><h2 class="section-title">五行属性</h2><div class="section-divider"></div></div>
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+
+      <!-- Pentagon SVG Diagram -->
+      <div class="flex justify-center mb-12 fade-in-up">
+        <div class="relative w-full max-w-[420px]">
+          <svg viewBox="0 0 400 400" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+            <!-- 相生连线 - 外圈五边形 -->
+            {shengEdges.map(([from, to]) => (
+              <line x1={pentagonNodes[from].x} y1={pentagonNodes[from].y} x2={pentagonNodes[to].x} y2={pentagonNodes[to].y} stroke="#4a7c59" stroke-width="2.5" stroke-dasharray="6,4" opacity="0.7"/>
+            ))}
+            <!-- 相克连线 - 内圈五角星 -->
+            {keEdges.map(([from, to]) => (
+              <line x1={pentagonNodes[from].x} y1={pentagonNodes[from].y} x2={pentagonNodes[to].x} y2={pentagonNodes[to].y} stroke="#c41e3a" stroke-width="2" stroke-dasharray="4,4" opacity="0.5"/>
+            ))}
+            <!-- 五行圆圈节点 -->
+            {pentagonNodes.map((node, i) => {
+              const isLight = ['earth', 'gold', 'vermilion', 'water'].includes(node.color);
+              return (
+                <g class="wuxing-node-group">
+                  <circle cx={node.x} cy={node.y} r="42" class={`wuxing-${node.color}`} filter="url(#shadow)"/>
+                  <circle cx={node.x} cy={node.y} r="42" fill="none" stroke={isLight ? 'rgba(26,26,26,0.2)' : 'rgba(255,255,255,0.3)'} stroke-width="1.5"/>
+                  <text x={node.x} y={node.y - 6} text-anchor="middle" class={`font-serif-cn text-2xl font-bold ${isLight ? 'fill-[#1a1a1a]' : 'fill-white'}`}>{node.name}</text>
+                  <text x={node.x} y={node.y + 14} text-anchor="middle" class={`text-[11px] ${isLight ? 'fill-[#1a1a1a]/70' : 'fill-white/80'}`}>{node.direction}·{node.season}</text>
+                  <text x={node.x} y={node.y + 26} text-anchor="middle" class={`text-[10px] ${isLight ? 'fill-[#1a1a1a]/50' : 'fill-white/60'}`}>{node.organ}</text>
+                </g>
+              );
+            })}
+            <!-- 相生箭头标签 -->
+            <text x="305" y="92" text-anchor="middle" class="fill-jade text-[11px] font-medium">生</text>
+            <text x="340" y="265" text-anchor="middle" class="fill-jade text-[11px] font-medium">生</text>
+            <text x="200" y="378" text-anchor="middle" class="fill-jade text-[11px] font-medium">生</text>
+            <text x="60" y="265" text-anchor="middle" class="fill-jade text-[11px] font-medium">生</text>
+            <text x="95" y="92" text-anchor="middle" class="fill-jade text-[11px] font-medium">生</text>
+            <!-- 相克箭头标签 -->
+            <text x="255" y="185" text-anchor="middle" class="fill-vermilion text-[10px]">克</text>
+            <text x="175" y="255" text-anchor="middle" class="fill-vermilion text-[10px]">克</text>
+            <text x="200" y="140" text-anchor="middle" class="fill-vermilion text-[10px]">克</text>
+            <text x="130" y="175" text-anchor="middle" class="fill-vermilion text-[10px]">克</text>
+            <text x="270" y="270" text-anchor="middle" class="fill-vermilion text-[10px]">克</text>
+            <defs>
+              <filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/></filter>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="flex flex-wrap items-center justify-center gap-8 text-sm fade-in-up">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-8 h-0.5 bg-jade" style="border-top: 2.5px dashed #4a7c59;"></span>
+          <span class="text-jade font-medium">相生 · 循环滋养</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-8 h-0.5 bg-vermilion" style="border-top: 2px dashed #c41e3a;"></span>
+          <span class="text-vermilion font-medium">相克 · 制约平衡</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detail Cards -->
+  <section class="py-16 bg-paper">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up"><span class="section-label">五行详解</span><h2 class="section-title">各属性详述</h2><div class="section-divider"></div></div>
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
         {wuxingData.map((wx) => {
-          const lightBg = ['earth', 'gold', 'vermilion', 'water'];
-          const isLight = lightBg.includes(wx.color);
+          const isLight = ['earth', 'gold', 'vermilion', 'water'].includes(wx.color);
           return (
-            <div class={`wuxing-${wx.color} rounded-2xl p-6 text-center card-hover fade-in-up ${isLight ? 'text-ink' : 'text-white'}`}>
-              <div class={`text-4xl font-serif-cn font-bold mb-2 ${isLight ? 'opacity-90' : ''}`}>{wx.name}</div>
-              <div class={`text-sm space-y-1 ${isLight ? 'opacity-75' : 'opacity-90'}`}>
+            <div class={`wuxing-${wx.color} rounded-2xl p-5 text-center card-hover fade-in-up ${isLight ? 'text-ink' : 'text-white'}`}>
+              <div class={`text-3xl font-serif-cn font-bold mb-3 ${isLight ? 'opacity-90' : ''}`}>{wx.name}</div>
+              <div class={`text-xs space-y-1.5 ${isLight ? 'opacity-75' : 'opacity-90'}`}>
                 <div>方位：{wx.direction}</div>
                 <div>季节：{wx.season}</div>
                 <div>特性：{wx.nature}</div>
                 <div>脏腑：{wx.organ}</div>
+                <div>情绪：{wx.emotion}</div>
                 <div>德行：{wx.virtue}</div>
               </div>
             </div>
@@ -71,11 +149,10 @@ const keRelations = [
     </div>
   </section>
 
-  <!-- Sheng Ke -->
-  <section class="py-16 bg-paper">
+  <!-- Sheng Ke Relations -->
+  <section class="py-16 bg-white">
     <div class="max-w-5xl mx-auto px-4">
       <div class="grid md:grid-cols-2 gap-12">
-        <!-- 相生 -->
         <div class="fade-in-up">
           <div class="text-center mb-8">
             <span class="text-jade text-sm font-medium tracking-widest">相生循环</span>
@@ -83,14 +160,13 @@ const keRelations = [
           </div>
           <div class="space-y-3">
             {shengRelations.map((r) => (
-              <div class="bg-white rounded-xl p-4 flex items-center gap-4 border border-gold/10">
+              <div class="bg-paper rounded-xl p-4 flex items-center gap-4 border border-gold/10">
                 <span class="font-serif-cn text-lg font-bold text-jade">{r.from} → {r.to}</span>
                 <span class="text-sm text-ink-light/70">{r.desc}</span>
               </div>
             ))}
           </div>
         </div>
-        <!-- 相克 -->
         <div class="fade-in-up">
           <div class="text-center mb-8">
             <span class="text-vermilion text-sm font-medium tracking-widest">相克循环</span>
@@ -98,7 +174,7 @@ const keRelations = [
           </div>
           <div class="space-y-3">
             {keRelations.map((r) => (
-              <div class="bg-white rounded-xl p-4 flex items-center gap-4 border border-gold/10">
+              <div class="bg-paper rounded-xl p-4 flex items-center gap-4 border border-gold/10">
                 <span class="font-serif-cn text-lg font-bold text-vermilion">{r.from} → {r.to}</span>
                 <span class="text-sm text-ink-light/70">{r.desc}</span>
               </div>
@@ -111,10 +187,10 @@ const keRelations = [
 
   <!-- Related Articles -->
   {posts.length > 0 && (
-    <section class="py-16 bg-white">
+    <section class="py-16 bg-paper">
       <div class="max-w-4xl mx-auto px-4">
         <div class="text-center mb-12 fade-in-up"><span class="section-label">相关文章</span><h2 class="section-title">推荐阅读</h2><div class="section-divider"></div></div>
-        <div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-paper rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div>
+        <div class="space-y-6">{posts.map((p) => (<a href={`/blog/${p.slug}/`} class="block bg-white rounded-xl p-6 border border-gold/5 card-hover no-underline fade-in-up"><h3 class="font-serif-cn text-lg font-bold text-ink mb-2 hover:text-vermilion transition-colors">{p.data.title}</h3><p class="text-sm text-ink-light/70 line-clamp-2">{p.data.description}</p><div class="text-xs text-ink-light/50 mt-3">{p.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div></a>))}</div>
       </div>
     </section>
   )}

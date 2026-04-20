@@ -14,9 +14,10 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await post.render();
+const rendered = await post.render();
+const { Content } = rendered;
 
-const categoryMap: Record<string, string> = {
+const categoryMap = {
   zhouyi: '周易', bazi: '八字命理', ziwei: '紫微斗数',
   fengshui: '风水堪舆', qimen: '奇门遁甲', liuyao: '六爻占卜',
   wuxing: '五行', general: '综合',
@@ -26,61 +27,179 @@ const catLabel = categoryMap[post.data.category] || post.data.category;
 const formattedDate = post.data.date.toLocaleDateString('zh-CN', {
   year: 'numeric', month: 'long', day: 'numeric',
 });
+
+// All posts sorted by date for prev/next
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.filter((p) => !p.data.draft)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+
+const currentIdx = sortedPosts.findIndex((p) => p.slug === post.slug);
+const prevPost = currentIdx < sortedPosts.length - 1 ? sortedPosts[currentIdx + 1] : null;
+const nextPost = currentIdx > 0 ? sortedPosts[currentIdx - 1] : null;
+
+// Recommended: same category, exclude current
+const recommended = allPosts
+  .filter((p) => !p.data.draft && p.data.category === post.data.category && p.slug !== post.slug)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5);
 ---
 
 <BaseLayout title={`${post.data.title} - ${siteName}`} description={post.data.description}>
   <Header />
 
-  <main class="pt-28 pb-16">
-    <div class="max-w-3xl mx-auto px-4">
-      <article>
-        <header class="mb-10">
-          <div class="flex items-center gap-3 text-sm text-ink-light/60 mb-4">
-            <span class="px-3 py-1 bg-vermilion/10 text-vermilion text-xs rounded-full font-medium">{catLabel}</span>
-            <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+  <div class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <span class="section-label">知识宝库</span>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mt-3 mb-4">最新文章</h1>
+      <div class="section-divider"></div>
+    </div>
+  </div>
+
+  <!-- Main Layout: Content + Sidebar -->
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Left: Article Content -->
+        <article class="flex-1 min-w-0">
+          <!-- Breadcrumb -->
+          <a href="/articles/" class="inline-flex items-center gap-2 text-sm text-ink-light/60 hover:text-vermilion transition-colors mb-8 no-underline fade-in-up">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            返回文章列表
+          </a>
+
+          <!-- Article Header -->
+          <header class="mb-10 fade-in-up">
+            <div class="flex items-center gap-3 text-sm text-ink-light/60 mb-4">
+              <span class="px-3 py-1 bg-vermilion/10 text-vermilion text-xs rounded-full font-medium">{catLabel}</span>
+              <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+            </div>
+            <h1 class="font-serif-cn text-3xl md:text-4xl font-bold text-ink leading-snug mb-4">
+              {post.data.title}
+            </h1>
+            <p class="text-ink-light/70 leading-relaxed">{post.data.description}</p>
+            <div class="w-24 h-1 bg-gradient-to-r from-vermilion to-gold mt-6"></div>
+          </header>
+
+          <!-- Article Content -->
+          <div class="font-sans-cn text-ink-light leading-loose
+                      prose prose-lg max-w-none
+                      prose-headings:font-serif-cn prose-headings:text-ink prose-headings:tracking-wider
+                      prose-h2:text-2xl prose-h3:text-xl
+                      prose-a:text-vermilion prose-a:no-underline hover:prose-a:underline
+                      prose-strong:text-ink
+                      prose-blockquote:border-l-gold/40 prose-blockquote:bg-gold/5
+                      prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-sm
+                      prose-table:border-collapse prose-th:border prose-td:border prose-th:border-gold/30 prose-td:border-gold/30
+                      prose-th:p-3 prose-td:p-3 prose-th:bg-paper-dark prose-th:font-serif-cn
+                      prose-img:rounded-2xl prose-img:shadow-lg
+                      prose-ul:list-disc prose-ol:list-decimal fade-in-up">
+            <Content />
           </div>
-          <h1 class="font-serif-cn text-3xl md:text-4xl font-bold text-ink leading-snug mb-4">
-            {post.data.title}
-          </h1>
-          <p class="text-ink-light/70 leading-relaxed">{post.data.description}</p>
-          <div class="w-24 h-1 bg-gradient-to-r from-vermilion to-gold mt-6"></div>
-        </header>
 
-        <div class="font-sans-cn text-ink-light leading-loose
-                    prose prose-lg max-w-none
-                    prose-headings:font-serif-cn prose-headings:text-ink prose-headings:tracking-wider
-                    prose-h2:text-2xl prose-h3:text-xl
-                    prose-a:text-vermilion prose-a:no-underline hover:prose-a:underline
-                    prose-strong:text-ink
-                    prose-blockquote:border-l-gold/40 prose-blockquote:bg-gold/5
-                    prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-sm
-                    prose-table:border-collapse prose-th:border prose-td:border prose-th:border-gold/30 prose-td:border-gold/30
-                    prose-th:p-3 prose-td:p-3 prose-th:bg-paper-dark prose-th:font-serif-cn
-                    prose-img:rounded-2xl prose-img:shadow-lg
-                    prose-ul:list-disc prose-ol:list-decimal">
-          <Content />
-        </div>
+          <!-- Tags -->
+          {post.data.tags.length > 0 && (
+            <div class="mt-10 pt-6 border-t border-gold/20 fade-in-up">
+              <div class="flex flex-wrap gap-2">
+                {post.data.tags.map((tag) => (
+                  <span class="px-3 py-1 text-xs font-medium text-jade bg-jade/10 rounded-full">{tag}</span>
+                ))}
+              </div>
+            </div>
+          )}
 
-        {post.data.tags.length > 0 && (
-          <div class="mt-10 pt-6 border-t border-gold/20">
-            <div class="flex flex-wrap gap-2">
-              {post.data.tags.map((tag) => (
-                <span class="px-3 py-1 text-xs font-medium text-jade bg-jade/10 rounded-full">{tag}</span>
-              ))}
+          <!-- Prev/Next Navigation -->
+          <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 fade-in-up">
+            {prevPost ? (
+              <a href={`/blog/${prevPost.slug}/`} class="group flex items-start gap-3 p-4 bg-paper rounded-xl border border-gold/10 hover:border-gold/30 transition-all no-underline">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shrink-0 group-hover:bg-gold/10 transition-colors">
+                  <svg class="w-5 h-5 text-ink-light/40 group-hover:text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div>
+                  <div class="text-xs text-ink-light/40 mb-1">上一篇</div>
+                  <div class="font-serif-cn text-sm font-bold text-ink group-hover:text-vermilion transition-colors line-clamp-2">{prevPost.data.title}</div>
+                </div>
+              </a>
+            ) : <div></div>}
+
+            {nextPost ? (
+              <a href={`/blog/${nextPost.slug}/`} class="group flex items-start gap-3 p-4 bg-paper rounded-xl border border-gold/10 hover:border-gold/30 transition-all no-underline sm:justify-end sm:flex-row-reverse sm:text-right">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shrink-0 group-hover:bg-gold/10 transition-colors">
+                  <svg class="w-5 h-5 text-ink-light/40 group-hover:text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+                <div>
+                  <div class="text-xs text-ink-light/40 mb-1">下一篇</div>
+                  <div class="font-serif-cn text-sm font-bold text-ink group-hover:text-vermilion transition-colors line-clamp-2">{nextPost.data.title}</div>
+                </div>
+              </a>
+            ) : <div></div>}
+          </div>
+
+          <!-- Disclaimer -->
+          <aside class="mt-8 p-4 bg-gold/5 border border-gold/20 rounded-xl fade-in-up">
+            <p class="text-xs text-ink-light/70 leading-relaxed">
+              <strong class="font-serif-cn text-ink">声明：</strong>
+              本文内容仅供学习与文化交流，命理之说不可尽信，切勿迷信盲从。
+              人生在世，当自强不息，顺势而为。
+            </p>
+          </aside>
+        </article>
+
+        <!-- Right: Sidebar -->
+        <aside class="lg:w-80 shrink-0">
+          <div class="lg:sticky lg:top-24 space-y-6">
+            {recommended.length > 0 && (
+              <div class="bg-paper rounded-2xl p-6 border border-gold/10 fade-in-up">
+                <div class="flex items-center gap-2 mb-4">
+                  <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+                  <h3 class="font-serif-cn text-lg font-bold text-ink">推荐阅读</h3>
+                </div>
+                <div class="space-y-3">
+                  {recommended.map((rp, i) => (
+                    <a href={`/blog/${rp.slug}/`} class="flex items-start gap-3 group no-underline py-2 border-b border-gold/5 last:border-0">
+                      <span class="font-serif-cn text-sm font-bold text-gold/40 shrink-0 w-5">{i + 1}</span>
+                      <div>
+                        <div class="font-serif-cn text-sm font-bold text-ink group-hover:text-vermilion transition-colors line-clamp-2">{rp.data.title}</div>
+                        <div class="text-xs text-ink-light/40 mt-1">{rp.data.date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</div>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- Category quick links -->
+            <div class="bg-paper rounded-2xl p-6 border border-gold/10 fade-in-up">
+              <div class="flex items-center gap-2 mb-4">
+                <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <h3 class="font-serif-cn text-lg font-bold text-ink">分类浏览</h3>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                {Object.entries(categoryMap).map(([slug, label]) => {
+                  const count = allPosts.filter((p) => !p.data.draft && p.data.category === slug).length;
+                  if (count === 0) return null;
+                  const isActive = slug === post.data.category;
+                  return (
+                    <a href={`/articles/?filter=${slug}`} class={`px-3 py-1.5 text-xs rounded-full transition-all ${isActive ? 'bg-vermilion text-white' : 'bg-white text-ink-light/70 hover:bg-gold/10 hover:text-gold'}`}>
+                      {label} ({count})
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        )}
-      </article>
-
-      <aside class="mt-12 p-4 bg-gold/5 border border-gold/20 rounded-xl">
-        <p class="text-xs text-ink-light/70 leading-relaxed">
-          <strong class="font-serif-cn text-ink">声明：</strong>
-          本文内容仅供学习与文化交流，命理之说不可尽信，切勿迷信盲从。
-          人生在世，当自强不息，顺势而为。
-        </p>
-      </aside>
+        </aside>
+      </div>
     </div>
-  </main>
+  </section>
 
   <Footer />
 </BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1 });
+    els.forEach((el) => obs.observe(el));
+  });
+</script>

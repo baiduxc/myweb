@@ -1,0 +1,163 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { siteName } from '@data/site';
+
+export async function getStaticPaths() {
+  const books = await getCollection('books');
+  return books.map((book) => ({
+    params: { slug: book.slug },
+    props: { book },
+  }));
+}
+
+const { book } = Astro.props;
+const rendered = await book.render();
+const { Content } = rendered;
+
+const allBooks = await getCollection('books');
+const categoryBooks = allBooks.filter((b) => !b.data.draft && b.data.category === book.data.category);
+const currentIndex = categoryBooks.findIndex((b) => b.slug === book.slug);
+const prevBook = currentIndex > 0 ? categoryBooks[currentIndex - 1] : null;
+const nextBook = currentIndex < categoryBooks.length - 1 ? categoryBooks[currentIndex + 1] : null;
+
+// Extract headings for TOC
+const headings = [];
+const tocMatch = rendered.body?.match(/<h([23])[^>]*>(.*?)<\/h\1>/g);
+if (tocMatch) {
+  tocMatch.forEach((h) => {
+    const level = h.match(/<h([23])/)[1];
+    const text = h.replace(/<[^>]+>/g, '').trim();
+    headings.push({ level: parseInt(level), text });
+  });
+}
+---
+
+<BaseLayout title={`${book.data.title} - 阅读 - ${siteName}`} description={book.data.description}>
+  <Header />
+
+  <!-- Reading Layout -->
+  <div class="pt-20 min-h-screen bg-[#f5f3ef]">
+    <div class="flex flex-col lg:flex-row max-w-7xl mx-auto">
+      <!-- Left: Content Area -->
+      <main class="flex-1 min-w-0">
+        <div class="max-w-3xl mx-auto px-4 py-12">
+          <!-- Book Header -->
+          <div class="text-center mb-12 fade-in-up">
+            <h1 class="font-serif-cn text-2xl md:text-3xl font-bold text-ink mb-3">{book.data.title}</h1>
+            <div class="flex items-center justify-center gap-4 text-sm text-ink-light/50">
+              <span>书名：{book.data.title}</span>
+              <span>作者：[{book.data.dynasty || ''}] {book.data.author}</span>
+            </div>
+            <div class="w-24 h-px bg-gold/30 mx-auto mt-4"></div>
+          </div>
+
+          <!-- Reading Content -->
+          <div class="prose prose-lg max-w-none font-sans-cn text-ink leading-loose
+                      prose-headings:font-serif-cn prose-headings:text-ink prose-headings:tracking-wider
+                      prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-6
+                      prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-4
+                      prose-p:text-ink/85 prose-p:indent-8
+                      prose-p:my-4
+                      prose-strong:text-ink
+                      prose-blockquote:border-l-gold/40 prose-blockquote:bg-gold/5
+                      prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-sm">
+            <Content />
+          </div>
+
+          <!-- Prev/Next Navigation -->
+          <div class="mt-16 pt-8 border-t border-gold/20">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+              {prevBook ? (
+                <a href={`/books/${prevBook.slug}/read/`} class="flex items-center gap-3 group no-underline w-full sm:w-auto">
+                  <div class="w-10 h-10 bg-paper rounded-xl flex items-center justify-center group-hover:bg-gold/10 transition-colors shrink-0">
+                    <svg class="w-5 h-5 text-ink-light/60 group-hover:text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                  </div>
+                  <div class="text-left">
+                    <div class="text-xs text-ink-light/40">上一本</div>
+                    <div class="font-serif-cn text-sm font-bold text-ink group-hover:text-vermilion transition-colors">{prevBook.data.title}</div>
+                  </div>
+                </a>
+              ) : <div></div>}
+
+              <a href={`/books/${book.slug}/`} class="px-6 py-2.5 bg-paper text-ink rounded-xl text-sm font-medium hover:bg-gold/10 hover:text-gold transition-all no-underline">
+                返回目录
+              </a>
+
+              {nextBook ? (
+                <a href={`/books/${nextBook.slug}/read/`} class="flex items-center gap-3 group no-underline w-full sm:w-auto sm:flex-row-reverse sm:text-right">
+                  <div class="w-10 h-10 bg-paper rounded-xl flex items-center justify-center group-hover:bg-gold/10 transition-colors shrink-0">
+                    <svg class="w-5 h-5 text-ink-light/60 group-hover:text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                  <div>
+                    <div class="text-xs text-ink-light/40">下一本</div>
+                    <div class="font-serif-cn text-sm font-bold text-ink group-hover:text-vermilion transition-colors">{nextBook.data.title}</div>
+                  </div>
+                </a>
+              ) : <div></div>}
+            </div>
+          </div>
+
+          <!-- Disclaimer -->
+          <aside class="mt-8 p-4 bg-gold/5 border border-gold/20 rounded-xl">
+            <p class="text-xs text-ink-light/70 leading-relaxed">
+              <strong class="font-serif-cn text-ink">声明：</strong>
+              本文内容为古籍数字化整理，仅供学术研究与文化传承参考。
+            </p>
+          </aside>
+        </div>
+      </main>
+
+      <!-- Right: TOC Sidebar (Desktop) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 px-6 py-8">
+          {headings.length > 0 && (
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gold/10">
+              <div class="flex items-center gap-2 mb-4">
+                <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <span class="text-sm font-medium text-ink">目录</span>
+              </div>
+              <nav class="space-y-1">
+                {headings.map((h) => (
+                  <a href={`#heading-${h.text}`} class={`block py-1.5 text-sm transition-colors hover:text-vermilion ${h.level === 3 ? 'pl-4 text-ink-light/50' : 'font-medium text-ink'}`}>
+                    {h.text}
+                  </a>
+                ))}
+              </nav>
+            </div>
+          )}
+
+          <!-- Floating action buttons -->
+          <div class="mt-6 space-y-2">
+            <a href={`/books/${book.slug}/`} class="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl shadow-sm border border-gold/10 text-sm text-ink-light/60 hover:text-gold hover:border-gold/30 transition-all no-underline">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <span>书籍详情</span>
+            </a>
+            <a href="/books/" class="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl shadow-sm border border-gold/10 text-sm text-ink-light/60 hover:text-gold hover:border-gold/30 transition-all no-underline">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/><polyline points="16 6 12 2 8 6"/></svg>
+              <span>返回书库</span>
+            </a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1 });
+    els.forEach((el) => obs.observe(el));
+
+    // Add IDs to headings for TOC links
+    document.querySelectorAll('h2, h3').forEach((h) => {
+      const id = 'heading-' + h.textContent.trim().replace(/\s+/g, '-');
+      h.id = id;
+    });
+  });
+</script>
