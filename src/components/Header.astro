@@ -22,11 +22,34 @@ import { navLinks, siteName } from '@data/site';
 
       <nav class="hidden md:flex items-center gap-6 lg:gap-8" aria-label="主导航">
         {navLinks.map((link) => {
-          const isActive = !link.external && Astro.url.pathname === link.href;
+          const isActive = !link.external && !link.dropdown && Astro.url.pathname === link.href;
           const linkClass = [
-            'text-ink hover:text-vermilion transition-colors duration-300 text-sm font-medium tracking-wide no-underline',
-            isActive && 'text-vermilion'
+            'hover:text-vermilion transition-colors duration-300 text-sm font-medium tracking-wide no-underline',
+            isActive ? 'text-vermilion' : 'text-ink',
+            link.dropdown && 'relative group',
           ].filter(Boolean).join(' ');
+
+          if (link.dropdown) {
+            return (
+              <div class={linkClass}>
+                <button class="flex items-center gap-1 cursor-pointer text-inherit font-inherit">
+                  {link.label}
+                  <svg class="w-3 h-3 transition-transform group-hover:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div class="bg-white rounded-xl shadow-lg border border-gold/10 py-2 min-w-[160px]">
+                    {link.children.map((child) => (
+                      <a href={child.href} class="block px-5 py-2.5 text-sm text-ink hover:bg-paper hover:text-vermilion transition-colors no-underline whitespace-nowrap">
+                        {child.icon && <span class="mr-2">{child.icon}</span>}
+                        {child.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
           return (
             link.external ? (
               <a
@@ -58,11 +81,26 @@ import { navLinks, siteName } from '@data/site';
   </div>
 
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="md:hidden hidden bg-paper border-t border-gold/20">
-    <nav class="px-4 py-4 space-y-3">
+  <div id="mobile-menu" class="md:hidden hidden bg-paper border-t border-gold/20 max-h-[80vh] overflow-y-auto">
+    <nav class="px-4 py-4 space-y-2">
       {navLinks.map((link) => (
-        link.external ? (
-          <a href={link.href} target="_blank" rel="noopener noreferrer" class="block text-ink py-2 text-sm no-underline hover:text-vermilion transition-colors">
+        link.dropdown ? (
+          <div class="mobile-dropdown">
+            <button class="mobile-dropdown-toggle flex items-center justify-between w-full text-ink py-2 text-sm hover:text-vermilion transition-colors">
+              {link.label}
+              <svg class="w-4 h-4 mobile-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="mobile-dropdown-content hidden pl-4 space-y-1">
+              {link.children.map((child) => (
+                <a href={child.href} class="block py-2 text-sm text-ink-light/70 hover:text-vermilion transition-colors no-underline">
+                  {child.icon && <span class="mr-2">{child.icon}</span>}
+                  {child.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : link.external ? (
+          <a href={link.href} target="_blank" rel="noopener noreferrer" class="flex items-center block text-ink py-2 text-sm no-underline hover:text-vermilion transition-colors">
             {link.label}
             <svg class="w-3 h-3 inline-block ml-1 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           </a>
@@ -92,6 +130,16 @@ import { navLinks, siteName } from '@data/site';
   if (mobileBtn && mobileMenu) {
     mobileBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
+    });
+
+    // Mobile dropdown toggles
+    mobileMenu.querySelectorAll('.mobile-dropdown-toggle').forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const content = toggle.nextElementSibling;
+        const chevron = toggle.querySelector('.mobile-dropdown-chevron');
+        content.classList.toggle('hidden');
+        chevron?.classList.toggle('rotate-180');
+      });
     });
 
     mobileMenu.querySelectorAll('a').forEach((link) => {
