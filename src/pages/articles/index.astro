@@ -79,7 +79,7 @@ posts.forEach((p) => {
                   <div class="flex flex-col md:flex-row">
                     <div class="md:w-48 h-48 md:h-auto shrink-0 bg-paper-dark">
                       <img
-                        src={`https://picsum.photos/seed/${post.slug}/400/300`}
+                        src={post.data.cover || `https://picsum.photos/seed/${post.slug}/400/300`}
                         alt={post.data.title}
                         class="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                         loading="lazy"
