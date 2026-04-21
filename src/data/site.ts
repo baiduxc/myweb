@@ -1,7 +1,7 @@
-export const siteName = '国学院';
+export const siteName = '昊天易学网';
 export const siteDesc = '深入研习周易八卦、四柱八字、紫微斗数、奇门遁甲等传统易学知识，以现代视角解读千年智慧，助您明理知命、趋吉避凶。';
-export const siteUrl = 'https://www.guoxueyuan.com';
-export const siteAuthor = '国学院';
+export const siteUrl = 'https://www.haotianyixue.com';
+export const siteAuthor = '昊天易学网';
 export const siteKeywords = '周易,八字,紫微斗数,风水,奇门遁甲,六爻,命理,国学,易学,天干地支,五行';
 
 export const navLinks = [
