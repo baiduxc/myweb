@@ -3,11 +3,30 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
 
 const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'zhouyi')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": siteUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "周易八卦",
+      "item": `${siteUrl}/zhouyi/`
+    }
+  ]
+};
 
 const baguaData = [
   { name: '乾', nature: '天', wuxing: '金', dir: '西北', family: '父', symbol: '☰', yao: '111', desc: '刚健中正，自强不息', shuxing: '阳' },
@@ -59,7 +78,12 @@ const learningPath = [
 ];
 ---
 
-<BaseLayout title={`周易八卦 - 六十四卦精解 - ${siteName}`} description="系统学习周易八卦，六十四卦卦辞爻辞解读，象数理占并重">
+<BaseLayout 
+  title={`周易八卦 - 六十四卦精解 - ${siteName}`} 
+  description="系统学习周易八卦知识，详解六十四卦卦辞爻辞，八卦象数与义理并重，掌握周易占卜与哲学智慧" 
+  keywords="周易,易经,八卦,六十四卦,卦辞,爻辞,象数,占卜,乾卦,坤卦,周易预测"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <!-- Page Hero -->

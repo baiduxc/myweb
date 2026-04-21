@@ -2,10 +2,19 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "首页", "item": siteUrl },
+    { "@type": "ListItem", "position": 2, "name": "八字排盘", "item": `${siteUrl}/bazi/paipan/` },
+  ],
+};
 ---
 
-<BaseLayout title={`八字排盘 - 在线四柱八字命盘计算器 - ${siteName}`} description="免费在线八字排盘，输入出生年月日时即可生成四柱命盘，包含五行分析、十神配置、大运流年等详细信息。">
+<BaseLayout title={`八字排盘 - 在线四柱八字命盘计算器 - ${siteName}`} description="免费在线八字排盘，输入出生年月日时即可生成四柱命盘，包含五行分析、十神配置、大运流年等详细信息。" keywords="八字排盘,在线排盘,四柱排盘,八字算命,八字命盘,生辰八字" jsonLd={breadcrumbJsonLd}>
   <Header />
 
   <!-- Page Hero -->

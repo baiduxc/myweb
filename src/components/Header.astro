@@ -2,10 +2,10 @@
 import { navLinks, siteName } from '@data/site';
 ---
 
-<header id="header01" class="fixed top-0 left-0 w-full z-50 transition-all duration-500 bg-transparent">
+<header id="header01" role="banner" class="fixed top-0 left-0 w-full z-50 transition-all duration-500 bg-transparent">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-20">
-      <a href="/" class="flex items-center gap-3 no-underline group">
+      <a href="/" class="flex items-center gap-3 no-underline group" aria-label={`${siteName} 首页`}>
         <div class="relative w-10 h-10 flex items-center justify-center">
           <svg class="w-8 h-8 text-vermilion" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
@@ -82,7 +82,7 @@ import { navLinks, siteName } from '@data/site';
 
   <!-- Mobile Menu -->
   <div id="mobile-menu" class="md:hidden hidden bg-paper border-t border-gold/20 max-h-[80vh] overflow-y-auto">
-    <nav class="px-4 py-4 space-y-2">
+    <nav class="px-4 py-4 space-y-2" aria-label="移动端导航">
       {navLinks.map((link) => (
         link.dropdown ? (
           <div class="mobile-dropdown">

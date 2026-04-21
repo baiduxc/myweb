@@ -24,7 +24,7 @@ export const navLinks = [
     ],
   },
   { href: '/articles/', label: '全部文章' },
-  { href: '/masters/', label: '专栏' },
+  // { href: '/masters/', label: '专栏' }, // 暂时隐藏
   { href: '/books/', label: '书库' },
 ];
 

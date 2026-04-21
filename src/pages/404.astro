@@ -5,7 +5,7 @@ import Footer from '@components/Footer.astro';
 import { siteName } from '@data/site';
 ---
 
-<BaseLayout title={`404 - ${siteName}`}>
+<BaseLayout title={`404 - ${siteName}`} robots="noindex, nofollow">
   <Header />
   <main class="flex-1 flex items-center justify-center py-20">
     <div class="text-center">

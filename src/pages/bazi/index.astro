@@ -3,11 +3,30 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
 
 const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'bazi')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": siteUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "八字命理",
+      "item": `${siteUrl}/bazi/`
+    }
+  ]
+};
 
 const topics = [
   { title: '天干地支', desc: '十天干（甲乙丙丁戊己庚辛壬癸）与十二地支（子丑寅卯辰巳午未申酉戌亥）的基础知识，阴阳五行属性，是八字的基石。' },
@@ -19,7 +38,12 @@ const topics = [
 ];
 ---
 
-<BaseLayout title={`八字命理 - 四柱预测精要 - ${siteName}`} description="系统学习八字命理，天干地支、四柱排盘、十神格局、大运流年">
+<BaseLayout 
+  title={`八字命理 - 四柱预测精要 - ${siteName}`} 
+  description="系统学习八字命理知识，涵盖天干地支、四柱排盘、十神格局、大运流年、用神选取，掌握八字预测核心方法" 
+  keywords="八字,八字命理,四柱八字,八字排盘,八字合婚,日柱,时柱,十神,用神,大运"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <!-- Hero -->

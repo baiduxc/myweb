@@ -3,11 +3,30 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
 
 const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'ziwei')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": siteUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "紫微斗数",
+      "item": `${siteUrl}/ziwei/`
+    }
+  ]
+};
 
 const zhiShiModules = [
   { title: '十四主星', desc: '紫微系（紫微、天机、太阳、武曲、天同、廉贞）与天府系（天府、太阴、贪狼、巨门、天相、天梁、七杀、破军）的特性与庙旺落陷。', icon: '01' },
@@ -51,7 +70,12 @@ const gongWei = [
 ];
 ---
 
-<BaseLayout title={`紫微斗数 - ${siteName}`} description="十四主星详解，学习紫微斗数知识">
+<BaseLayout 
+  title={`紫微斗数 - ${siteName}`} 
+  description="系统学习紫微斗数命理，详解十四主星、十二宫位、四化飞星、大运流年，掌握紫微排盘与命盘解读方法" 
+  keywords="紫微斗数,紫微,斗数,十四主星,十二宫位,命宫,流年,四化,飞星,紫微排盘"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <!-- Hero -->

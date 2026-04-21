@@ -3,11 +3,30 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
 
 const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'qimen')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": siteUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "奇门遁甲",
+      "item": `${siteUrl}/qimen/`
+    }
+  ]
+};
 
 // 九宫格元素
 const jiuGong = [
@@ -115,7 +134,12 @@ const liuYaoSu = [
 ];
 ---
 
-<BaseLayout title={`奇门遁甲 - 三奇六仪排盘 - ${siteName}`} description="古代最高决策学，九宫八卦与三奇六仪的时空分析体系">
+<BaseLayout 
+  title={`奇门遁甲 - 三奇六仪排盘 - ${siteName}`} 
+  description="系统学习奇门遁甲，精通九宫排盘、三奇六仪、八门九星、八神布局，掌握古代最高决策预测学" 
+  keywords="奇门遁甲,奇门,遁甲,九宫,八门,九星,八神,三奇六仪,排盘,奇门预测"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <!-- Page Hero -->

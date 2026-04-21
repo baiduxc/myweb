@@ -3,7 +3,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
 
 const allBooks = await getCollection('books');
 const books = allBooks.filter((b) => !b.data.draft);
@@ -36,9 +36,23 @@ const subCategories = {
   xiang: ['地相', '人相', '星相'],
   bu: ['易经', '六爻', '梅花易数', '奇门遁甲', '大六壬'],
 };
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "首页", "item": siteUrl },
+    { "@type": "ListItem", "position": 2, "name": "国学书库", "item": `${siteUrl}/books/` },
+  ],
+};
 ---
 
-<BaseLayout title={`国学书库 - ${siteName}`} description="五术典籍收藏，山医命相卜国学经典在线阅读">
+<BaseLayout
+  title={`国学书库 - ${siteName}`}
+  description="五术典籍收藏，山医命相卜国学经典在线阅读，涵盖八字、紫微、周易、奇门遁甲等命理典籍"
+  keywords="国学书库,五术典籍,山医命相卜,八字书籍,紫微书籍,周易书籍,奇门书籍,命理书籍"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">

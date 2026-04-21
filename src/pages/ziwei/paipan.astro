@@ -2,10 +2,19 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "首页", "item": siteUrl },
+    { "@type": "ListItem", "position": 2, "name": "紫微排盘", "item": `${siteUrl}/ziwei/paipan/` },
+  ],
+};
 ---
 
-<BaseLayout title={`紫微斗数排盘 - 在线紫微命盘计算器 - ${siteName}`} description="免费在线紫微斗数排盘，输入出生时间即可生成十二宫命盘，包含主星分布、四化飞星、大运流年等详细信息。">
+<BaseLayout title={`紫微斗数排盘 - 在线紫微命盘计算器 - ${siteName}`} description="免费在线紫微斗数排盘，输入出生时间即可生成十二宫命盘，包含主星分布、四化飞星、大运流年等详细信息。" keywords="紫微排盘,紫微斗数排盘,在线排盘,紫微命盘,斗数排盘,紫微斗数" jsonLd={breadcrumbJsonLd}>
   <Header />
 
   <!-- Page Hero -->

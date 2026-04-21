@@ -2,10 +2,24 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
-import { siteName, categories, masters } from '@data/site';
+import { siteName, siteUrl, categories, masters } from '@data/site';
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "首页", "item": siteUrl },
+    { "@type": "ListItem", "position": 2, "name": "关于我们", "item": `${siteUrl}/about/` },
+  ],
+};
 ---
 
-<BaseLayout title={`关于${siteName}`} description="了解昊天易学网的创立初衷与理念">
+<BaseLayout
+  title={`关于${siteName}`}
+  description="了解昊天易学网的创立初衷与理念，传承国学经典，弘扬易学智慧"
+  keywords="昊天易学网,关于我们,易学平台,命理学习,国学传承"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">

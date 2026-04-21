@@ -3,11 +3,30 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
 
 const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'liuyao')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": siteUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "六爻占卜",
+      "item": `${siteUrl}/liuyao/`
+    }
+  ]
+};
 
 const knowledgeCards = [
   { title: '阴阳爻', desc: '阳爻⚊与阴爻⚋是六爻的基本单位，三爻成卦，六爻为重卦。', icon: '⚊⚋' },
@@ -48,7 +67,12 @@ const shiZhanCases = [
 ];
 ---
 
-<BaseLayout title={`六爻占卜 - 纳甲筮法 - ${siteName}`} description="学习六爻预测方法，纳甲筮法、六亲六神、动爻变卦">
+<BaseLayout 
+  title={`六爻占卜 - 纳甲筮法 - ${siteName}`} 
+  description="系统学习六爻占卜预测，掌握纳甲筮法、六亲六神、动爻变卦、用神选取，从起卦到断卦完整方法" 
+  keywords="六爻,六爻占卜,纳甲,六爻预测,起卦,断卦,六亲,六神,动爻,变卦"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <!-- Page Hero -->

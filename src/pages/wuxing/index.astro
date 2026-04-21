@@ -3,11 +3,30 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
 
 const allPosts = await getCollection('blog');
 const posts = allPosts.filter((p) => !p.data.draft && p.data.category === 'wuxing')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": siteUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "五行基础",
+      "item": `${siteUrl}/wuxing/`
+    }
+  ]
+};
 
 // Each element with its own color palette
 const wuxingData = [
@@ -47,7 +66,12 @@ const shengEdges = [[0,1],[1,2],[2,3],[3,4],[4,0]];
 const keEdges = [[0,2],[2,4],[4,1],[1,3],[3,0]];
 ---
 
-<BaseLayout title={`五行基础 - ${siteName}`} description="五行生克制化的深入理解">
+<BaseLayout 
+  title={`五行基础 - ${siteName}`} 
+  description="系统学习五行基础理论，深入理解五行相生相克、金木水火土属性、五行旺衰，命理学的根本法则" 
+  keywords="五行,五行相生,五行相克,金木水火土,阴阳五行,五行属性,五行旺衰,五行生克,命理基础"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <!-- Hero -->

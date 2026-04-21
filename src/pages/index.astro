@@ -3,7 +3,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName, siteDesc, categories, masters } from '@data/site';
+import { siteName, siteDesc, siteUrl, categories, masters } from '@data/site';
 
 const allPosts = await getCollection('blog');
 const publishedPosts = allPosts.filter((p) => !p.data.draft);
@@ -27,9 +27,20 @@ const categoryMap: Record<string, string> = {
   fengshui: '风水堪舆', qimen: '奇门遁甲', liuyao: '六爻占卜',
   wuxing: '五行', general: '综合',
 };
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "首页", "item": siteUrl },
+  ],
+};
 ---
 
-<BaseLayout>
+<BaseLayout
+  keywords="昊天易学网,周易,八字,紫微斗数,奇门遁甲,风水,易学,国学,命理,占卜"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <!-- ===== Hero Section ===== -->

@@ -3,7 +3,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName } from '@data/site';
+import { siteName, siteUrl } from '@data/site';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -28,6 +28,22 @@ const formattedDate = post.data.date.toLocaleDateString('zh-CN', {
   year: 'numeric', month: 'long', day: 'numeric',
 });
 
+// SEO: build article structured data
+const articleUrl = `${siteUrl}/blog/${post.slug}/`;
+const keywords = post.data.tags?.join(', ') || catLabel;
+
+// Breadcrumb structured data
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "首页", "item": siteUrl },
+    { "@type": "ListItem", "position": 2, "name": "全部文章", "item": `${siteUrl}/articles/` },
+    { "@type": "ListItem", "position": 3, "name": catLabel, "item": `${siteUrl}/${post.data.category}/` },
+    { "@type": "ListItem", "position": 4, "name": post.data.title },
+  ],
+};
+
 // All posts sorted by date for prev/next
 const allPosts = await getCollection('blog');
 const sortedPosts = allPosts.filter((p) => !p.data.draft)
@@ -44,7 +60,20 @@ const recommended = allPosts
   .slice(0, 5);
 ---
 
-<BaseLayout title={`${post.data.title} - ${siteName}`} description={post.data.description}>
+<BaseLayout 
+  title={`${post.data.title} - ${siteName}`} 
+  description={post.data.description}
+  keywords={keywords}
+  article={{
+    title: post.data.title,
+    description: post.data.description,
+    publishedTime: post.data.date.toISOString(),
+    category: catLabel,
+    tags: post.data.tags,
+    url: articleUrl,
+  }}
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <div class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
@@ -63,10 +92,17 @@ const recommended = allPosts
         <!-- Left: Article Content -->
         <article class="flex-1 min-w-0">
           <!-- Breadcrumb -->
-          <a href="/articles/" class="inline-flex items-center gap-2 text-sm text-ink-light/60 hover:text-vermilion transition-colors mb-8 no-underline fade-in-up">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            返回文章列表
-          </a>
+          <nav aria-label="面包屑导航" class="mb-6 fade-in-up">
+            <ol class="flex items-center gap-2 text-sm text-ink-light/60 flex-wrap">
+              <li><a href="/" class="hover:text-vermilion transition-colors no-underline">首页</a></li>
+              <li class="text-gold/40">/</li>
+              <li><a href="/articles/" class="hover:text-vermilion transition-colors no-underline">全部文章</a></li>
+              <li class="text-gold/40">/</li>
+              <li><a href={`/${post.data.category}/`} class="hover:text-vermilion transition-colors no-underline">{catLabel}</a></li>
+              <li class="text-gold/40">/</li>
+              <li class="text-ink font-medium truncate">{post.data.title}</li>
+            </ol>
+          </nav>
 
           <!-- Article Header -->
           <header class="mb-10 fade-in-up">

@@ -2,11 +2,19 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
-import { siteName } from '@data/site';
+import { siteName, siteUrl, categories, masters } from '@data/site';
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "首页", "item": siteUrl },
+    { "@type": "ListItem", "position": 2, "name": "易学论坛", "item": `${siteUrl}/forum/` },
+  ],
+};
 
 const forumSections = [
   { name: '综合讨论', desc: '易学交流、心得分享、疑问解答', icon: '💬', posts: '开放中' },
-  { name: '八字研讨', desc: '四柱八字案例分析、理论探讨', icon: '📊', posts: '开放中' },
   { name: '紫微斗数', desc: '命盘解读、星曜分析、实战经验', icon: '⭐', posts: '开放中' },
   { name: '风水实战', desc: '家居布局、选址勘察、案例分析', icon: '🧭', posts: '开放中' },
   { name: '周易卦理', desc: '卦象解读、爻辞分析、象数义理', icon: '☰', posts: '开放中' },
@@ -14,7 +22,12 @@ const forumSections = [
 ];
 ---
 
-<BaseLayout title={`易学论坛 - ${siteName}`} description="易学爱好者交流社区，分享学习心得与案例分析">
+<BaseLayout
+  title={`易学论坛 - ${siteName}`}
+  description="昊天易学网论坛专区，与易学爱好者交流心得，探讨命理风水，分享学习经验"
+  keywords="易学论坛,命理论坛,周易论坛,八字论坛,风水论坛,易学交流"
+  jsonLd={breadcrumbJsonLd}
+>
   <Header />
 
   <!-- Hero -->
