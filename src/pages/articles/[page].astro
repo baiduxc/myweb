@@ -5,16 +5,32 @@ import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
 import { siteName } from '@data/site';
 
-const POSTS_PER_PAGE = 18;
+export async function getStaticPaths() {
+  const POSTS_PER_PAGE = 18;
+  const allPosts = await getCollection('blog');
+  const posts = allPosts
+    .filter((p) => !p.data.draft)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  const paths = [];
+  
+  for (let i = 1; i <= totalPages; i++) {
+    paths.push({
+      params: { page: i === 1 ? '1' : String(i) },
+      props: {
+        posts: posts.slice((i - 1) * POSTS_PER_PAGE, i * POSTS_PER_PAGE),
+        currentPage: i,
+        totalPages,
+        totalPosts: posts.length,
+      },
+    });
+  }
+  
+  return paths;
+}
 
-const allPosts = await getCollection('blog');
-const posts = allPosts
-  .filter((p) => !p.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-const totalPosts = posts.length;
-const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
-const pagePosts = posts.slice(0, POSTS_PER_PAGE);
+const { posts, currentPage, totalPages, totalPosts } = Astro.props;
 
 const categoryMap = {
   zhouyi: { label: '周易', color: 'bg-ink/90' },
@@ -27,14 +43,17 @@ const categoryMap = {
   general: { label: '综合', color: 'bg-ink-light/90' },
 };
 
+// Count posts per category for sidebar
+const allPostsForCount = await getCollection('blog');
+const publishedPosts = allPostsForCount.filter((p) => !p.data.draft);
 const categoryCounts: Record<string, number> = {};
-posts.forEach((p) => {
+publishedPosts.forEach((p) => {
   const cat = p.data.category;
   categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
 });
 ---
 
-<BaseLayout title={`全部文章 - ${siteName}`} description="昊天易学网全部文章合集">
+<BaseLayout title={`全部文章${currentPage > 1 ? ` - 第${currentPage}页` : ''} - ${siteName}`} description="昊天易学网全部文章合集">
   <Header />
 
   <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
@@ -44,21 +63,26 @@ posts.forEach((p) => {
       <h1 class="font-serif-cn text-4xl md:text-5xl font-bold text-ink mt-3 mb-4">全部文章</h1>
       <div class="section-divider"></div>
       <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">
-        共 {totalPosts} 篇文章 · 当前第 1/{totalPages} 页
+        共 {totalPosts} 篇文章 · 当前第 {currentPage}/{totalPages} 页
       </p>
     </div>
   </section>
 
+  <!-- Sidebar + Articles Layout -->
   <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Left: Category Sidebar -->
         <aside class="lg:w-56 shrink-0">
           <div class="lg:sticky lg:top-24">
             <div class="text-sm font-medium tracking-widest text-gold mb-4 hidden lg:block">分类导航</div>
             <div class="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
-              <span class="shrink-0 px-4 py-2.5 bg-vermilion text-white rounded-xl text-sm font-medium whitespace-nowrap text-center">
+              <a 
+                href="/articles/" 
+                class={`shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap no-underline text-center ${currentPage === 1 ? 'bg-vermilion text-white' : 'bg-paper text-ink hover:bg-vermilion hover:text-white'}`}
+              >
                 全部 ({totalPosts})
-              </span>
+              </a>
               {Object.entries(categoryMap).map(([slug, info]) => {
                 const count = categoryCounts[slug] || 0;
                 if (count === 0) return null;
@@ -75,12 +99,16 @@ posts.forEach((p) => {
           </div>
         </aside>
 
+        <!-- Right: Article List -->
         <div class="flex-1 min-w-0">
           <div class="space-y-6">
-            {pagePosts.map((post) => {
+            {posts.map((post) => {
               const cat = categoryMap[post.data.category] || { label: post.data.category, color: 'bg-ink/90' };
               return (
-                <article class="article-card bg-paper rounded-2xl overflow-hidden border border-gold/5 card-hover fade-in-up">
+                <article
+                  class="article-card bg-paper rounded-2xl overflow-hidden border border-gold/5 card-hover fade-in-up"
+                  data-category={post.data.category}
+                >
                   <div class="flex flex-col md:flex-row">
                     <div class="md:w-48 h-48 md:h-auto shrink-0 bg-paper-dark">
                       <img
@@ -115,37 +143,83 @@ posts.forEach((p) => {
             })}
           </div>
 
+          <!-- Pagination -->
           {totalPages > 1 && (
             <nav class="flex justify-center items-center gap-2 mt-12" aria-label="分页导航">
-              <span class="px-4 py-2 bg-paper/50 text-ink-light/40 rounded-lg cursor-not-allowed flex items-center gap-1">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-                <span>上一页</span>
-              </span>
+              {/* Previous Page */}
+              {currentPage > 1 ? (
+                <a 
+                  href={currentPage === 2 ? '/articles/' : `/articles/${currentPage - 1}/`}
+                  class="px-4 py-2 bg-paper text-ink rounded-lg hover:bg-vermilion hover:text-white transition-all duration-200 no-underline flex items-center gap-1"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                  <span>上一页</span>
+                </a>
+              ) : (
+                <span class="px-4 py-2 bg-paper/50 text-ink-light/40 rounded-lg cursor-not-allowed flex items-center gap-1">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                  <span>上一页</span>
+                </span>
+              )}
 
+              {/* Page Numbers */}
               <div class="flex gap-1">
-                <span class="w-10 h-10 flex items-center justify-center rounded-lg bg-vermilion text-white">1</span>
+                {/* First page */}
+                <a 
+                  href="/articles/"
+                  class={`w-10 h-10 flex items-center justify-center rounded-lg no-underline transition-all duration-200 ${currentPage === 1 ? 'bg-vermilion text-white' : 'bg-paper text-ink hover:bg-vermilion hover:text-white'}`}
+                >
+                  1
+                </a>
                 
-                {totalPages > 2 && (
-                  <a href="/articles/2/" class="w-10 h-10 flex items-center justify-center rounded-lg bg-paper text-ink hover:bg-vermilion hover:text-white no-underline transition-all duration-200">
-                    2
-                  </a>
-                )}
-                
-                {totalPages > 3 && (
+                {/* Ellipsis before */}
+                {currentPage > 3 && (
                   <span class="w-10 h-10 flex items-center justify-center text-ink-light/50">...</span>
                 )}
-                
+
+                {/* Pages around current */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((p) => p > 1 && p < totalPages && Math.abs(p - currentPage) <= 1)
+                  .map((p) => (
+                    <a
+                      href={p === 1 ? '/articles/' : `/articles/${p}/`}
+                      class={`w-10 h-10 flex items-center justify-center rounded-lg no-underline transition-all duration-200 ${p === currentPage ? 'bg-vermilion text-white' : 'bg-paper text-ink hover:bg-vermilion hover:text-white'}`}
+                    >
+                      {p}
+                    </a>
+                  ))}
+
+                {/* Ellipsis after */}
+                {currentPage < totalPages - 2 && (
+                  <span class="w-10 h-10 flex items-center justify-center text-ink-light/50">...</span>
+                )}
+
+                {/* Last page */}
                 {totalPages > 1 && (
-                  <a href={`/articles/${totalPages}/`} class="w-10 h-10 flex items-center justify-center rounded-lg bg-paper text-ink hover:bg-vermilion hover:text-white no-underline transition-all duration-200">
+                  <a
+                    href={`/articles/${totalPages}/`}
+                    class={`w-10 h-10 flex items-center justify-center rounded-lg no-underline transition-all duration-200 ${currentPage === totalPages ? 'bg-vermilion text-white' : 'bg-paper text-ink hover:bg-vermilion hover:text-white'}`}
+                  >
                     {totalPages}
                   </a>
                 )}
               </div>
 
-              <a href="/articles/2/" class="px-4 py-2 bg-paper text-ink rounded-lg hover:bg-vermilion hover:text-white transition-all duration-200 no-underline flex items-center gap-1">
-                <span>下一页</span>
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-              </a>
+              {/* Next Page */}
+              {currentPage < totalPages ? (
+                <a 
+                  href={`/articles/${currentPage + 1}/`}
+                  class="px-4 py-2 bg-paper text-ink rounded-lg hover:bg-vermilion hover:text-white transition-all duration-200 no-underline flex items-center gap-1"
+                >
+                  <span>下一页</span>
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </a>
+              ) : (
+                <span class="px-4 py-2 bg-paper/50 text-ink-light/40 rounded-lg cursor-not-allowed flex items-center gap-1">
+                  <span>下一页</span>
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </span>
+              )}
             </nav>
           )}
         </div>

@@ -1,0 +1,286 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { siteName, masters } from '@data/site';
+
+export async function getStaticPaths() {
+  return masters.map((master) => ({
+    params: { slug: master.slug },
+    props: { master },
+  }));
+}
+
+const { master } = Astro.props;
+
+// 获取相关文章（根据大师专长分类）
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts.filter((p) => !p.data.draft);
+
+// 按大师专长匹配文章
+const specialtyMap: Record<string, string[]> = {
+  mingyi: ['zhouyi', 'general'],
+  xuanwei: ['bazi', 'ziwei'],
+  qingyuan: ['qimen', 'liuyao', 'fengshui'],
+};
+
+const relatedCategories = specialtyMap[master.slug] || [];
+const relatedPosts = publishedPosts
+  .filter((p) => relatedCategories.includes(p.data.category))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 6);
+
+const categoryMap: Record<string, string> = {
+  zhouyi: '周易', bazi: '八字命理', ziwei: '紫微斗数',
+  fengshui: '风水堪舆', qimen: '奇门遁甲', liuyao: '六爻占卜',
+  wuxing: '五行', general: '综合',
+};
+
+// 大师的其他信息
+const masterDetails: Record<string, { intro: string; achievements: string[]; courses: { title: string; desc: string }[] }> = {
+  mingyi: {
+    intro: '明易先生，本名张明，号明易居士，周易研究专家。自幼受家庭熏陶，对中国传统文化产生浓厚兴趣。三十余年来潜心研习《周易》，师从多位易学名家，融会贯通古今易学理论。',
+    achievements: [
+      '《易道人生》作者，累计销售超10万册',
+      '创办"明易书院"，培养易学人才逾千人',
+      '受邀在多所高校讲授周易哲学',
+      '多次接受央视、凤凰卫视专访',
+    ],
+    courses: [
+      { title: '周易入门精讲', desc: '从零开始，系统学习周易六十四卦' },
+      { title: '梅花易数实战', desc: '掌握梅花易数占卜方法与应用' },
+    ],
+  },
+  xuanwei: {
+    intro: '玄微道长，道号玄微，八字命理大师。传承祖辈命理绝学，精通四柱八字、紫微斗数、奇门遁甲等多种术数。以现代视角解读传统命理，致力于将易学智慧应用于现代生活。',
+    achievements: [
+      '《命理真诠》《紫微斗数精义》作者',
+      '累计批命案例超过5000例',
+      '创建"玄微命理"在线学习平台',
+      '担任多家企业命理顾问',
+    ],
+    courses: [
+      { title: '四柱八字系统课程', desc: '从排盘到断命，全面掌握八字命理' },
+      { title: '紫微斗数进阶', desc: '深入研习十四主星与宫位关系' },
+    ],
+  },
+  qingyuan: {
+    intro: '清源居士，法号清源，奇门遁甲传人。师承民间隐士，掌握奇门遁甲、六壬神课、太乙神数等古法术数。数十年来致力于传统文化的现代化传播，让深奥的术数变得通俗易懂。',
+    achievements: [
+      '《奇门遁甲实战精要》作者',
+      '开发"清源奇门"APP，服务用户超20万',
+      '央视《百家讲坛》特邀嘉宾',
+      '国家非物质文化遗产传承人',
+    ],
+    courses: [
+      { title: '奇门遁甲入门', desc: '掌握三奇六仪、九星八门基础知识' },
+      { title: '六壬神课精讲', desc: '学习大六壬的排课与断课方法' },
+    ],
+  },
+};
+
+const details = masterDetails[master.slug] || { intro: '', achievements: [], courses: [] };
+---
+
+<BaseLayout title={`${master.name}专栏 - ${siteName}`} description={`${master.name}，${master.title}。${master.bio}`}>
+  <Header />
+
+  <!-- Hero -->
+  <section class="pt-28 pb-16 bg-gradient-to-br from-paper via-paper-dark to-[#e8e2d4] relative overflow-hidden">
+    <div class="absolute inset-0 bg-pattern opacity-30"></div>
+    <div class="absolute top-0 right-0 w-96 h-96 bg-vermilion/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl"></div>
+    <div class="relative z-10 max-w-5xl mx-auto px-4">
+      <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+        <!-- Avatar -->
+        <div class="relative shrink-0">
+          <div class="w-40 h-40 rounded-2xl overflow-hidden shadow-xl border-4 border-white">
+            <img src={master.image} alt={master.name} class="w-full h-full object-cover" />
+          </div>
+          <div class="absolute -bottom-2 -right-2 w-12 h-12 bg-vermilion rounded-full flex items-center justify-center shadow-lg">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="text-center md:text-left">
+          <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
+            <h1 class="font-serif-cn text-3xl md:text-4xl font-bold text-ink">{master.name}</h1>
+            <span class="px-3 py-1 bg-gold/10 text-gold text-sm rounded-full font-medium">{master.title}</span>
+          </div>
+          <div class="flex items-center justify-center md:justify-start gap-4 mb-4">
+            <div class="flex items-center gap-1">
+              {Array.from({ length: 5 }).map((_, si) => (
+                <svg class={`w-4 h-4 ${si < Math.floor(parseFloat(master.rating)) ? 'text-yellow-400' : 'text-ink-light/20'}`} viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/>
+                </svg>
+              ))}
+              <span class="text-sm text-ink-light/60 ml-1">{master.rating}</span>
+            </div>
+            <span class="text-vermilion font-medium">{master.articleCount}篇文章</span>
+          </div>
+          <p class="text-ink-light/70 leading-relaxed max-w-2xl">{master.bio}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Introduction -->
+  <section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="text-center mb-12 fade-in-up">
+        <span class="section-label">人物简介</span>
+        <h2 class="section-title">关于{master.name}</h2>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="font-sans-cn text-ink-light/80 leading-loose fade-in-up">
+        <p class="mb-6">{details.intro}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievements -->
+  {details.achievements.length > 0 && (
+    <section class="py-16 bg-paper">
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="text-center mb-12 fade-in-up">
+          <span class="section-label">专业成就</span>
+          <h2 class="section-title">主要成就</h2>
+          <div class="section-divider"></div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 fade-in-up">
+          {details.achievements.map((achievement, i) => (
+            <div class="flex items-start gap-3 bg-white p-4 rounded-xl border border-gold/10">
+              <div class="w-8 h-8 bg-vermilion/10 rounded-full flex items-center justify-center shrink-0">
+                <span class="text-vermilion font-bold text-sm">{i + 1}</span>
+              </div>
+              <p class="text-ink-light/80 leading-relaxed">{achievement}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Courses -->
+  {details.courses.length > 0 && (
+    <section class="py-16 bg-white">
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="text-center mb-12 fade-in-up">
+          <span class="section-label">精品课程</span>
+          <h2 class="section-title">热门课程</h2>
+          <div class="section-divider"></div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 fade-in-up">
+          {details.courses.map((course) => (
+            <div class="bg-paper rounded-2xl p-6 border border-gold/10 card-hover">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-vermilion to-vermilion-light rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                  </svg>
+                </div>
+                <h3 class="font-serif-cn text-lg font-bold text-ink">{course.title}</h3>
+              </div>
+              <p class="text-ink-light/70 text-sm leading-relaxed">{course.desc}</p>
+              <a href="#" class="inline-flex items-center gap-1 text-vermilion text-sm font-medium mt-4 hover:gap-2 transition-all">
+                <span>了解详情</span>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Related Articles -->
+  {relatedPosts.length > 0 && (
+    <section class="py-16 bg-paper">
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="text-center mb-12 fade-in-up">
+          <span class="section-label">精选文章</span>
+          <h2 class="section-title">推荐阅读</h2>
+          <div class="section-divider"></div>
+          <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">{master.name}精选的易学文章</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {relatedPosts.map((post) => {
+            const catLabel = categoryMap[post.data.category] || post.data.category;
+            return (
+              <article class="bg-white rounded-2xl overflow-hidden border border-gold/10 card-hover fade-in-up">
+                <div class="relative h-40 overflow-hidden">
+                  <img
+                    src={`https://picsum.photos/seed/${post.slug}/400/200`}
+                    alt={post.data.title}
+                    class="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div class="absolute top-3 left-3">
+                    <span class="px-2 py-1 bg-vermilion/90 text-white text-xs rounded-full">{catLabel}</span>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <a href={`/blog/${post.slug}/`} class="no-underline block">
+                    <h3 class="font-serif-cn text-base font-bold text-ink mb-2 hover:text-vermilion transition-colors line-clamp-2">
+                      {post.data.title}
+                    </h3>
+                  </a>
+                  <p class="text-sm text-ink-light/60 line-clamp-2">{post.data.description}</p>
+                  <div class="text-xs text-ink-light/40 mt-3">
+                    {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <div class="text-center mt-10">
+          <a href="/articles/" class="btn-outline">
+            <span>查看更多文章</span>
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Contact -->
+  <section class="py-16 bg-gradient-to-br from-ink to-ink-light relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-gold/30 rounded-full taiji-spin"></div>
+    </div>
+    <div class="max-w-3xl mx-auto px-4 relative z-10 text-center">
+      <h2 class="font-serif-cn text-2xl md:text-3xl font-bold text-white mb-4">联系{master.name}</h2>
+      <p class="text-paper/70 mb-8">如果您有命理咨询需求或合作意向，欢迎与我们联系</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#" class="btn-primary">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>在线咨询</span>
+        </a>
+        <a href="/articles/" class="px-6 py-3 border border-gold/50 text-white rounded-full hover:bg-gold/10 transition-all duration-300 no-underline flex items-center gap-2">
+          <span>浏览更多文章</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.fade-in-up');
+    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    els.forEach((el) => obs.observe(el));
+  });
+</script>

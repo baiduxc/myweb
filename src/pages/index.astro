@@ -6,10 +6,21 @@ import { getCollection } from 'astro:content';
 import { siteName, siteDesc, categories, masters } from '@data/site';
 
 const allPosts = await getCollection('blog');
-const posts = allPosts
-  .filter((p) => !p.data.draft)
+const publishedPosts = allPosts.filter((p) => !p.data.draft);
+const posts = publishedPosts
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 6);
+
+// 本周精选：取最新一篇文章
+const featuredPost = publishedPosts
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
+
+// 分类统计（实时）
+const categoryCounts: Record<string, number> = {};
+publishedPosts.forEach((p) => {
+  const cat = p.data.category;
+  categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+});
 
 const categoryMap: Record<string, string> = {
   zhouyi: '周易', bazi: '八字命理', ziwei: '紫微斗数',
@@ -101,7 +112,9 @@ const categoryMap: Record<string, string> = {
         <p class="mt-6 text-ink-light/70 max-w-2xl mx-auto">系统梳理中华易学脉络，从周易八卦到命理术数，构建完整的国学知识体系</p>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        {categories.map((cat, i) => (
+        {categories.map((cat, i) => {
+          const realCount = categoryCounts[cat.slug] || 0;
+          return (
           <a href={`/${cat.slug}/`} class="group relative bg-paper rounded-2xl p-6 text-center card-hover cursor-pointer fade-in-up border border-gold/10 no-underline" style={`transition-delay: ${i * 100}ms;`}>
             <div class={`w-16 h-16 mx-auto mb-4 bg-gradient-to-br ${cat.color} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
               <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -116,10 +129,11 @@ const categoryMap: Record<string, string> = {
             <h3 class="font-serif-cn text-lg font-bold text-ink mb-1">{cat.name}</h3>
             <p class="text-xs text-ink-light/60 mb-3">{cat.desc}</p>
             <div class="text-sm font-medium text-vermilion">
-              {cat.articles}篇 <span class="text-ink-light/40">·</span> {cat.views}阅读
+              {realCount}篇 <span class="text-ink-light/40">·</span> {cat.views}阅读
             </div>
           </a>
-        ))}
+          );
+        })}
       </div>
     </div>
   </section>
@@ -132,44 +146,44 @@ const categoryMap: Record<string, string> = {
         <div class="fade-in-up">
           <span class="text-vermilion text-sm font-medium tracking-widest uppercase">本周精选</span>
           <h2 class="font-serif-cn text-3xl md:text-4xl font-bold text-ink mt-3 mb-6 leading-tight">
-            <span class="text-vermilion">《周易》</span>乾卦详解：<br>潜龙勿用到飞龙在天的人生智慧
+            {featuredPost.data.title}
           </h2>
           <p class="text-ink-light/70 mb-6 leading-relaxed">
-            本文深入剖析乾卦六爻的深层含义，从"潜龙勿用"的韬光养晦，到"飞龙在天"的顺势而为，结合现代职场与人生发展，解读六十四卦之首的处世哲学。
+            {featuredPost.data.description}
           </p>
           <div class="flex flex-wrap items-center gap-4 mb-8">
             <div class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <span class="text-sm text-ink-light">作者：明易先生</span>
-            </div>
-            <div class="flex items-center gap-2">
               <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              <span class="text-sm text-ink-light">2024年3月15日</span>
+              <span class="text-sm text-ink-light">{featuredPost.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
             </div>
             <div class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              <span class="text-sm text-ink-light">32.6k 阅读</span>
+              <span class="px-2 py-0.5 bg-vermilion/10 text-vermilion text-xs rounded-full font-medium">{categoryMap[featuredPost.data.category] || featuredPost.data.category}</span>
             </div>
+            {featuredPost.data.tags.length > 0 && (
+              <div class="flex items-center gap-1">
+                <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                <span class="text-sm text-ink-light">{featuredPost.data.tags.slice(0, 3).join(' · ')}</span>
+              </div>
+            )}
           </div>
           <div class="flex items-center gap-4">
-            <a href="#" class="btn-primary">
+            <a href={`/blog/${featuredPost.slug}/`} class="btn-primary">
               <span>阅读全文</span>
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
-            <button class="btn-outline">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              <span>收藏</span>
-            </button>
+            <a href="/articles/" class="btn-outline">
+              <span>更多文章</span>
+            </a>
           </div>
         </div>
         <div class="relative fade-in-up">
           <div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-paper-dark">
-            <img src="https://picsum.photos/seed/yijing-gua/800/600" alt="周易乾卦" class="w-full h-full object-cover" loading="lazy" />
+            <img src={`https://picsum.photos/seed/${featuredPost.slug}/800/600`} alt={featuredPost.data.title} class="w-full h-full object-cover" loading="lazy" />
           </div>
           <div class="absolute -bottom-6 -right-6 w-48 h-48 bg-gradient-to-br from-vermilion to-vermilion-light rounded-2xl flex items-center justify-center shadow-xl">
             <div class="text-center text-white">
               <div class="text-3xl font-bold font-serif-cn mb-1">TOP 1</div>
-              <div class="text-sm opacity-90">本周最热</div>
+              <div class="text-sm opacity-90">本周精选</div>
             </div>
           </div>
         </div>
@@ -186,11 +200,14 @@ const categoryMap: Record<string, string> = {
           <h2 class="font-serif-cn text-3xl md:text-4xl font-bold text-ink mt-3">最新文章</h2>
         </div>
         <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
-          <button class="filter-btn active px-4 py-2 bg-vermilion text-white rounded-full text-sm font-medium transition-all" data-filter="all">全部</button>
-          <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter="bazi">八字</button>
-          <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter="ziwei">紫微</button>
-          <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter="wuxing">五行</button>
-          <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter="zhouyi">周易</button>
+          <button class="filter-btn active px-4 py-2 bg-vermilion text-white rounded-full text-sm font-medium transition-all" data-filter="all">全部 ({publishedPosts.length})</button>
+          {['bazi', 'ziwei', 'wuxing', 'zhouyi', 'fengshui', 'qimen', 'liuyao', 'general'].map((cat) => {
+            const count = categoryCounts[cat] || 0;
+            if (count === 0) return null;
+            return (
+              <button class="filter-btn px-4 py-2 bg-paper text-ink rounded-full text-sm font-medium hover:bg-vermilion hover:text-white transition-all" data-filter={cat}>{categoryMap[cat]} ({count})</button>
+            );
+          })}
         </div>
       </div>
 
