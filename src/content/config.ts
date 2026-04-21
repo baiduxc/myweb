@@ -24,6 +24,7 @@ const booksCollection = defineCollection({
     description: z.string(),
     coverUrl: z.string().optional(),
     pdfUrl: z.string().optional(),
+    order: z.number().optional(),
     draft: z.boolean().default(false),
   }),
 });

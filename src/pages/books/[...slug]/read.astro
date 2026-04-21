@@ -1,9 +1,5 @@
 ---
-import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { siteName } from '@data/site';
 
 export async function getStaticPaths() {
   const books = await getCollection('books');
@@ -15,149 +11,337 @@ export async function getStaticPaths() {
 
 const { book } = Astro.props;
 const rendered = await book.render();
-const { Content } = rendered;
+
+// Split content into pages by h2 headings
+const pages = [];
+let currentPage = { title: book.data.title, html: '' };
+const body = rendered.body || '';
+const sectionRegex = /<h2[^>]*>(.*?)<\/h2>/g;
+let lastIndex = 0;
+let match;
+
+while ((match = sectionRegex.exec(body)) !== null) {
+  const sectionHtml = body.slice(lastIndex, match.index);
+  if (sectionHtml.trim()) {
+    currentPage.html = sectionHtml;
+    pages.push(currentPage);
+  }
+  currentPage = { title: match[1].replace(/<[^>]+>/g, ''), html: '' };
+  lastIndex = match.index + match[0].length;
+}
+if (lastIndex < body.length) {
+  currentPage.html = body.slice(lastIndex);
+  pages.push(currentPage);
+}
+
+// Serialize pages for JS
+const pagesJson = JSON.stringify(pages.map(p => ({ title: p.title, html: p.html })));
 
 const allBooks = await getCollection('books');
-const categoryBooks = allBooks.filter((b) => !b.data.draft && b.data.category === book.data.category);
+const categoryBooks = allBooks.filter((b) => !b.data.draft && b.data.category === book.data.category)
+  .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
 const currentIndex = categoryBooks.findIndex((b) => b.slug === book.slug);
 const prevBook = currentIndex > 0 ? categoryBooks[currentIndex - 1] : null;
 const nextBook = currentIndex < categoryBooks.length - 1 ? categoryBooks[currentIndex + 1] : null;
-
-// Extract headings for TOC
-const headings = [];
-const tocMatch = rendered.body?.match(/<h([23])[^>]*>(.*?)<\/h\1>/g);
-if (tocMatch) {
-  tocMatch.forEach((h) => {
-    const level = h.match(/<h([23])/)[1];
-    const text = h.replace(/<[^>]+>/g, '').trim();
-    headings.push({ level: parseInt(level), text });
-  });
-}
 ---
 
-<BaseLayout title={`${book.data.title} - 阅读 - ${siteName}`} description={book.data.description}>
-  <Header />
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{book.data.title} - 国学院</title>
+  <meta name="description" content={book.data.description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'ink': '#1a1a1a', 'vermilion': '#c41e3a', 'paper': '#faf7f0',
+            'gold': '#c5a456', 'jade': '#4a7c59', 'water': '#2c5f6e', 'earth': '#8b6914',
+          },
+          fontFamily: {
+            'serif-cn': ['"Noto Serif SC"', 'serif'],
+            'sans-cn': ['"Noto Sans SC"', 'sans-serif'],
+            'kaiti-cn': ['"Ma Shan Zheng"', 'cursive'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .reader-body-content h2 {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(197,164,86,0.2);
+    }
+    .reader-body-content p {
+      text-indent: 2em;
+      margin-bottom: 1em;
+    }
+    .reader-body-content blockquote {
+      border-left: 3px solid rgba(197,164,86,0.3);
+      padding: 0.5rem 1rem;
+      margin: 1rem 0;
+      border-radius: 0 0.375rem 0.375rem 0;
+    }
+    .settings-btn.active {
+      border-color: #c5a456 !important;
+      ring: 2px solid rgba(197,164,86,0.3);
+      box-shadow: 0 0 0 2px rgba(197,164,86,0.15);
+    }
+    .reader-drawer-panel.open {
+      transform: translateX(0) !important;
+    }
+  </style>
+</head>
+<body class="overflow-hidden">
 
-  <!-- Reading Layout -->
-  <div class="pt-20 min-h-screen bg-[#f5f3ef]">
-    <div class="flex flex-col lg:flex-row max-w-7xl mx-auto">
-      <!-- Left: Content Area -->
-      <main class="flex-1 min-w-0">
-        <div class="max-w-3xl mx-auto px-4 py-12">
-          <!-- Book Header -->
-          <div class="text-center mb-12 fade-in-up">
-            <h1 class="font-serif-cn text-2xl md:text-3xl font-bold text-ink mb-3">{book.data.title}</h1>
-            <div class="flex items-center justify-center gap-4 text-sm text-ink-light/50">
-              <span>书名：{book.data.title}</span>
-              <span>作者：[{book.data.dynasty || ''}] {book.data.author}</span>
-            </div>
-            <div class="w-24 h-px bg-gold/30 mx-auto mt-4"></div>
-          </div>
-
-          <!-- Reading Content -->
-          <div class="prose prose-lg max-w-none font-sans-cn text-ink leading-loose
-                      prose-headings:font-serif-cn prose-headings:text-ink prose-headings:tracking-wider
-                      prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-6
-                      prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-4
-                      prose-p:text-ink/85 prose-p:indent-8
-                      prose-p:my-4
-                      prose-strong:text-ink
-                      prose-blockquote:border-l-gold/40 prose-blockquote:bg-gold/5
-                      prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-sm">
-            <Content />
-          </div>
-
-          <!-- Prev/Next Navigation -->
-          <div class="mt-16 pt-8 border-t border-gold/20">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-              {prevBook ? (
-                <a href={`/books/${prevBook.slug}/read/`} class="flex items-center gap-3 group no-underline w-full sm:w-auto">
-                  <div class="w-10 h-10 bg-paper rounded-xl flex items-center justify-center group-hover:bg-gold/10 transition-colors shrink-0">
-                    <svg class="w-5 h-5 text-ink-light/60 group-hover:text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-                  </div>
-                  <div class="text-left">
-                    <div class="text-xs text-ink-light/40">上一本</div>
-                    <div class="font-serif-cn text-sm font-bold text-ink group-hover:text-vermilion transition-colors">{prevBook.data.title}</div>
-                  </div>
-                </a>
-              ) : <div></div>}
-
-              <a href={`/books/${book.slug}/`} class="px-6 py-2.5 bg-paper text-ink rounded-xl text-sm font-medium hover:bg-gold/10 hover:text-gold transition-all no-underline">
-                返回目录
-              </a>
-
-              {nextBook ? (
-                <a href={`/books/${nextBook.slug}/read/`} class="flex items-center gap-3 group no-underline w-full sm:w-auto sm:flex-row-reverse sm:text-right">
-                  <div class="w-10 h-10 bg-paper rounded-xl flex items-center justify-center group-hover:bg-gold/10 transition-colors shrink-0">
-                    <svg class="w-5 h-5 text-ink-light/60 group-hover:text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-                  </div>
-                  <div>
-                    <div class="text-xs text-ink-light/40">下一本</div>
-                    <div class="font-serif-cn text-sm font-bold text-ink group-hover:text-vermilion transition-colors">{nextBook.data.title}</div>
-                  </div>
-                </a>
-              ) : <div></div>}
-            </div>
-          </div>
-
-          <!-- Disclaimer -->
-          <aside class="mt-8 p-4 bg-gold/5 border border-gold/20 rounded-xl">
-            <p class="text-xs text-ink-light/70 leading-relaxed">
-              <strong class="font-serif-cn text-ink">声明：</strong>
-              本文内容为古籍数字化整理，仅供学术研究与文化传承参考。
-            </p>
-          </aside>
-        </div>
-      </main>
-
-      <!-- Right: TOC Sidebar (Desktop) -->
-      <aside class="hidden lg:block w-64 shrink-0">
-        <div class="sticky top-24 px-6 py-8">
-          {headings.length > 0 && (
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gold/10">
-              <div class="flex items-center gap-2 mb-4">
-                <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                <span class="text-sm font-medium text-ink">目录</span>
-              </div>
-              <nav class="space-y-1">
-                {headings.map((h) => (
-                  <a href={`#heading-${h.text}`} class={`block py-1.5 text-sm transition-colors hover:text-vermilion ${h.level === 3 ? 'pl-4 text-ink-light/50' : 'font-medium text-ink'}`}>
-                    {h.text}
-                  </a>
-                ))}
-              </nav>
-            </div>
-          )}
-
-          <!-- Floating action buttons -->
-          <div class="mt-6 space-y-2">
-            <a href={`/books/${book.slug}/`} class="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl shadow-sm border border-gold/10 text-sm text-ink-light/60 hover:text-gold hover:border-gold/30 transition-all no-underline">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              <span>书籍详情</span>
-            </a>
-            <a href="/books/" class="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl shadow-sm border border-gold/10 text-sm text-ink-light/60 hover:text-gold hover:border-gold/30 transition-all no-underline">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/><polyline points="16 6 12 2 8 6"/></svg>
-              <span>返回书库</span>
-            </a>
-          </div>
-        </div>
-      </aside>
+  <!-- Top Bar -->
+  <div class="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-4 h-14 transition-all duration-300" id="topbar">
+    <a href={`/books/${book.slug}/`} class="flex items-center gap-2 text-sm text-ink/70 hover:text-vermilion transition-colors no-underline group">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      <span class="hidden sm:inline">返回</span>
+    </a>
+    <span class="font-serif-cn text-sm font-medium text-ink/60 truncate max-w-xs">{book.data.title}</span>
+    <div class="flex items-center gap-1">
+      <button onclick="toggleToc()" class="p-2 rounded-lg hover:bg-black/5 transition-colors" title="目录">
+        <svg class="w-5 h-5 text-ink/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </button>
+      <button onclick="toggleSettings()" class="p-2 rounded-lg hover:bg-black/5 transition-colors" title="设置">
+        <svg class="w-5 h-5 text-ink/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </div>
 
-  <Footer />
-</BaseLayout>
+  <!-- Content Area -->
+  <div id="reader-container" class="pt-14 pb-16 min-h-screen transition-colors duration-300" onclick="handleContentClick(event)">
+    <div class="max-w-3xl mx-auto px-6 py-8">
+      <div id="reader-title" class="text-center mb-12">
+        <h1 class="font-serif-cn text-2xl md:text-3xl font-bold mb-3">{book.data.title}</h1>
+        <p class="text-sm opacity-50">[{book.data.dynasty || ''}] {book.data.author}</p>
+      </div>
+      <div id="reader-body" class="reader-body-content"></div>
+    </div>
+  </div>
 
-<script is:inline>
-  document.addEventListener('DOMContentLoaded', () => {
-    const els = document.querySelectorAll('.fade-in-up');
-    const obs = new IntersectionObserver((e) => e.forEach((x) => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1 });
-    els.forEach((el) => obs.observe(el));
+  <!-- Bottom Bar -->
+  <div class="fixed bottom-0 left-0 w-full z-40 flex items-center justify-between px-4 h-12 transition-all duration-300" id="bottombar">
+    <button onclick="goPage(-1)" id="btn-prev" class="p-2 rounded-lg hover:bg-black/5 transition-colors disabled:opacity-30">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span id="page-indicator" class="text-xs text-ink/40 font-mono"></span>
+    <button onclick="goPage(1)" id="btn-next" class="p-2 rounded-lg hover:bg-black/5 transition-colors disabled:opacity-30">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
 
-    // Add IDs to headings for TOC links
-    document.querySelectorAll('h2, h3').forEach((h) => {
-      const id = 'heading-' + h.textContent.trim().replace(/\s+/g, '-');
-      h.id = id;
+  <!-- TOC Drawer -->
+  <div id="drawer-toc" class="hidden">
+    <div class="fixed inset-0 bg-black/40 z-50" onclick="toggleToc()"></div>
+    <div class="fixed top-0 right-0 w-72 max-w-[85vw] h-full bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300" id="panel-toc">
+      <div class="p-4 border-b border-gold/10 flex items-center justify-between">
+        <span class="font-serif-cn text-base font-bold text-ink">目录</span>
+        <button onclick="toggleToc()" class="p-1 rounded hover:bg-black/5">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <nav class="p-4 space-y-1 overflow-y-auto" style="max-height:calc(100vh - 57px)">
+        {pages.map((p, i) => (
+          <button class="toc-item block w-full text-left py-2.5 px-3 text-sm rounded-lg hover:bg-paper transition-colors" data-page={i}>
+            <span class="text-xs text-gold/60 mr-2">{i + 1}.</span>
+            {p.title}
+          </button>
+        ))}
+      </nav>
+    </div>
+  </div>
+
+  <!-- Settings Drawer -->
+  <div id="drawer-settings" class="hidden">
+    <div class="fixed inset-0 bg-black/40 z-50" onclick="toggleSettings()"></div>
+    <div class="fixed top-0 right-0 w-72 max-w-[85vw] h-full bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300" id="panel-settings">
+      <div class="p-4 border-b border-gold/10 flex items-center justify-between">
+        <span class="font-serif-cn text-base font-bold text-ink">阅读设置</span>
+        <button onclick="toggleSettings()" class="p-1 rounded hover:bg-black/5">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-4 space-y-6 overflow-y-auto" style="max-height:calc(100vh - 57px)">
+        <!-- Font Size -->
+        <div>
+          <div class="text-xs text-ink/50 mb-3 font-medium">字号</div>
+          <div class="flex gap-2">
+            <button class="settings-btn shrink-0 w-10 h-10 rounded-lg border border-gold/20 flex items-center justify-center text-sm font-medium transition-all" data-action="fontsize" data-value="14">A</button>
+            <button class="settings-btn shrink-0 w-10 h-10 rounded-lg border border-gold/20 flex items-center justify-center text-base font-medium transition-all" data-action="fontsize" data-value="16">A</button>
+            <button class="settings-btn shrink-0 w-10 h-10 rounded-lg border border-gold/20 flex items-center justify-center text-lg font-bold transition-all" data-action="fontsize" data-value="18">A</button>
+            <button class="settings-btn shrink-0 w-10 h-10 rounded-lg border border-gold/20 flex items-center justify-center text-xl font-bold transition-all" data-action="fontsize" data-value="22">A</button>
+            <button class="settings-btn shrink-0 w-10 h-10 rounded-lg border border-gold/20 flex items-center justify-center text-2xl font-bold transition-all" data-action="fontsize" data-value="26">A</button>
+          </div>
+        </div>
+
+        <!-- Font Family -->
+        <div>
+          <div class="text-xs text-ink/50 mb-3 font-medium">字体</div>
+          <div class="space-y-2">
+            <button class="settings-btn font-serif-cn w-full text-left px-4 py-2.5 rounded-lg border border-gold/20 text-sm transition-all" data-action="font" data-value="'Noto Serif SC', serif">宋体</button>
+            <button class="settings-btn font-sans-cn w-full text-left px-4 py-2.5 rounded-lg border border-gold/20 text-sm transition-all" data-action="font" data-value="'Noto Sans SC', sans-serif">黑体</button>
+            <button class="settings-btn font-kaiti-cn w-full text-left px-4 py-2.5 rounded-lg border border-gold/20 text-lg transition-all" data-action="font" data-value="'Ma Shan Zheng', cursive">楷体</button>
+          </div>
+        </div>
+
+        <!-- Background -->
+        <div>
+          <div class="text-xs text-ink/50 mb-3 font-medium">背景</div>
+          <div class="flex gap-3">
+            <button class="settings-btn shrink-0 w-12 h-12 rounded-lg border-2 transition-all" data-action="bg" data-value="#faf7f0" style="background:#faf7f0;border-color:#ddd"></button>
+            <button class="settings-btn shrink-0 w-12 h-12 rounded-lg border-2 transition-all" data-action="bg" data-value="#f5f0e8" style="background:#f5f0e8;border-color:#ddd"></button>
+            <button class="settings-btn shrink-0 w-12 h-12 rounded-lg border-2 transition-all" data-action="bg" data-value="#1a1a1a" style="background:#1a1a1a;border-color:#555"></button>
+            <button class="settings-btn shrink-0 w-12 h-12 rounded-lg border-2 transition-all" data-action="bg" data-value="#e8f0e8" style="background:#e8f0e8;border-color:#ddd"></button>
+            <button class="settings-btn shrink-0 w-12 h-12 rounded-lg border-2 transition-all" data-action="bg" data-value="#f0e8e0" style="background:#f0e8e0;border-color:#ddd"></button>
+          </div>
+        </div>
+
+        <!-- Line Height -->
+        <div>
+          <div class="text-xs text-ink/50 mb-3 font-medium">行距</div>
+          <div class="flex gap-2">
+            <button class="settings-btn shrink-0 w-12 h-12 rounded-lg border border-gold/20 flex items-center justify-center transition-all" data-action="lineheight" data-value="1.6">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+            </button>
+            <button class="settings-btn shrink-0 w-12 h-12 rounded-lg border border-gold/20 flex items-center justify-center transition-all" data-action="lineheight" data-value="2.0">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="4" x2="20" y2="4"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="20" x2="20" y2="20"/></svg>
+            </button>
+            <button class="settings-btn shrink-0 w-12 h-12 rounded-lg border border-gold/20 flex items-center justify-center transition-all" data-action="lineheight" data-value="2.4">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="2" x2="20" y2="2"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="22" x2="20" y2="22"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    // Pages data
+    const PAGES = JSON.parse('{pagesJson}'.replace(/\n/g, '\\n').replace(/\\/g, '\\\\').replace(/\\\\n/g, '\\n'));
+    let currentPage = 0;
+    const totalPages = PAGES.length;
+
+    // Default settings
+    const DEFAULTS = { fontSize: 18, fontFamily: "'Noto Serif SC', serif", bgColor: '#faf7f0', textColor: '#1a1a1a', lineHeight: 2.0 };
+    function loadSettings() { try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem('reader-settings') || '{}') }; } catch { return { ...DEFAULTS }; } }
+    function saveSettings(s) { try { localStorage.setItem('reader-settings', JSON.stringify(s)); } catch {} }
+
+    function applySettings(s) {
+      const c = document.getElementById('reader-container');
+      const b = document.getElementById('reader-body');
+      const t = document.getElementById('reader-title');
+      const tb = document.getElementById('topbar');
+      const bb = document.getElementById('bottombar');
+      const dark = s.bgColor === '#1a1a1a';
+      const tc = dark ? '#d4d4d4' : s.textColor;
+
+      c.style.backgroundColor = s.bgColor;
+      c.style.color = tc;
+      b.style.fontSize = s.fontSize + 'px';
+      b.style.fontFamily = s.fontFamily;
+      b.style.lineHeight = s.lineHeight;
+      t.style.color = tc;
+      tb.style.backgroundColor = dark ? 'rgba(26,26,26,0.92)' : 'rgba(250,247,240,0.96)';
+      bb.style.backgroundColor = dark ? 'rgba(26,26,26,0.92)' : 'rgba(250,247,240,0.96)';
+      tb.style.borderBottom = dark ? 'none' : '1px solid rgba(197,164,86,0.1)';
+      bb.style.borderTop = dark ? 'none' : '1px solid rgba(197,164,86,0.1)';
+
+      // Update content text colors
+      b.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,a').forEach(el => {
+        if (el.tagName === 'H2') { el.style.borderBottomColor = dark ? '#555' : 'rgba(197,164,86,0.2)'; }
+        if (el.tagName === 'BLOCKQUOTE') {
+          el.style.borderLeftColor = dark ? '#555' : 'rgba(197,164,86,0.3)';
+          el.style.backgroundColor = dark ? '#2a2a2a' : 'rgba(197,164,86,0.03)';
+        }
+        el.style.color = tc;
+      });
+    }
+
+    function renderPage(idx) {
+      if (idx < 0 || idx >= totalPages) return;
+      currentPage = idx;
+      const b = document.getElementById('reader-body');
+      b.innerHTML = PAGES[idx].html || '<p style="text-align:center;opacity:0.4;padding:3rem 0">暂无内容</p>';
+      document.getElementById('page-indicator').textContent = (idx + 1) + ' / ' + totalPages;
+      document.getElementById('btn-prev').disabled = idx === 0;
+      document.getElementById('btn-next').disabled = idx === totalPages - 1;
+      document.getElementById('reader-title').style.display = idx === 0 ? '' : 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goPage(dir) { renderPage(currentPage + dir); saveSettings({ ...loadSettings(), _page: currentPage }); }
+
+    // Click on content area for nav
+    function handleContentClick(e) {
+      if (e.target.closest('#topbar') || e.target.closest('#bottombar') || e.target.closest('a') || e.target.closest('button')) return;
+      const rect = document.getElementById('reader-container').getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      if (x > rect.width * 0.65) goPage(1);
+      else if (x < rect.width * 0.35) goPage(-1);
+    }
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goPage(-1); }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goPage(1); }
     });
-  });
-</script>
+
+    // Drawers
+    function toggleToc() {
+      const d = document.getElementById('drawer-toc'), p = document.getElementById('panel-toc');
+      if (d.classList.contains('hidden')) { d.classList.remove('hidden'); requestAnimationFrame(() => p.classList.add('open')); }
+      else { p.classList.remove('open'); setTimeout(() => d.classList.add('hidden'), 320); }
+    }
+    function toggleSettings() {
+      const d = document.getElementById('drawer-settings'), p = document.getElementById('panel-settings');
+      if (d.classList.contains('hidden')) { d.classList.remove('hidden'); requestAnimationFrame(() => p.classList.add('open')); }
+      else { p.classList.remove('open'); setTimeout(() => d.classList.add('hidden'), 320); }
+    }
+
+    // TOC clicks
+    document.querySelectorAll('.toc-item').forEach(btn => btn.addEventListener('click', () => { renderPage(parseInt(btn.dataset.page)); toggleToc(); }));
+
+    // Settings clicks
+    function setActive(action) {
+      document.querySelectorAll(`[data-action="${action}"]`).forEach(b => b.classList.remove('active'));
+    }
+
+    document.querySelectorAll('.settings-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const s = loadSettings();
+        const a = btn.dataset.action, v = btn.dataset.value;
+        if (a === 'fontsize') s.fontSize = parseInt(v);
+        else if (a === 'font') s.fontFamily = v;
+        else if (a === 'bg') { s.bgColor = v; s.textColor = v === '#1a1a1a' ? '#d4d4d4' : '#1a1a1a'; }
+        else if (a === 'lineheight') s.lineHeight = parseFloat(v);
+        saveSettings(s);
+        applySettings(s);
+        setActive(a);
+        btn.classList.add('active');
+      });
+    });
+
+    // Init
+    const s = loadSettings();
+    applySettings(s);
+    renderPage(s._page || 0);
+
+    // Set initial active states
+    document.querySelectorAll(`[data-action="fontsize"][data-value="${s.fontSize}"]`).forEach(b => b.classList.add('active'));
+    document.querySelectorAll(`[data-action="lineheight"][data-value="${s.lineHeight}"]`).forEach(b => b.classList.add('active'));
+    document.querySelectorAll(`[data-action="bg"][data-value="${s.bgColor}"]`).forEach(b => b.classList.add('active'));
+  </script>
+</body>
+</html>

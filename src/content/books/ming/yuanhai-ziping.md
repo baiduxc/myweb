@@ -3,6 +3,7 @@ title: 渊海子平
 author: 徐升
 dynasty: 宋
 category: ming
+order: 1
 description: 八字命理学的奠基之作，系统论述了四柱八字的排盘方法、十神体系、格局判断、大运流年推演等核心知识。全书以子平法为基础，是学习八字命理必读的经典。
 coverUrl: /books/cover/yuanhai.png
 draft: false
