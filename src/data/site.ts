@@ -8,7 +8,7 @@ export const navLinks = [
   { href: '/', label: '首页' },
   { href: 'https://bbs.haotian8.com', label: '论坛', external: true },
   { href: 'https://bbs.haotian8.com/ai-dream', label: 'Ai解梦', external: true },
-  { href: 'https://bbs.haotian8.com/bazi', label: 'Ai排盘', external: true },
+  { href: 'https://bbs.haotian8.com/bazi', label: '排盘', external: true },
   {
     href: '/bazi/',
     label: '基础知识',
@@ -25,7 +25,7 @@ export const navLinks = [
   },
   { href: '/articles/', label: '全部文章' },
   // { href: '/masters/', label: '专栏' }, // 暂时隐藏
-  { href: '/books/', label: '书库' },
+  // { href: '/books/', label: '书库' }, // 暂时隐藏
 ];
 
 export const categories = [
